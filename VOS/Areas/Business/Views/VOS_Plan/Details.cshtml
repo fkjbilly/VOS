@@ -1,0 +1,16 @@
+﻿@model VOS.ViewModel.Business.VOS_PlanVMs.VOS_PlanVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+<wt:row items-per-row="ItemsPerRowEnum.Two">
+<wt:display field="Entity.Plan_no" />
+<wt:display field="Entity.Shopname.ShopName" />
+<wt:display field="Entity.PlanSatrtTime" />
+<wt:display field="Entity.PlanEndTime" />
+<wt:display field="Entity.PlanFee" />
+<wt:display field="Entity.Remark" />
+</wt:row>
+    <wt:row align="AlignEnum.Right">
+        <wt:closebutton />
+    </wt:row>
+</wt:form>

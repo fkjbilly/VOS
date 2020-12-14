@@ -1,0 +1,17 @@
+﻿@model VOS.ViewModel.Business.VOS_TaskVMs.VOS_TaskListVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:searchpanel vm="@Model" reset-btn="true">
+<wt:row items-per-row="ItemsPerRowEnum.Three">
+<wt:combobox field="Searcher.TaskType" empty-text="@Localizer["All"]" />
+<wt:combobox field="Searcher.PlanId" items="Searcher.AllPlans" empty-text="@Localizer["All"]" />
+<wt:textbox field="Searcher.CommodityName" />
+<wt:textbox field="Searcher.SearchKeyword" />
+<wt:combobox field="Searcher.IsLock" empty-text="@Localizer["All"]" />
+<wt:combobox field="Searcher.DistributorId" items="Searcher.AllDistributors" empty-text="@Localizer["All"]" />
+<wt:combobox field="Searcher.EmployeeId" items="Searcher.AllEmployees" empty-text="@Localizer["All"]" />
+<wt:textbox field="Searcher.VOrderCode" />
+<wt:textbox field="Searcher.TBAccount" />
+</wt:row>
+</wt:searchpanel>
+<wt:grid vm="@Model" url="/Business/VOS_Task/Search"/>

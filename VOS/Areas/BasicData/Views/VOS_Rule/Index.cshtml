@@ -1,0 +1,11 @@
+﻿@model VOS.ViewModel.BasicData.VOS_RuleVMs.VOS_RuleListVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:searchpanel vm="@Model" reset-btn="true">
+<wt:row items-per-row="ItemsPerRowEnum.Three">
+<wt:textbox field="Searcher.RuleName" />
+<wt:combobox field="Searcher.RuleType" empty-text="@Localizer["All"]" />
+<wt:combobox field="Searcher.IsUse" empty-text="@Localizer["All"]" />
+</wt:row>
+</wt:searchpanel>
+<wt:grid vm="@Model" url="/BasicData/VOS_Rule/Search"/>

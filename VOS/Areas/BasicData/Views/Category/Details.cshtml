@@ -1,0 +1,13 @@
+﻿@model VOS.ViewModel.BasicData.CategoryVMs.CategoryVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+<wt:row items-per-row="ItemsPerRowEnum.Two">
+<wt:display field="Entity.Name" />
+<wt:display field="Entity.Parent.Name" />
+<wt:display field="Entity.CycleNum" />
+</wt:row>
+    <wt:row align="AlignEnum.Right">
+        <wt:closebutton />
+    </wt:row>
+</wt:form>

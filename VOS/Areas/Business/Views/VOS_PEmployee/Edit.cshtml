@@ -1,0 +1,28 @@
+﻿@model VOS.ViewModel.Business.VOS_PEmployeeVMs.VOS_PEmployeeVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+    <wt:row items-per-row="ItemsPerRowEnum.Two">
+        <wt:combobox field="Entity.RecomId" items="AllRecoms" />
+        <wt:combobox field="ShengId" items="AllSheng" label-text="籍贯（省）" trigger-url="/BasicData/City/GetChildrenCity" link-field="ShiId" />
+        <wt:combobox field="ShiId" items="AllShi" label-text="籍贯（市）" trigger-url="/BasicData/City/GetChildrenCity" link-field="Entity.AreaId" />
+        <wt:combobox field="Entity.AreaId" items="AllQu" label-text="籍贯（区）" />
+        <wt:textbox field="Entity.Address" />
+        <wt:textbox field="Entity.FullName" />
+        <wt:combobox field="Entity.Sex" />
+        <wt:textbox field="Entity.Mobile" />
+        <wt:textbox field="Entity.WeChat" />
+        <wt:textbox field="Entity.TaobaAccount" />
+        <wt:textbox field="Entity.JDAccount" />
+        <wt:upload field="Entity.AlipayPicId" />
+        <wt:upload field="Entity.WeChatPicId" />
+        <wt:upload field="Entity.WeChatRealNamePicId" />
+        <wt:textbox field="Entity.Remark" />
+        <wt:combobox field="Entity.PEstate" />
+    </wt:row>
+    <wt:hidden field="Entity.ID" />
+    <wt:row align="AlignEnum.Right">
+        <wt:submitbutton />
+        <wt:closebutton />
+    </wt:row>
+</wt:form>

@@ -1,0 +1,12 @@
+﻿@model VOS.ViewModel.Business.VOS_PlanVMs.VOS_PlanListVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:searchpanel vm="@Model" reset-btn="true">
+<wt:row items-per-row="ItemsPerRowEnum.Three">
+<wt:textbox field="Searcher.Plan_no" />
+<wt:combobox field="Searcher.ShopnameId" items="Searcher.AllShopnames" empty-text="@Localizer["All"]" />
+<wt:datetime field="Searcher.PlanSatrtTime" range="true" />
+<wt:datetime field="Searcher.PlanEndTime" range="true" />
+</wt:row>
+</wt:searchpanel>
+<wt:grid vm="@Model" url="/Business/VOS_Plan/Search"/>

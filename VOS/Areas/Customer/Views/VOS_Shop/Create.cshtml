@@ -1,0 +1,15 @@
+﻿@model VOS.ViewModel.Customer.VOS_ShopVMs.VOS_ShopVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+<wt:row items-per-row="ItemsPerRowEnum.Two">
+<wt:combobox field="Entity.CustomerId" items="AllCustomers"/>
+<wt:textbox field="Entity.ShopName" />
+<wt:combobox field="Entity.ShopPlat" />
+<wt:datetime field="Entity.OpenTime" />
+</wt:row>
+    <wt:row align="AlignEnum.Right">
+        <wt:submitbutton />
+        <wt:closebutton />
+    </wt:row>
+</wt:form>

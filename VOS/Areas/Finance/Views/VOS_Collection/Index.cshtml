@@ -1,0 +1,9 @@
+﻿@model VOS.ViewModel.Finance.VOS_CollectionVMs.VOS_CollectionListVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:searchpanel vm="@Model" reset-btn="true">
+<wt:row items-per-row="ItemsPerRowEnum.Three">
+<wt:combobox field="Searcher.Plan_noId" items="Searcher.AllPlan_nos" empty-text="@Localizer["All"]" />
+</wt:row>
+</wt:searchpanel>
+<wt:grid vm="@Model" url="/Finance/VOS_Collection/Search"/>

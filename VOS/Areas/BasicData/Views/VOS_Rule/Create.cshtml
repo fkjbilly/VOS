@@ -1,0 +1,17 @@
+﻿@model VOS.ViewModel.BasicData.VOS_RuleVMs.VOS_RuleVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+<wt:row items-per-row="ItemsPerRowEnum.Two">
+<wt:textbox field="Entity.RuleName" />
+<wt:combobox field="Entity.RuleType" />
+<wt:textbox field="Entity.Num" />
+<wt:textbox field="Entity.Cycle" />
+<wt:switch field="Entity.IsUse" />
+<wt:textbox field="Entity.Remark" />
+</wt:row>
+    <wt:row align="AlignEnum.Right">
+        <wt:submitbutton />
+        <wt:closebutton />
+    </wt:row>
+</wt:form>

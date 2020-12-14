@@ -1,0 +1,54 @@
+﻿@model VOS.ViewModel.Business.VOS_TaskVMs.VOS_TaskVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+<wt:row items-per-row="ItemsPerRowEnum.Two">
+<wt:display field="Entity.Task_no" />
+<wt:display field="Entity.TaskType" />
+<wt:display field="Entity.Plan.Plan_no" />
+<wt:display field="Entity.ComDis" />
+<wt:display field="Entity.CustomerService" />
+<wt:display field="Entity.Contact" />
+<wt:display field="Entity.ShopCharge" />
+<wt:display field="Entity.ShopChargeContact" />
+<wt:display field="Entity.ImplementStartTime" />
+<wt:display field="Entity.ImplementEndTime" />
+<wt:display field="Entity.TaskCate.Name" />
+<wt:display field="Entity.CommodityName" />
+<wt:display field="Entity.CommodityLink" />
+<wt:display field="Entity.CommodityPicId" />
+<wt:display field="Entity.Eweight" />
+<wt:display field="Entity.TaskFen" />
+<wt:display field="Entity.CommodityPrice" />
+<wt:display field="Entity.Commission" />
+<wt:display field="Entity.OtherExpenses" />
+<wt:display field="Entity.ORequirement" />
+<wt:display field="Entity.TRequirement" />
+<wt:display field="Entity.CRemarks" />
+<wt:display field="Entity.AreaRequirement" />
+<wt:display field="Entity.IsTP" />
+<wt:display field="Entity.SearchKeyword" />
+<wt:display field="Entity.DealKeyword" />
+<wt:display field="Entity.SKU" />
+<wt:display field="Entity.IsLock" />
+<wt:display field="Entity.Unlocker.CodeAndName" />
+<wt:display field="Entity.UnlockTime" />
+<wt:display field="Entity.Executor.CodeAndName" />
+<wt:display field="Entity.Distributor.CodeAndName" />
+<wt:display field="Entity.DistributionTime" />
+<wt:display field="Entity.Employee.FullName" />
+<wt:display field="Entity.EmployeeCommission" />
+<wt:display field="Entity.VOrderCode" />
+<wt:display field="Entity.Phone" />
+<wt:display field="Entity.TBAccount" />
+<wt:display field="Entity.WXAccount" />
+<wt:display field="Entity.Completer.CodeAndName" />
+<wt:display field="Entity.CompleteTime" />
+<wt:display field="Entity.Refunder.CodeAndName" />
+<wt:display field="Entity.RefundTime" />
+<wt:display field="Entity.OrderState" />
+</wt:row>
+    <wt:row align="AlignEnum.Right">
+        <wt:closebutton />
+    </wt:row>
+</wt:form>

@@ -1,0 +1,27 @@
+﻿@model VOS.ViewModel.Business.VOS_PEmployeeVMs.VOS_PEmployeeVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+	<wt:quote>@Model.Localizer["DeleteConfirm"]</wt:quote>
+<wt:row items-per-row="ItemsPerRowEnum.Two">
+<wt:display field="Entity.Recom.FullName" />
+<wt:display field="Entity.Area.Name" />
+<wt:display field="Entity.Address" />
+<wt:display field="Entity.FullName" />
+<wt:display field="Entity.Sex" />
+<wt:display field="Entity.Mobile" />
+<wt:display field="Entity.WeChat" />
+<wt:display field="Entity.TaobaAccount" />
+<wt:display field="Entity.JDAccount" />
+<wt:display field="Entity.AlipayPicId" />
+<wt:display field="Entity.WeChatPicId" />
+<wt:display field="Entity.WeChatRealNamePicId" />
+<wt:display field="Entity.Remark" />
+<wt:display field="Entity.PEstate" />
+</wt:row>
+    <wt:hidden field="Entity.ID" />
+    <wt:row align="AlignEnum.Right">
+        <wt:submitbutton theme=" ButtonThemeEnum.Warm" text="删除"/>
+        <wt:closebutton />
+    </wt:row>
+</wt:form>

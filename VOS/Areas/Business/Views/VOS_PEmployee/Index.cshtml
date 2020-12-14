@@ -1,0 +1,14 @@
+﻿@model VOS.ViewModel.Business.VOS_PEmployeeVMs.VOS_PEmployeeListVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:searchpanel vm="@Model" reset-btn="true">
+<wt:row items-per-row="ItemsPerRowEnum.Three">
+<wt:textbox field="Searcher.FullName" />
+<wt:textbox field="Searcher.Mobile" />
+<wt:textbox field="Searcher.WeChat" />
+<wt:textbox field="Searcher.TaobaAccount" />
+<wt:textbox field="Searcher.JDAccount" />
+<wt:combobox field="Searcher.PEstate" empty-text="@Localizer["All"]" />
+</wt:row>
+</wt:searchpanel>
+<wt:grid vm="@Model" url="/Business/VOS_PEmployee/Search"/>

@@ -1,0 +1,11 @@
+﻿@model VOS.ViewModel.Customer.VOS_ShopVMs.VOS_ShopListVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:searchpanel vm="@Model" reset-btn="true">
+<wt:row items-per-row="ItemsPerRowEnum.Three">
+<wt:combobox field="Searcher.CustomerId" items="Searcher.AllCustomers" empty-text="@Localizer["All"]" />
+<wt:textbox field="Searcher.ShopName" />
+<wt:combobox field="Searcher.ShopPlat" empty-text="@Localizer["All"]" />
+</wt:row>
+</wt:searchpanel>
+<wt:grid vm="@Model" url="/Customer/VOS_Shop/Search"/>

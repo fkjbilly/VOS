@@ -1,0 +1,63 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using WalkingTec.Mvvm.Core;
+using WalkingTec.Mvvm.Core.Extensions;
+using VOS.Model;
+
+
+namespace VOS.ViewModel.Business.VOS_TaskVMs
+{
+    public partial class VOS_TaskVM : BaseCRUDVM<VOS_Task>
+    {
+        public List<ComboSelectListItem> AllPlans { get; set; }
+        public List<ComboSelectListItem> AllTaskCates { get; set; }
+        public List<ComboSelectListItem> AllUnlockers { get; set; }
+        public List<ComboSelectListItem> AllExecutors { get; set; }
+        public List<ComboSelectListItem> AllDistributors { get; set; }
+        public List<ComboSelectListItem> AllEmployees { get; set; }
+        public List<ComboSelectListItem> AllCompleters { get; set; }
+        public List<ComboSelectListItem> AllRefunders { get; set; }
+
+        public VOS_TaskVM()
+        {
+            SetInclude(x => x.Plan);
+            SetInclude(x => x.TaskCate);
+            SetInclude(x => x.Unlocker);
+            SetInclude(x => x.Executor);
+            SetInclude(x => x.Distributor);
+            SetInclude(x => x.Employee);
+            SetInclude(x => x.Completer);
+            SetInclude(x => x.Refunder);
+        }
+
+        protected override void InitVM()
+        {
+            AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
+            AllTaskCates = DC.Set<Category>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
+            AllUnlockers = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
+            AllExecutors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
+            AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
+            AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
+            AllCompleters = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
+            AllRefunders = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
+        }
+
+        public override void DoAdd()
+        {           
+            base.DoAdd();
+        }
+
+        public override void DoEdit(bool updateAllFields = false)
+        {
+            base.DoEdit(updateAllFields);
+        }
+
+        public override void DoDelete()
+        {
+            base.DoDelete();
+        }
+    }
+}

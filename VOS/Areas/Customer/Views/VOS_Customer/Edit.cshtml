@@ -1,0 +1,26 @@
+﻿@model VOS.ViewModel.Customer.VOS_CustomerVMs.VOS_CustomerVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+    <wt:row items-per-row="ItemsPerRowEnum.Two">
+        <wt:textbox field="Entity.cust_no" />
+        <wt:textbox field="Entity.cust_name" />
+        <wt:combobox field="ShengId" items="AllSheng" label-text="地区（省）" trigger-url="/BasicData/City/GetChildrenCity" link-field="ShiId" />
+        <wt:combobox field="ShiId" items="AllShi" label-text="地区（市）" trigger-url="/BasicData/City/GetChildrenCity" link-field="Entity.cust_regionId" />
+        <wt:combobox field="Entity.cust_regionId" items="AllQu" label-text="地区（区）" />
+        <wt:textbox field="Entity.cust_address" />
+        <wt:combobox field="Entity.cust_level" />
+        <wt:textbox field="Entity.cust_telephone" />
+        <wt:combobox field="Entity.cust_flag" />
+        <wt:textbox field="Entity.link_name" />
+        <wt:combobox field="Entity.link_sex" />
+        <wt:textbox field="Entity.link_position" />
+        <wt:textbox field="Entity.link_mobile" />
+        <wt:textbox field="Entity.Remark" />
+    </wt:row>
+    <wt:hidden field="Entity.ID" />
+    <wt:row align="AlignEnum.Right">
+        <wt:submitbutton />
+        <wt:closebutton />
+    </wt:row>
+</wt:form>
