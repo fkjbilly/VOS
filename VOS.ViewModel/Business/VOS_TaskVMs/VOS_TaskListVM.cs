@@ -16,7 +16,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         protected override List<GridAction> InitGridAction()
         {
             return new List<GridAction>
-            {
+            { 
+
                 this.MakeAction("VOS_Task","分配刷手","分配","",GridActionParameterTypesEnum.SingleId,"VOS_TaskVMs",800),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
