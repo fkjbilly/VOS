@@ -15,8 +15,14 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
     {
         protected override List<GridAction> InitGridAction()
         {
-            return new List<GridAction>
-            { 
+            if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
+            {
+                return new List<GridAction>();
+            }
+            else
+            {
+                return new List<GridAction>
+            {
                 this.MakeAction("VOS_Task","分配刷手","分配","",GridActionParameterTypesEnum.SingleId,"VOS_TaskVMs",800),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
@@ -27,12 +33,27 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Import, Localizer["Import"], "Business", dialogWidth: 800),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.ExportExcel, Localizer["Export"], "Business"),
             };
+            }
         }
 
 
         protected override IEnumerable<IGridColumn<VOS_Task_View>> InitGridHeader()
         {
-            return new List<GridColumn<VOS_Task_View>>{
+            if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
+            {
+                return new List<GridColumn<VOS_Task_View>> 
+                {
+                this.MakeGridHeader(x => x.Task_no),
+                this.MakeGridHeader(x => x.TaskType),
+                this.MakeGridHeader(x => x.Plan_no_view),
+                this.MakeGridHeader(x => x.Name_view),
+                this.MakeGridHeader(x => x.CommodityName),
+                this.MakeGridHeader(x => x.TBAccount),
+                };
+            }
+            else
+            {
+                return new List<GridColumn<VOS_Task_View>>{
                 this.MakeGridHeader(x => x.Task_no),
                 this.MakeGridHeader(x => x.TaskType),
                 this.MakeGridHeader(x => x.Plan_no_view),
@@ -47,6 +68,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 this.MakeGridHeader(x => x.OrderState),
                 this.MakeGridHeaderAction(width: 200)
             };
+            }
         }
 
         public override IOrderedQueryable<VOS_Task_View> GetSearchQuery()

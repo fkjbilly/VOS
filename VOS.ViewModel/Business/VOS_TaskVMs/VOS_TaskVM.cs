@@ -55,6 +55,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             base.DoEdit(updateAllFields);
         }
 
+        public override void DoEdit()
+
         public override void DoDelete()
         {
             base.DoDelete();

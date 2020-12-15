@@ -6,12 +6,13 @@ using System.ComponentModel.DataAnnotations;
 using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Core.Extensions;
 using VOS.Model;
-
+using VOS.ViewModel.Business.VOS_TaskVMs;
 
 namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 {
     public partial class VOS_PEmployeeVM : BaseCRUDVM<VOS_PEmployee>
     {
+        public VOS_TaskListVM taskVM { get; set; } = new VOS_TaskListVM();
         public List<ComboSelectListItem> AllRecoms { get; set; }
         public List<ComboSelectListItem> AllSheng { get; set; }
 
@@ -28,6 +29,9 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 
         protected override void InitVM()
         {
+            taskVM.CopyContext(this);
+            taskVM.SearcherMode = ListVMSearchModeEnum.MasterDetail;
+            taskVM.Searcher.EmployeeId = Entity.ID;
             AllRecoms = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
             AllSheng = DC.Set<City>().Where(x => x.ParentId == null).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
             if (Entity.AreaId != null)
