@@ -2,7 +2,7 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:form vm="@Model">
-<wt:row items-per-row="ItemsPerRowEnum.Two">
+<wt:row items-per-row="ItemsPerRowEnum.Three">
 <wt:textbox field="Entity.Task_no" />
 <wt:combobox field="Entity.TaskType" />
 <wt:combobox field="Entity.PlanId" items="AllPlans"/>
@@ -31,22 +31,6 @@
 <wt:textbox field="Entity.DealKeyword" />
 <wt:textbox field="Entity.SKU" />
 <wt:switch field="Entity.IsLock" />
-<wt:combobox field="Entity.UnlockerId" items="AllUnlockers"/>
-<wt:datetime field="Entity.UnlockTime" />
-<wt:combobox field="Entity.ExecutorId" items="AllExecutors"/>
-<wt:combobox field="Entity.DistributorId" items="AllDistributors"/>
-<wt:datetime field="Entity.DistributionTime" />
-<wt:combobox field="Entity.EmployeeId" items="AllEmployees"/>
-<wt:textbox field="Entity.EmployeeCommission" />
-<wt:textbox field="Entity.VOrderCode" />
-<wt:textbox field="Entity.Phone" />
-<wt:textbox field="Entity.TBAccount" />
-<wt:textbox field="Entity.WXAccount" />
-<wt:combobox field="Entity.CompleterId" items="AllCompleters"/>
-<wt:datetime field="Entity.CompleteTime" />
-<wt:combobox field="Entity.RefunderId" items="AllRefunders"/>
-<wt:datetime field="Entity.RefundTime" />
-<wt:combobox field="Entity.OrderState" />
 </wt:row>
     <wt:row align="AlignEnum.Right">
         <wt:submitbutton />

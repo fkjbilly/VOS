@@ -1,0 +1,24 @@
+﻿@model VOS.ViewModel.Business.VOS_UserVMs.VOS_UserVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+    <wt:row items-per-row="ItemsPerRowEnum.Two">
+        <wt:textbox field="Entity.ITCode" empty-text="后期不可更改用户名"/>
+        <wt:textbox field="Entity.Password" empty-text="密码必填" is-password="true" />
+        <wt:textbox field="Entity.Email" />
+        <wt:textbox field="Entity.Name" empty-text="姓名必填" />
+        <wt:radio field="Entity.Sex" default-value="0"/>
+        <wt:textbox field="Entity.CellPhone" />
+        <wt:textbox field="Entity.HomePhone" />
+        <wt:textbox field="Entity.Address" />
+        <wt:textbox field="Entity.ZipCode" />
+        <wt:upload field="Entity.PhotoId" />
+        <wt:switch field="Entity.IsValid" default-value="true" />
+        <wt:checkbox field="SelectedUserRolesIDs" items="AllUserRoless" />
+        <wt:checkbox field="SelectedUserGroupsIDs" items="AllUserGroupss" />
+    </wt:row>
+    <wt:row align="AlignEnum.Right">
+        <wt:submitbutton />
+        <wt:closebutton />
+    </wt:row>
+</wt:form>

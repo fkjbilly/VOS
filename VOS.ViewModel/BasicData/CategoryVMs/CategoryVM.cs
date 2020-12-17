@@ -38,5 +38,11 @@ namespace VOS.ViewModel.BasicData.CategoryVMs
         {
             base.DoDelete();
         }
+
+        public override DuplicatedInfo<Category> SetDuplicatedCheck()
+        {
+            var rv = CreateFieldsInfo(SimpleField(a => a.Name), SimpleField(a => a.ParentId));
+            return rv;
+        }
     }
 }

@@ -41,6 +41,7 @@ namespace VOS.Controllers
         public ActionResult Create()
         {
             var vm = CreateVM<VOS_CustomerVM>();
+            vm.Entity.cust_no = "C" + DateTime.Now.ToString("yyyyMMddHHmmss");
             return PartialView(vm);
         }
 

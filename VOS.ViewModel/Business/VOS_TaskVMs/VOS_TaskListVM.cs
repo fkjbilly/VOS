@@ -7,12 +7,13 @@ using WalkingTec.Mvvm.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using VOS.Model;
-
+using VOS.ViewModel.Business.VOS_PEmployeeVMs;
 
 namespace VOS.ViewModel.Business.VOS_TaskVMs
 {
     public partial class VOS_TaskListVM : BasePagedListVM<VOS_Task_View, VOS_TaskSearcher>
     {
+
         protected override List<GridAction> InitGridAction()
         {
             if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
@@ -23,8 +24,9 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 return new List<GridAction>
             {
-                this.MakeAction("VOS_Task","分配刷手","分配","",GridActionParameterTypesEnum.SingleId,"VOS_TaskVMs",800),
+                this.MakeAction("VOS_Task","BrushHand","分配","刷手分配",GridActionParameterTypesEnum.SingleId,"Business",800,600).SetShowInRow(true).SetHideOnToolBar(true),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
+                this.MakeAction("VOS_User","Index","批量执行人","执行人分配",GridActionParameterTypesEnum.MultiIds,"Business",900,600),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Delete, Localizer["Delete"], "Business", dialogWidth: 800),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Details, Localizer["Details"], "Business", dialogWidth: 800),
@@ -41,7 +43,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         {
             if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
             {
-                return new List<GridColumn<VOS_Task_View>> 
+                return new List<GridColumn<VOS_Task_View>>
                 {
                 this.MakeGridHeader(x => x.Task_no),
                 this.MakeGridHeader(x => x.TaskType),
@@ -74,18 +76,18 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public override IOrderedQueryable<VOS_Task_View> GetSearchQuery()
         {
             var query = DC.Set<VOS_Task>()
-                .CheckEqual(Searcher.TaskType, x=>x.TaskType)
-                .CheckEqual(Searcher.PlanId, x=>x.PlanId)
-                .CheckContain(Searcher.CommodityName, x=>x.CommodityName)
-                .CheckContain(Searcher.SearchKeyword, x=>x.SearchKeyword)
-                .CheckEqual(Searcher.IsLock, x=>x.IsLock)
-                .CheckEqual(Searcher.DistributorId, x=>x.DistributorId)
-                .CheckEqual(Searcher.EmployeeId, x=>x.EmployeeId)
-                .CheckContain(Searcher.VOrderCode, x=>x.VOrderCode)
-                .CheckContain(Searcher.TBAccount, x=>x.TBAccount)
+                .CheckEqual(Searcher.TaskType, x => x.TaskType)
+                .CheckEqual(Searcher.PlanId, x => x.PlanId)
+                .CheckContain(Searcher.CommodityName, x => x.CommodityName)
+                .CheckContain(Searcher.SearchKeyword, x => x.SearchKeyword)
+                .CheckEqual(Searcher.IsLock, x => x.IsLock)
+                .CheckEqual(Searcher.DistributorId, x => x.DistributorId)
+                .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
+                .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
+                .CheckContain(Searcher.TBAccount, x => x.TBAccount)
                 .Select(x => new VOS_Task_View
                 {
-				    ID = x.ID,
+                    ID = x.ID,
                     Task_no = x.Task_no,
                     TaskType = x.TaskType,
                     Plan_no_view = x.Plan.Plan_no,
@@ -105,7 +107,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
     }
 
-    public class VOS_Task_View : VOS_Task{
+    public class VOS_Task_View : VOS_Task
+    {
         [Display(Name = "计划编号")]
         public String Plan_no_view { get; set; }
         [Display(Name = "类目名称")]

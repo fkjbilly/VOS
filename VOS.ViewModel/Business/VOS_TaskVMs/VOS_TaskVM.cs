@@ -6,12 +6,13 @@ using System.ComponentModel.DataAnnotations;
 using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Core.Extensions;
 using VOS.Model;
-
+using VOS.ViewModel.Business.VOS_PEmployeeVMs;
 
 namespace VOS.ViewModel.Business.VOS_TaskVMs
 {
     public partial class VOS_TaskVM : BaseCRUDVM<VOS_Task>
     {
+        //public VOS_PEmployeeListVM VOS_PEmployeeList { get; set; }
         public List<ComboSelectListItem> AllPlans { get; set; }
         public List<ComboSelectListItem> AllTaskCates { get; set; }
         public List<ComboSelectListItem> AllUnlockers { get; set; }
@@ -20,6 +21,20 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public List<ComboSelectListItem> AllEmployees { get; set; }
         public List<ComboSelectListItem> AllCompleters { get; set; }
         public List<ComboSelectListItem> AllRefunders { get; set; }
+
+        #region MyRegion
+        [Display(Name = "姓名")]
+        public String FullName { get; set; }
+        [Display(Name = "联系电话")]
+        public String Mobile { get; set; }
+        [Display(Name = "微信账号")]
+        public String WeChat { get; set; }
+        [Display(Name = "淘宝账号")]
+        public String TaobaAccount { get; set; }
+        [Display(Name = "京东账号")]
+
+        public VOS_PEmployeeListVM VOS_PEmployeeListVM { get; set; }
+        #endregion
 
         public VOS_TaskVM()
         {
@@ -35,6 +50,11 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
         protected override void InitVM()
         {
+            VOS_PEmployeeListVM = new VOS_PEmployeeListVM();
+            //VOS_PEmployeeList = new VOS_PEmployeeListVM();
+            //VOS_PEmployeeList.CopyContext(this);
+            //VOS_PEmployeeList.SearcherMode = ListVMSearchModeEnum.Custom1;
+            
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllTaskCates = DC.Set<Category>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
             AllUnlockers = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
@@ -55,11 +75,17 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             base.DoEdit(updateAllFields);
         }
 
-        public override void DoEdit()
 
         public override void DoDelete()
         {
             base.DoDelete();
+        }
+
+        public override DuplicatedInfo<VOS_Task> SetDuplicatedCheck()
+        {
+            var rv = CreateFieldsInfo(SimpleField(a => a.Task_no));
+            //rv.AddGroup(SimpleField(a => a.PlanId), SimpleField(a => a.CommodityName));
+            return rv;
         }
     }
 }

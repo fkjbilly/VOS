@@ -15,23 +15,45 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
     {
         protected override List<GridAction> InitGridAction()
         {
-            return new List<GridAction>
+            if (SearcherMode == ListVMSearchModeEnum.Custom1)
             {
-                this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.Delete, Localizer["Delete"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.Details, Localizer["Details"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.BatchEdit, Localizer["BatchEdit"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.BatchDelete, Localizer["BatchDelete"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.Import, Localizer["Import"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.ExportExcel, Localizer["Export"], "Business"),
-            };
+                return new List<GridAction> {
+                    this.MakeAction(null,null,"选择刷手",null,GridActionParameterTypesEnum.SingleId,null).SetOnClickScript("SelectBrushHand").SetShowInRow(true).SetHideOnToolBar(true),
+                };
+            }
+            else
+            {
+                return new List<GridAction>
+                {
+                    this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.Delete, Localizer["Delete"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.Details, Localizer["Details"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.BatchEdit, Localizer["BatchEdit"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.BatchDelete, Localizer["BatchDelete"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.Import, Localizer["Import"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_PEmployee", GridActionStandardTypesEnum.ExportExcel, Localizer["Export"], "Business"),
+                };
+            }
         }
 
 
         protected override IEnumerable<IGridColumn<VOS_PEmployee_View>> InitGridHeader()
         {
-            return new List<GridColumn<VOS_PEmployee_View>>{
+            if (SearcherMode == ListVMSearchModeEnum.Custom1)
+            {
+                return new List<GridColumn<VOS_PEmployee_View>>{
+                this.MakeGridHeader(x => x.FullName),
+                this.MakeGridHeader(x => x.WeChat),
+                this.MakeGridHeader(x => x.TaobaAccount),
+                this.MakeGridHeader(x => x.JDAccount),
+                this.MakeGridHeader(x => x.PEstate),
+                this.MakeGridHeaderAction(width: 200)
+            };
+            }
+            else
+            {
+                return new List<GridColumn<VOS_PEmployee_View>>{
                 this.MakeGridHeader(x => x.Name_view),
                 this.MakeGridHeader(x => x.FullName),
                 this.MakeGridHeader(x => x.WeChat),
@@ -43,6 +65,8 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 this.MakeGridHeader(x => x.PEstate),
                 this.MakeGridHeaderAction(width: 200)
             };
+
+            }
         }
         private List<ColumnFormatInfo> AlipayPicIdFormat(VOS_PEmployee_View entity, object val)
         {

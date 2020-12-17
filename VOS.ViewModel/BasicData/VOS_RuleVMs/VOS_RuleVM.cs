@@ -35,5 +35,12 @@ namespace VOS.ViewModel.BasicData.VOS_RuleVMs
         {
             base.DoDelete();
         }
+
+        public override DuplicatedInfo<VOS_Rule> SetDuplicatedCheck()
+        {
+            var rv = CreateFieldsInfo(SimpleField(a => a.RuleName));
+            rv.AddGroup(SimpleField(a => a.RuleType));
+            return rv;
+        }
     }
 }

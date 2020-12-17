@@ -4,25 +4,32 @@ using System;
 using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
-using VOS.ViewModel.Business.VOS_PlanVMs;
+using VOS.ViewModel.Business.VOS_UserVMs;
+using VOS.Model;
+using System.Linq;
 
 namespace VOS.Controllers
 {
     [Area("Business")]
-    [ActionDescription("计划管理")]
-    public partial class VOS_PlanController : BaseController
+    [ActionDescription("新用户管理")]
+    public partial class VOS_UserController : BaseController
     {
         #region Search
         [ActionDescription("Search")]
-        public ActionResult Index()
+        public ActionResult Index(string[] IDs = null)
         {
-            var vm = CreateVM<VOS_PlanListVM>();
+            var vm = CreateVM<VOS_UserListVM>();
+            if (IDs.Length > 0 && IDs != null)
+            {
+                ViewBag.id = string.Join(',', IDs);
+                vm.SearcherMode = ListVMSearchModeEnum.Custom1;
+            }
             return PartialView(vm);
         }
 
         [ActionDescription("Search")]
         [HttpPost]
-        public string Search(VOS_PlanListVM vm)
+        public string Search(VOS_UserListVM vm)
         {
             if (ModelState.IsValid)
             {
@@ -40,15 +47,15 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create()
         {
-            var vm = CreateVM<VOS_PlanVM>();
-            vm.Entity.Plan_no = "P" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            var vm = CreateVM<VOS_UserVM>();
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("Create")]
-        public ActionResult Create(VOS_PlanVM vm)
+        public ActionResult Create(VOS_UserVM vm)
         {
+            vm.Entity.IsValid = true;
             if (!ModelState.IsValid)
             {
                 return PartialView(vm);
@@ -73,14 +80,14 @@ namespace VOS.Controllers
         [ActionDescription("Edit")]
         public ActionResult Edit(string id)
         {
-            var vm = CreateVM<VOS_PlanVM>(id);
+            var vm = CreateVM<VOS_UserVM>(id);
             return PartialView(vm);
         }
 
         [ActionDescription("Edit")]
         [HttpPost]
         [ValidateFormItemOnly]
-        public ActionResult Edit(VOS_PlanVM vm)
+        public ActionResult Edit(VOS_UserVM vm)
         {
             if (!ModelState.IsValid)
             {
@@ -106,7 +113,7 @@ namespace VOS.Controllers
         [ActionDescription("Delete")]
         public ActionResult Delete(string id)
         {
-            var vm = CreateVM<VOS_PlanVM>(id);
+            var vm = CreateVM<VOS_UserVM>(id);
             return PartialView(vm);
         }
 
@@ -114,7 +121,7 @@ namespace VOS.Controllers
         [HttpPost]
         public ActionResult Delete(string id, IFormCollection nouse)
         {
-            var vm = CreateVM<VOS_PlanVM>(id);
+            var vm = CreateVM<VOS_UserVM>(id);
             vm.DoDelete();
             if (!ModelState.IsValid)
             {
@@ -131,7 +138,7 @@ namespace VOS.Controllers
         [ActionDescription("Details")]
         public ActionResult Details(string id)
         {
-            var vm = CreateVM<VOS_PlanVM>(id);
+            var vm = CreateVM<VOS_UserVM>(id);
             return PartialView(vm);
         }
         #endregion
@@ -141,17 +148,17 @@ namespace VOS.Controllers
         [ActionDescription("BatchEdit")]
         public ActionResult BatchEdit(string[] IDs)
         {
-            var vm = CreateVM<VOS_PlanBatchVM>(Ids: IDs);
+            var vm = CreateVM<VOS_UserBatchVM>(Ids: IDs);
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("BatchEdit")]
-        public ActionResult DoBatchEdit(VOS_PlanBatchVM vm, IFormCollection nouse)
+        public ActionResult DoBatchEdit(VOS_UserBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchEdit())
             {
-                return PartialView("BatchEdit",vm);
+                return PartialView("BatchEdit", vm);
             }
             else
             {
@@ -165,17 +172,17 @@ namespace VOS.Controllers
         [ActionDescription("BatchDelete")]
         public ActionResult BatchDelete(string[] IDs)
         {
-            var vm = CreateVM<VOS_PlanBatchVM>(Ids: IDs);
+            var vm = CreateVM<VOS_UserBatchVM>(Ids: IDs);
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("BatchDelete")]
-        public ActionResult DoBatchDelete(VOS_PlanBatchVM vm, IFormCollection nouse)
+        public ActionResult DoBatchDelete(VOS_UserBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchDelete())
             {
-                return PartialView("BatchDelete",vm);
+                return PartialView("BatchDelete", vm);
             }
             else
             {
@@ -185,16 +192,16 @@ namespace VOS.Controllers
         #endregion
 
         #region Import
-		[ActionDescription("Import")]
+        [ActionDescription("Import")]
         public ActionResult Import()
         {
-            var vm = CreateVM<VOS_PlanImportVM>();
+            var vm = CreateVM<VOS_UserImportVM>();
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("Import")]
-        public ActionResult Import(VOS_PlanImportVM vm, IFormCollection nouse)
+        public ActionResult Import(VOS_UserImportVM vm, IFormCollection nouse)
         {
             if (vm.ErrorListVM.EntityList.Count > 0 || !vm.BatchSaveData())
             {
@@ -207,9 +214,61 @@ namespace VOS.Controllers
         }
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ids">任务编号</param>
+        /// <param name="id">执行人编号</param>
+        /// <returns></returns>
+        [HttpPost]
+        public bool DistributionExecutor(string ids, Guid id)
+        {
+            string[] IDs = ids.Split(',');//任务编号
+            using (var transaction = DC.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in IDs)
+                    {
+                        var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID.ToString() == item).SingleOrDefault();
+                        vOS_Task.ExecutorId = id;
+                        vOS_Task.DistributionTime = DateTime.Now;
+                    }
+                    int count = DC.SaveChanges();
+                    transaction.Commit();
+                    return count > 0;
+                }
+                catch (Exception exception)
+                {
+                    transaction.Rollback();
+                }
+            }
+            return false;
+        }
+
+        #region EditPassword
+        [ActionDescription("EditPassword")]
+        public ActionResult EditPassword1(string id)
+        {
+            var vm = CreateVM<VOS_UserVM>(id);
+            return PartialView(vm);
+        }
+        [ActionDescription("EditPassword")]
+        [HttpPost]
+        public ActionResult EditPassword1(VOS_UserVM vm)
+        {
+            var _User = DC.Set<VOS_User>().Where(x => x.ID == vm.Entity.ID).SingleOrDefault();
+            _User.Password= Utils.GetMD5String(vm.Entity.Password);
+            DC.Set<VOS_User>().Update(_User).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            DC.SaveChanges();
+            return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID);
+        }
+
+        #endregion
+
         [ActionDescription("Export")]
         [HttpPost]
-        public IActionResult ExportExcel(VOS_PlanListVM vm)
+        public IActionResult ExportExcel(VOS_UserListVM vm)
         {
             return vm.GetExportData();
         }

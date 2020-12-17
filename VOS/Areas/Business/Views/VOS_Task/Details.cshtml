@@ -2,7 +2,7 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:form vm="@Model">
-<wt:row items-per-row="ItemsPerRowEnum.Two">
+<wt:row items-per-row="ItemsPerRowEnum.Three">
 <wt:display field="Entity.Task_no" />
 <wt:display field="Entity.TaskType" />
 <wt:display field="Entity.Plan.Plan_no" />
@@ -31,10 +31,10 @@
 <wt:display field="Entity.DealKeyword" />
 <wt:display field="Entity.SKU" />
 <wt:display field="Entity.IsLock" />
-<wt:display field="Entity.Unlocker.CodeAndName" />
+<wt:display field="Entity.Unlocker.CodeAndName" label-text="解锁人"/>
 <wt:display field="Entity.UnlockTime" />
-<wt:display field="Entity.Executor.CodeAndName" />
-<wt:display field="Entity.Distributor.CodeAndName" />
+<wt:display field="Entity.Executor.CodeAndName"  label-text="执行人"/>
+<wt:display field="Entity.Distributor.CodeAndName" label-text="分配人"/>
 <wt:display field="Entity.DistributionTime" />
 <wt:display field="Entity.Employee.FullName" />
 <wt:display field="Entity.EmployeeCommission" />
@@ -42,9 +42,9 @@
 <wt:display field="Entity.Phone" />
 <wt:display field="Entity.TBAccount" />
 <wt:display field="Entity.WXAccount" />
-<wt:display field="Entity.Completer.CodeAndName" />
+<wt:display field="Entity.Completer.CodeAndName" label-text="完成人"/>
 <wt:display field="Entity.CompleteTime" />
-<wt:display field="Entity.Refunder.CodeAndName" />
+<wt:display field="Entity.Refunder.CodeAndName" label-text="返款人"/>
 <wt:display field="Entity.RefundTime" />
 <wt:display field="Entity.OrderState" />
 </wt:row>

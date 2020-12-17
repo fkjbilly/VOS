@@ -140,7 +140,7 @@ namespace VOS.Model
         public Guid? UnlockerId { get; set; }
 
         [Display(Name = "解锁人")]
-        public FrameworkUserBase Unlocker { get; set; }
+        public VOS_User Unlocker { get; set; }
 
         [Display(Name = "解锁时间")]
         public DateTime? UnlockTime { get; set; }
@@ -149,13 +149,13 @@ namespace VOS.Model
         public Guid? ExecutorId { get; set; }
 
         [Display(Name = "执行人")]
-        public FrameworkUserBase Executor { get; set; }
+        public VOS_User Executor { get; set; }
 
         [Display(Name = "分配人")]
         public Guid? DistributorId { get; set; }
 
         [Display(Name = "分配人")]
-        public FrameworkUserBase Distributor { get; set; }
+        public VOS_User Distributor { get; set; }
         [Display(Name = "分配时间")]
         public DateTime? DistributionTime { get; set; }
         [Display(Name = "刷手")]
@@ -178,14 +178,14 @@ namespace VOS.Model
         public Guid? CompleterId { get; set; }
 
         [Display(Name = "完成人")]
-        public FrameworkUserBase Completer { get; set; }
+        public VOS_User Completer { get; set; }
         [Display(Name = "完成时间")]
         public DateTime? CompleteTime { get; set; }
         [Display(Name = "返款人")]
         public Guid? RefunderId { get; set; }
 
         [Display(Name = "返款人")]
-        public FrameworkUserBase Refunder { get; set; }
+        public VOS_User Refunder { get; set; }
         [Display(Name = "返款时间")]
         public DateTime? RefundTime { get; set; }
         [Display(Name = "任务状态")]

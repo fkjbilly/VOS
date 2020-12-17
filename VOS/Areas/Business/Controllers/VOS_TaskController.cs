@@ -5,6 +5,9 @@ using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
 using VOS.ViewModel.Business.VOS_TaskVMs;
+using VOS.Model;
+using VOS.ViewModel.Business.VOS_PEmployeeVMs;
+using System.Linq;
 
 namespace VOS.Controllers
 {
@@ -73,6 +76,7 @@ namespace VOS.Controllers
         public ActionResult Edit(string id)
         {
             var vm = CreateVM<VOS_TaskVM>(id);
+            vm.Entity.Task_no = "T" + DateTime.Now.ToString("yyyyMMddHHmmss");
             return PartialView(vm);
         }
 
@@ -203,6 +207,42 @@ namespace VOS.Controllers
             {
                 return FFResult().CloseDialog().RefreshGrid().Alert(WalkingTec.Mvvm.Core.Program._localizer["ImportSuccess", vm.EntityList.Count.ToString()]);
             }
+        }
+        #endregion
+
+        #region BrushHand 单个分配刷手
+        [ActionDescription("BrushHand")]
+        public ActionResult BrushHand(string id)
+        {
+            ViewBag.id = id;
+            var vm = CreateVM<VOS_PEmployeeListVM>();
+            vm.SearcherMode = ListVMSearchModeEnum.Custom1;
+            return PartialView(vm);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ID">任务编号</param>
+        /// <param name="BrushHandID">刷手编号</param>
+        /// <returns></returns>
+        [ActionDescription("BrushHand")]
+        [HttpPost]
+        public ActionResult BrushHand(Guid ID, Guid BrushHandID)
+        {
+            var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
+            //执行人   当前登录人信息
+            vOS_Task.ExecutorId = LoginUserInfo.Id;
+            //分配人
+            vOS_Task.DistributorId = LoginUserInfo.Id;
+            //刷手编号
+            vOS_Task.EmployeeId = BrushHandID;
+            //任务状态
+            vOS_Task.OrderState = OrderState.已分配;
+            vOS_Task.DistributionTime = DateTime.Now;
+            DC.Set<VOS_Task>().Update(vOS_Task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            DC.SaveChanges();
+            return FFResult().CloseDialog().RefreshGrid();//FFResult().CloseDialog().RefreshGridRow(ID);
         }
         #endregion
 

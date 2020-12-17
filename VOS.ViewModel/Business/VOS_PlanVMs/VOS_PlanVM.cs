@@ -38,5 +38,10 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
         {
             base.DoDelete();
         }
+        public override DuplicatedInfo<VOS_Plan> SetDuplicatedCheck()
+        {
+            var rv = CreateFieldsInfo(SimpleField(a => a.Plan_no));
+            return rv;
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Core.Extensions;
 using VOS.Model;
-
+using VOS.ViewModel.BasicData.CityVMs;
 
 namespace VOS.ViewModel.Customer.VOS_CustomerVMs
 {
@@ -20,6 +20,8 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
 
         public Guid? ShengId { get; set; }
         public Guid? ShiId { get; set; }
+
+        public CityListVM citys { get; set; }
         public VOS_CustomerVM()
         {
             SetInclude(x => x.cust_region);
@@ -36,6 +38,9 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
                 AllQu = DC.Set<City>().Where(x => x.ParentId == ShiId).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
                 AllShi = DC.Set<City>().Where(x => x.ParentId == ShengId).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
             }
+
+            citys = new CityListVM();
+            citys.CopyContext(this);
         }
 
         public override void DoAdd()
@@ -51,6 +56,13 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
         public override void DoDelete()
         {
             base.DoDelete();
+        }
+
+        public override DuplicatedInfo<VOS_Customer> SetDuplicatedCheck()
+        {
+            var rv = CreateFieldsInfo(SimpleField(a => a.cust_no));
+            rv.AddGroup(SimpleField(a => a.cust_name));
+            return rv;
         }
     }
 }

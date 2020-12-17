@@ -25,10 +25,36 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
             AllPlan_nos = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
         }
 
+        public override void Validate()
+        {
+            base.Validate();
+        }
+
         public override void DoAdd()
-        {           
-            base.DoAdd();
-            this.EidtLock(Entity.Plan_noId.ToString());
+        {
+            using (var transaction = DC.BeginTransaction())
+            {
+                try
+                {
+                    base.DoAdd();
+                    //添加到账记录后解锁任务
+                    var Tasks = DC.Set<VOS_Task>().Where(x => x.PlanId == Entity.Plan_noId);
+                    foreach (var task in Tasks)
+                    {
+                        task.IsLock = false;
+                        task.UnlockerId = LoginUserInfo.Id;
+                        task.UnlockTime = DateTime.Now;
+                        DC.Set<VOS_Task>().Update(task);
+                    }
+                    transaction.Commit();
+                }
+
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    MSD.AddModelError("123","添加失败");
+                }
+            }
         }
 
         public override void DoEdit(bool updateAllFields = false)
@@ -39,6 +65,12 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
         public override void DoDelete()
         {
             base.DoDelete();
+        }
+
+        public override DuplicatedInfo<VOS_Collection> SetDuplicatedCheck() 
+        {
+            var rv = CreateFieldsInfo(SimpleField(a => a.Plan_noId));
+            return rv;
         }
 
         public void EidtLock(string PlanId)

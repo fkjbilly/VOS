@@ -14,4 +14,12 @@
 <wt:textbox field="Searcher.TBAccount" />
 </wt:row>
 </wt:searchpanel>
+<wt:quote>
+    <wt:row items-per-row="ItemsPerRowEnum.Four">
+            <span class="layui-badge layui-bg-orange ">未解锁</span>
+            <span class="layui-badge layui-bg-green">未分配</span>
+            <span class="layui-badge layui-bg-red">进行中</span>
+            <span class="layui-badge layui-bg-blue">已完成</span>
+    </wt:row>
+</wt:quote>
 <wt:grid vm="@Model" url="/Business/VOS_Task/Search"/>

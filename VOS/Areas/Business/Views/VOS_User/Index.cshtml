@@ -1,0 +1,52 @@
+﻿@model VOS.ViewModel.Business.VOS_UserVMs.VOS_UserListVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:searchpanel vm="@Model" reset-btn="true">
+    <wt:row items-per-row="ItemsPerRowEnum.Three">
+        <wt:textbox field="Searcher.ITCode" empty-text="账号" />
+        <wt:textbox field="Searcher.Name" empty-text="姓名" />
+        <wt:textbox field="Searcher.CellPhone" empty-text="手机号" />
+    </wt:row>
+</wt:searchpanel>
+<input hidden id="ids" value="@ViewBag.id" />
+@if (@ViewBag.id != null)
+{
+    <wt:grid vm="@Model" url="/Business/VOS_User/Search" hidden-checkbox="true" hidden-grid-index="true" />
+
+}
+else
+{
+    <wt:grid vm="@Model" url="/Business/VOS_User/Search" />
+
+}
+
+<script type="text/javascript">
+    var table, layer, form;
+    layui.use(['table', 'layer', 'form'], function () {
+        table = layui.table;
+        layer = layui.layer;
+        form = layui.form;
+    });
+    function SelectAll(id) {
+        var index = layer.index;
+        $.post('@Url.Action("DistributionExecutor", "VOS_User")', { "ids": $("#ids").val(), "id": id }, function (r) {
+            if (r == true) {
+                layer.msg('已分配执行人', {
+                    icon: 1,
+                    time: 1000
+                }, function () {
+                    layer.close(index);
+                    window.parent.location.reload();//刷新父页面
+                });
+            } else {
+                layer.msg('发送错误了', {
+                    icon: 5,
+                    time: 1000
+                }, function () {
+                        layer.close(index);
+                        window.parent.location.reload();//刷新父页面
+                });
+            }
+        });
+    }
+</script>

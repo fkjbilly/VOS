@@ -38,5 +38,10 @@ namespace VOS.ViewModel.BasicData.CityVMs
         {
             base.DoDelete();
         }
+        public override DuplicatedInfo<City> SetDuplicatedCheck()
+        {
+            var rv = CreateFieldsInfo(SimpleField(a => a.Name), SimpleField(a => a.ParentId));
+            return rv;
+        }
     }
 }
