@@ -28,7 +28,7 @@
             time: 1000
         }, function () {
                 layer.close(index);
-                window.parent.location.reload();//刷新父页面
+                parent.layui.table.reload($('table')[0].id);//刷新父页面
         });
     }
 </script>

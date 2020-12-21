@@ -29,7 +29,7 @@ else
     });
     function SelectAll(id) {
         var index = layer.index;
-        $.post('@Url.Action("DistributionExecutor", "VOS_User")', { "ids": $("#ids").val(), "id": id }, function (r) {
+        $.post('@Url.Action("DistributionExecutor", "VOS_Task")', { "ids": $("#ids").val(), "id": id }, function (r) {
             if (r == true) {
                 layer.msg('已分配执行人', {
                     icon: 1,

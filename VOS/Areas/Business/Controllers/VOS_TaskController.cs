@@ -242,9 +242,40 @@ namespace VOS.Controllers
             vOS_Task.DistributionTime = DateTime.Now;
             DC.Set<VOS_Task>().Update(vOS_Task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             DC.SaveChanges();
-            return FFResult().CloseDialog().RefreshGrid();//FFResult().CloseDialog().RefreshGridRow(ID);
+            return Json(true);
         }
         #endregion
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ids">任务编号</param>
+        /// <param name="id">执行人编号</param>
+        /// <returns></returns>
+        [HttpPost]
+        public bool DistributionExecutor(string ids, Guid id)
+        {
+            string[] IDs = ids.Split(',');//任务编号
+            using (var transaction = DC.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in IDs)
+                    {
+                        var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID.ToString() == item).SingleOrDefault();
+                        vOS_Task.ExecutorId = id;
+                        vOS_Task.DistributionTime = DateTime.Now;
+                    }
+                    int count = DC.SaveChanges();
+                    transaction.Commit();
+                    return count > 0;
+                }
+                catch (Exception exception)
+                {
+                    transaction.Rollback();
+                }
+            }
+            return false;
+        }
 
         [ActionDescription("Export")]
         [HttpPost]
