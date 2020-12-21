@@ -24,9 +24,10 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 return new List<GridAction>
             {
-                this.MakeAction("VOS_Task","BrushHand","分配","刷手分配",GridActionParameterTypesEnum.SingleId,"Business",800,600).SetShowInRow(true).SetHideOnToolBar(true),
+                this.MakeAction("VOS_Task","BrushHand","分配","刷手分配",GridActionParameterTypesEnum.SingleId,"Business",800,600)
+                .SetShowInRow(true).SetHideOnToolBar(true).SetBindVisiableColName("OrderStateHide"),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
-                this.MakeAction("VOS_Task","Index","批量执行人","执行人分配",GridActionParameterTypesEnum.MultiIds,"Business",900,600),
+                this.MakeAction("VOS_User","Index","批量执行人","执行人分配",GridActionParameterTypesEnum.MultiIds,"Business",900,600),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Delete, Localizer["Delete"], "Business", dialogWidth: 800),
                 this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Details, Localizer["Details"], "Business", dialogWidth: 800),
@@ -65,12 +66,48 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 this.MakeGridHeader(x => x.SearchKeyword),
                 this.MakeGridHeader(x => x.SKU),
                 this.MakeGridHeader(x => x.FullName_view),
-                this.MakeGridHeader(x => x.VOrderCode),
+                //this.MakeGridHeader(x => x.VOrderCode),
+                this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(150),
+                this.MakeGridHeader(x=> "OrderStateHide").SetHide().SetFormat((a,b)=>{
+                    if(a.OrderState == OrderState.未分配)
+                    {
+                        return "true";
+                    }
+                    return "false";
+                }),
                 this.MakeGridHeader(x => x.TBAccount),
                 this.MakeGridHeader(x => x.OrderState),
                 this.MakeGridHeaderAction(width: 200)
             };
             }
+        }
+
+        /// <summary>
+        /// 双击文本
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        private string VOrderCodeFormat(VOS_Task_View entity, object val)
+        {
+            string str;
+            if (!string.IsNullOrEmpty(entity.VOrderCode))
+            {
+                str = entity.VOrderCode;
+            }
+            else
+            {
+                if (entity.OrderState == OrderState.未分配)
+                {
+                    str = "";
+                }
+                else
+                {
+                    str = "<input type='text' placeholder='双击填写单号' readonly data-code='" + entity.ID + "' class='layui-input brushAlone' style='width:150px;' />";
+
+                }
+            }
+            return str;
         }
 
         public override IOrderedQueryable<VOS_Task_View> GetSearchQuery()

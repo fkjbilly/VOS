@@ -13,22 +13,29 @@
 <input type="hidden" id="rwid" value="@ViewBag.id" />
 <wt:grid vm="@Model" url="/Business/VOS_PEmployee/Search" hidden-checkbox="true" hidden-grid-index="true"  hidden-panel="true" />
 <script type="text/javascript">
-    var table, layer, form;
-    layui.use(['table', 'layer', 'form'], function () {
+    var table, layer;
+    layui.use(['table', 'layer'], function () {
         table = layui.table;
         layer = layui.layer;
-        form = layui.form;
     });
     function SelectBrushHand(id) {
-        //当前弹出层
         var index = layer.index;
-        $.post('@Url.Action("BrushHand", "VOS_Task")', { "ID": $("#rwid").val(), "BrushHandID": id }, function (r) {});
-        layer.msg('已选择刷手', {
-            icon: 1,
-            time: 1000
-        }, function () {
+        $.post('@Url.Action("BrushHand", "VOS_Task")', { "ID": $("#rwid").val(), "BrushHandID": id }, function (r) {
+            var str, ico = "";
+            if (r.Data == true) {
+                str = "已选择刷手";
+                ico = 1;
+            } else {
+                str = "发生错误";
+                ico = 5;
+            }
+            layer.msg(str, {
+                icon: ico,
+                time: 1000
+            }, function () {
+                    parent.layui.table.reload($('table')[0].id);//刷新父页面table
                 layer.close(index);
-                parent.layui.table.reload($('table')[0].id);//刷新父页面
+            });
         });
     }
 </script>

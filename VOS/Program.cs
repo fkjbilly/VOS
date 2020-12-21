@@ -40,6 +40,11 @@ namespace VOS
                  {
                      webBuilder.ConfigureServices(x =>
                     {
+                        //var pris = new List<IDataPrivilege>
+                        //{
+                        //    new DataPrivilegeInfo<VOS_User>("测试用户", y => y.Name),
+                        //};
+                        //x.AddFrameworkService(dataPrivilegeSettings: pris);
                         x.AddFrameworkService();
                         x.AddLayui();
                         x.AddSwaggerGen(c =>

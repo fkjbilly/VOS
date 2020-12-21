@@ -214,21 +214,19 @@ namespace VOS.Controllers
         }
         #endregion
 
- 
-
-        #region EditPassword
-        [ActionDescription("EditPassword")]
+        #region 修改密码
+        [ActionDescription("修改密码")]
         public ActionResult EditPassword1(string id)
         {
             var vm = CreateVM<VOS_UserVM>(id);
             return PartialView(vm);
         }
-        [ActionDescription("EditPassword")]
+        [ActionDescription("修改密码")]
         [HttpPost]
         public ActionResult EditPassword1(VOS_UserVM vm)
         {
             var _User = DC.Set<VOS_User>().Where(x => x.ID == vm.Entity.ID).SingleOrDefault();
-            _User.Password= Utils.GetMD5String(vm.Entity.Password);
+            _User.Password = Utils.GetMD5String(vm.Entity.Password);
             DC.Set<VOS_User>().Update(_User).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             DC.SaveChanges();
             return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID);

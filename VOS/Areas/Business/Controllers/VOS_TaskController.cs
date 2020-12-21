@@ -211,7 +211,7 @@ namespace VOS.Controllers
         #endregion
 
         #region BrushHand 单个分配刷手
-        [ActionDescription("BrushHand")]
+        [ActionDescription("分配刷手")]
         public ActionResult BrushHand(string id)
         {
             ViewBag.id = id;
@@ -226,48 +226,52 @@ namespace VOS.Controllers
         /// <param name="ID">任务编号</param>
         /// <param name="BrushHandID">刷手编号</param>
         /// <returns></returns>
-        [ActionDescription("BrushHand")]
+        [ActionDescription("分配刷手")]
         [HttpPost]
         public ActionResult BrushHand(Guid ID, Guid BrushHandID)
         {
-            var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
-            //执行人   当前登录人信息
-            vOS_Task.ExecutorId = LoginUserInfo.Id;
-            //分配人
-            vOS_Task.DistributorId = LoginUserInfo.Id;
-            //刷手编号
-            vOS_Task.EmployeeId = BrushHandID;
-            //任务状态
-            vOS_Task.OrderState = OrderState.已分配;
-            vOS_Task.DistributionTime = DateTime.Now;
-            DC.Set<VOS_Task>().Update(vOS_Task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            DC.SaveChanges();
-            return Json(true);
+            try
+            {
+                var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
+                //执行人   当前登录人信息
+                vOS_Task.ExecutorId = LoginUserInfo.Id;
+                //分配人
+                vOS_Task.DistributorId = LoginUserInfo.Id;
+                //刷手编号
+                vOS_Task.EmployeeId = BrushHandID;
+                //任务状态
+                vOS_Task.OrderState = OrderState.已分配;
+                vOS_Task.DistributionTime = DateTime.Now;
+                DC.Set<VOS_Task>().Update(vOS_Task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                DC.SaveChanges();
+                return Json(true);
+            }
+            catch (Exception)
+            {
+                return Json(false);
+            }
         }
         #endregion
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ids">任务编号</param>
-        /// <param name="id">执行人编号</param>
-        /// <returns></returns>
+
+        #region DistributionExecutor 批量分配执行人
         [HttpPost]
+        [ActionDescription("批量分配执行人")]
         public bool DistributionExecutor(string ids, Guid id)
         {
-            string[] IDs = ids.Split(',');//任务编号
             using (var transaction = DC.BeginTransaction())
             {
                 try
                 {
+                    string[] IDs = ids.Split(',');//任务编号
                     foreach (var item in IDs)
                     {
                         var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID.ToString() == item).SingleOrDefault();
                         vOS_Task.ExecutorId = id;
                         vOS_Task.DistributionTime = DateTime.Now;
                     }
-                    int count = DC.SaveChanges();
+                    DC.SaveChanges();
                     transaction.Commit();
-                    return count > 0;
+                    return true;
                 }
                 catch (Exception exception)
                 {
@@ -276,6 +280,25 @@ namespace VOS.Controllers
             }
             return false;
         }
+        #endregion
+
+        #region BrushAlone 填写刷单单号
+        [ActionDescription("填写刷单单号")]
+        [HttpPost]
+        public ActionResult BrushAlone(Guid ID, string VOrderCode)
+        {
+            try
+            {
+                var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
+                vOS_Task.VOrderCode = VOrderCode;
+                return Json(DC.SaveChanges() > 0);
+            }
+            catch (Exception)
+            {
+                return Json(false);
+            }
+        }
+        #endregion
 
         [ActionDescription("Export")]
         [HttpPost]

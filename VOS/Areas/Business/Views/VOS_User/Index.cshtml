@@ -30,23 +30,21 @@ else
     function SelectAll(id) {
         var index = layer.index;
         $.post('@Url.Action("DistributionExecutor", "VOS_Task")', { "ids": $("#ids").val(), "id": id }, function (r) {
+            var str,ico = "";
             if (r == true) {
-                layer.msg('已分配执行人', {
-                    icon: 1,
-                    time: 1000
-                }, function () {
-                    layer.close(index);
-                    window.parent.location.reload();//刷新父页面
-                });
+                str = "已分配执行人";
+                ico = 1;
             } else {
-                layer.msg('发送错误了', {
-                    icon: 5,
-                    time: 1000
-                }, function () {
-                        layer.close(index);
-                        window.parent.location.reload();//刷新父页面
-                });
+                str = "发生错误";
+                ico = 5;
             }
+            layer.msg(str, {
+                icon: ico,
+                time: 1000
+            }, function () {
+               parent.layui.table.reload($('table')[0].id);//刷新父页面table
+               layer.close(index);
+            });
         });
     }
 </script>
