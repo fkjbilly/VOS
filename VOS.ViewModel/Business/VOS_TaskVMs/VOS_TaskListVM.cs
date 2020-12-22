@@ -93,7 +93,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             string str;
             if (!string.IsNullOrEmpty(entity.VOrderCode))
             {
-                str = entity.VOrderCode;
+                str = "<input type='text' placeholder='双击填写单号' readonly value='" + entity.VOrderCode + "' data-code='" + entity.ID + "' class='layui-input brushAlone' style='width:150px;' />";
             }
             else
             {
@@ -112,7 +112,12 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
         public override IOrderedQueryable<VOS_Task_View> GetSearchQuery()
         {
-            var query = DC.Set<VOS_Task>()
+            const string  list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
+            var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+            var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+            if (list.IndexOf(b.RoleName) < 0)
+            {
+                var query = DC.Set<VOS_Task>()
                 .CheckEqual(Searcher.TaskType, x => x.TaskType)
                 .CheckEqual(Searcher.PlanId, x => x.PlanId)
                 .CheckContain(Searcher.CommodityName, x => x.CommodityName)
@@ -122,7 +127,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
                 .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
                 .CheckContain(Searcher.TBAccount, x => x.TBAccount)
-                .DPWhere(LoginUserInfo.DataPrivileges, x => x.EmployeeId)
+                .Where(x=>x.ExecutorId.Equals(LoginUserInfo.Id))
                 .Select(x => new VOS_Task_View
                 {
                     ID = x.ID,
@@ -140,7 +145,41 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     OrderState = x.OrderState,
                 })
                 .OrderBy(x => x.ID);
-            return query;
+                return query;
+            }
+            else
+            {
+
+
+                var query = DC.Set<VOS_Task>()
+                .CheckEqual(Searcher.TaskType, x => x.TaskType)
+                .CheckEqual(Searcher.PlanId, x => x.PlanId)
+                .CheckContain(Searcher.CommodityName, x => x.CommodityName)
+                .CheckContain(Searcher.SearchKeyword, x => x.SearchKeyword)
+                .CheckEqual(Searcher.IsLock, x => x.IsLock)
+                .CheckEqual(Searcher.DistributorId, x => x.DistributorId)
+                .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
+                .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
+                .CheckContain(Searcher.TBAccount, x => x.TBAccount)
+                .Select(x => new VOS_Task_View
+                {
+                    ID = x.ID,
+                    Task_no = x.Task_no,
+                    TaskType = x.TaskType,
+                    Plan_no_view = x.Plan.Plan_no,
+                    Name_view = x.TaskCate.Name,
+                    CommodityName = x.CommodityName,
+                    Eweight = x.Eweight,
+                    SearchKeyword = x.SearchKeyword,
+                    SKU = x.SKU,
+                    FullName_view = x.Employee.FullName,
+                    VOrderCode = x.VOrderCode,
+                    TBAccount = x.TBAccount,
+                    OrderState = x.OrderState,
+                })
+                .OrderBy(x => x.ID);
+                return query;
+            }
         }
 
     }

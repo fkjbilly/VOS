@@ -240,7 +240,7 @@ namespace VOS.Controllers
                 //刷手编号
                 vOS_Task.EmployeeId = BrushHandID;
                 //任务状态
-                vOS_Task.OrderState = OrderState.已分配;
+                vOS_Task.OrderState = OrderState.进行中;
                 vOS_Task.DistributionTime = DateTime.Now;
                 DC.Set<VOS_Task>().Update(vOS_Task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 DC.SaveChanges();
@@ -268,6 +268,7 @@ namespace VOS.Controllers
                         var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID.ToString() == item).SingleOrDefault();
                         vOS_Task.ExecutorId = id;
                         vOS_Task.DistributionTime = DateTime.Now;
+                        vOS_Task.OrderState = OrderState.已分配;
                     }
                     DC.SaveChanges();
                     transaction.Commit();
@@ -291,7 +292,6 @@ namespace VOS.Controllers
             {
                 var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
                 vOS_Task.VOrderCode = VOrderCode;
-                vOS_Task.OrderState = OrderState.进行中;
                 return Json(DC.SaveChanges() > 0);
             }
             catch (Exception)
