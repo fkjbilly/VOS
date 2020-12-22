@@ -291,6 +291,7 @@ namespace VOS.Controllers
             {
                 var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
                 vOS_Task.VOrderCode = VOrderCode;
+                vOS_Task.OrderState = OrderState.进行中;
                 return Json(DC.SaveChanges() > 0);
             }
             catch (Exception)
