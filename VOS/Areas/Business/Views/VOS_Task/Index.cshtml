@@ -47,7 +47,7 @@
                    }
                    $.post('@Url.Action("BrushAlone", "VOS_Task")', { "ID": ID, "VOrderCode": VOrderCode }, function (r) {
                       if (r.Data == true) {
-                          layer.alert('填写完毕，无法更改单号', { icon: 1 });
+                          layer.alert('填写完毕', { icon: 1 });
                           table.reload($('table')[0].id);//刷新table
                           layer.close(index);
                       } else {

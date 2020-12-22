@@ -42,9 +42,9 @@ namespace VOS.Test
             VOS_UserVM vm = rv.Model as VOS_UserVM;
             VOS_User v = new VOS_User();
 			
-            v.ITCode = "Gx8";
-            v.Password = "g5dBulN";
-            v.Name = "7POCpEd";
+            v.ITCode = "lAoh1Z";
+            v.Password = "4JkIz";
+            v.Name = "fhOE1";
             vm.Entity = v;
             _controller.Create(vm);
 
@@ -52,9 +52,9 @@ namespace VOS.Test
             {
                 var data = context.Set<VOS_User>().FirstOrDefault();
 				
-                Assert.AreEqual(data.ITCode, "Gx8");
-                Assert.AreEqual(data.Password, "g5dBulN");
-                Assert.AreEqual(data.Name, "7POCpEd");
+                Assert.AreEqual(data.ITCode, "lAoh1Z");
+                Assert.AreEqual(data.Password, "4JkIz");
+                Assert.AreEqual(data.Name, "fhOE1");
                 Assert.AreEqual(data.CreateBy, "user");
                 Assert.IsTrue(DateTime.Now.Subtract(data.CreateTime.Value).Seconds < 10);
             }
@@ -68,9 +68,9 @@ namespace VOS.Test
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
        			
-                v.ITCode = "Gx8";
-                v.Password = "g5dBulN";
-                v.Name = "7POCpEd";
+                v.ITCode = "lAoh1Z";
+                v.Password = "4JkIz";
+                v.Name = "fhOE1";
                 context.Set<VOS_User>().Add(v);
                 context.SaveChanges();
             }
@@ -82,9 +82,9 @@ namespace VOS.Test
             v = new VOS_User();
             v.ID = vm.Entity.ID;
        		
-            v.ITCode = "6rplC";
-            v.Password = "reLw";
-            v.Name = "K3s1i";
+            v.ITCode = "QUFpT7";
+            v.Password = "UUcPnSe";
+            v.Name = "U4OiX";
             vm.Entity = v;
             vm.FC = new Dictionary<string, object>();
 			
@@ -97,9 +97,9 @@ namespace VOS.Test
             {
                 var data = context.Set<VOS_User>().FirstOrDefault();
  				
-                Assert.AreEqual(data.ITCode, "6rplC");
-                Assert.AreEqual(data.Password, "reLw");
-                Assert.AreEqual(data.Name, "K3s1i");
+                Assert.AreEqual(data.ITCode, "QUFpT7");
+                Assert.AreEqual(data.Password, "UUcPnSe");
+                Assert.AreEqual(data.Name, "U4OiX");
                 Assert.AreEqual(data.UpdateBy, "user");
                 Assert.IsTrue(DateTime.Now.Subtract(data.UpdateTime.Value).Seconds < 10);
             }
@@ -114,9 +114,9 @@ namespace VOS.Test
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
         		
-                v.ITCode = "Gx8";
-                v.Password = "g5dBulN";
-                v.Name = "7POCpEd";
+                v.ITCode = "lAoh1Z";
+                v.Password = "4JkIz";
+                v.Name = "fhOE1";
                 context.Set<VOS_User>().Add(v);
                 context.SaveChanges();
             }
@@ -145,9 +145,9 @@ namespace VOS.Test
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
 				
-                v.ITCode = "Gx8";
-                v.Password = "g5dBulN";
-                v.Name = "7POCpEd";
+                v.ITCode = "lAoh1Z";
+                v.Password = "4JkIz";
+                v.Name = "fhOE1";
                 context.Set<VOS_User>().Add(v);
                 context.SaveChanges();
             }
@@ -164,12 +164,12 @@ namespace VOS.Test
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
 				
-                v1.ITCode = "Gx8";
-                v1.Password = "g5dBulN";
-                v1.Name = "7POCpEd";
-                v2.ITCode = "6rplC";
-                v2.Password = "reLw";
-                v2.Name = "K3s1i";
+                v1.ITCode = "lAoh1Z";
+                v1.Password = "4JkIz";
+                v1.Name = "fhOE1";
+                v2.ITCode = "QUFpT7";
+                v2.Password = "UUcPnSe";
+                v2.Name = "U4OiX";
                 context.Set<VOS_User>().Add(v1);
                 context.Set<VOS_User>().Add(v2);
                 context.SaveChanges();

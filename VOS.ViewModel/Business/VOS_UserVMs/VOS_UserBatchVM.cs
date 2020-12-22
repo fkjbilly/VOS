@@ -26,7 +26,6 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
     public class VOS_User_BatchEdit : BaseVM
     {
         [Display(Name = "密码")]
-        [Required(ErrorMessage ="密码不能为空")]
         public String Password { get; set; }
 
         protected override void InitVM()

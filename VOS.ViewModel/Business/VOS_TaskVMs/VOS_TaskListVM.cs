@@ -69,7 +69,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 //this.MakeGridHeader(x => x.VOrderCode),
                 this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(150),
                 this.MakeGridHeader(x=> "OrderStateHide").SetHide().SetFormat((a,b)=>{
-                    if(a.OrderState == OrderState.未分配)
+                    if(a.OrderState == OrderState.未分配 || a.OrderState == OrderState.已分配)
                     {
                         return "true";
                     }
@@ -122,6 +122,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
                 .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
                 .CheckContain(Searcher.TBAccount, x => x.TBAccount)
+                .DPWhere(LoginUserInfo.DataPrivileges, x => x.EmployeeId)
                 .Select(x => new VOS_Task_View
                 {
                     ID = x.ID,
