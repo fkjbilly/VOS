@@ -188,7 +188,7 @@ namespace VOS.Controllers
         #endregion
 
         #region Import
-		[ActionDescription("Import")]
+        [ActionDescription("Import")]
         public ActionResult Import()
         {
             var vm = CreateVM<VOS_TaskImportVM>();
@@ -262,14 +262,20 @@ namespace VOS.Controllers
             {
                 try
                 {
+                    const string str = "进行中,已完成,已返款";
                     string[] IDs = ids.Split(',');//任务编号
                     foreach (var item in IDs)
                     {
                         var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID.ToString() == item).SingleOrDefault();
+                        if (str.IndexOf(vOS_Task.OrderState.ToString()) >= 0)
+                        {
+                            continue;
+                        }
                         vOS_Task.ExecutorId = id;
                         vOS_Task.DistributionTime = DateTime.Now;
                         vOS_Task.OrderState = OrderState.已分配;
                     }
+
                     DC.SaveChanges();
                     transaction.Commit();
                     return true;
