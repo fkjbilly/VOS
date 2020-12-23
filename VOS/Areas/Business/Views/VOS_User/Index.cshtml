@@ -30,17 +30,19 @@ else
     function SelectAll(id) {
         var index = layer.index;
         $.post('@Url.Action("DistributionExecutor", "VOS_Task")', { "ids": $("#ids").val(), "id": id }, function (r) {
-            var str,ico = "";
+            var str, ico, tim = "";
             if (r == true) {
                 str = "已分配执行人";
                 ico = 1;
+                tim = 1000;
             } else {
-                str = "发生错误";
+                str = "发生错误，请联系管理员";
                 ico = 5;
+                tim = 2000;
             }
             layer.msg(str, {
                 icon: ico,
-                time: 1000
+                time: tim
             }, function () {
                parent.layui.table.reload($('table')[0].id);//刷新父页面table
                layer.close(index);
