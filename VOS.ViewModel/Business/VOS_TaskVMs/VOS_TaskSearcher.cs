@@ -34,6 +34,10 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         [Display(Name = "淘宝账号")]
         public String TBAccount { get; set; }
 
+
+        [Display(Name = "执行人")]
+        public Guid? ExecutorId { get; set; }
+
         protected override void InitVM()
         {
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);

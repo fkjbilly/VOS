@@ -12,22 +12,60 @@ namespace VOS.ViewModel.BasicData.CityVMs
 {
     public partial class CityTemplateVM : BaseTemplateVM
     {
-        [Display(Name = "名称")]
-        public ExcelPropety Name_Excel = ExcelPropety.CreateProperty<City>(x => x.Name);
-        [Display(Name = "父级")]
-        public ExcelPropety Parent_Excel = ExcelPropety.CreateProperty<City>(x => x.ParentId);
+        [Display(Name = "省")]
+        public ExcelPropety Sheng_Excel = ExcelPropety.CreateProperty<City>(x => x.Sheng);
+        [Display(Name = "市")]
+        public ExcelPropety Shi_Excel = ExcelPropety.CreateProperty<City>(x => x.Shi);
+        [Display(Name = "区")]
+        public ExcelPropety Qu_Excel = ExcelPropety.CreateProperty<City>(x => x.Qu);
 
-	    protected override void InitVM()
+        protected override void InitVM()
         {
-            Parent_Excel.DataType = ColumnDataType.ComboBox;
-            Parent_Excel.ListItems = DC.Set<City>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
         }
 
     }
 
     public class CityImportVM : BaseImportVM<CityTemplateVM, City>
     {
+        public override bool BatchSaveData()
+        {
+            this.SetEntityList();
+            List<City> newList = new List<City>();
+            var shengs = EntityList.Select(x => x.Sheng).Distinct();
 
+            foreach (var sheng in shengs)
+            {
+                City c = new City
+                {
+                    Name = sheng
+                };
+                newList.Add(c);
+                var shis = EntityList.Where(x => x.Sheng == sheng).Select(x => x.Shi).Distinct();
+                foreach (var shi in shis)
+                {
+                    City c2 = new City
+                    {
+                        Name = shi,
+                        Parent = c,
+                        ParentId = c.ID
+                    };
+                    newList.Add(c2);
+                    var qus = EntityList.Where(x => x.Sheng == sheng && x.Shi == shi && x.Qu != "市辖区").Select(x => x.Qu).Distinct();
+                    foreach (var qu in qus)
+                    {
+                        City c3 = new City
+                        {
+                            Name = qu,
+                            Parent = c2,
+                            ParentId = c2.ID
+                        };
+                        newList.Add(c3);
+                    }
+                }
+            }
+            this.EntityList = newList;
+            return base.BatchSaveData();
+        }
     }
 
 }

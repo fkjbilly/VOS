@@ -43,7 +43,7 @@ namespace VOS
                     {
                         var pris = new List<IDataPrivilege>
                         {
-                            new DataPrivilegeInfo<VOS_PEmployee>("_刷单员", y => y.FullName),
+                            new DataPrivilegeInfo<VOS_User>("排单员", y => y.CodeAndName),
                         };
                         x.AddFrameworkService(dataPrivilegeSettings: pris);
                         //x.AddFrameworkService();

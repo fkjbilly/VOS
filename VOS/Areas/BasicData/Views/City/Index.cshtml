@@ -4,7 +4,7 @@
 <wt:searchpanel vm="@Model" reset-btn="true">
 <wt:row items-per-row="ItemsPerRowEnum.Three">
 <wt:textbox field="Searcher.Name" />
-<wt:combobox field="Searcher.ParentId" items="Searcher.AllParents" empty-text="@Localizer["All"]" />
+<wt:combobox field="Searcher.ParentId" items="Searcher.AllParents" empty-text="@Localizer["All"]" lay-search="" />
 </wt:row>
 </wt:searchpanel>
 <wt:grid vm="@Model" url="/BasicData/City/Search"/>
