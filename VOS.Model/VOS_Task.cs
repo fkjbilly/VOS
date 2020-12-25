@@ -9,7 +9,7 @@ namespace VOS.Model
     public enum TaskType
     {
         搜索单,
-        隔天但,
+        隔天单,
         非搜单,
         动销单,
         其他

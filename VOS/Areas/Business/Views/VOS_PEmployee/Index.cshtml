@@ -11,4 +11,11 @@
 <wt:combobox field="Searcher.PEstate" empty-text="@Localizer["All"]" />
 </wt:row>
 </wt:searchpanel>
+<wt:quote>
+    <wt:row items-per-row="ItemsPerRowEnum.Three">
+        <span class="layui-badge" style="background-color: #c2c2c2; color:#FFFFFF;">休息</span>
+        <span class="layui-badge" style="background-color: #1E9FFF;color: #FFFFFF;">正常</span>
+        <span class="layui-badge" style="background-color: #393D49;color: #FFFFFF;">黑名单</span>
+    </wt:row>
+</wt:quote>
 <wt:grid vm="@Model" url="/Business/VOS_PEmployee/Search"/>

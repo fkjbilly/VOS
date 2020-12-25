@@ -117,15 +117,16 @@ namespace VOS.Controllers
         [HttpPost]
         public ActionResult Delete(string id, IFormCollection nouse)
         {
-            var vm = CreateVM<VOS_TaskVM>(id);
-            vm.DoDelete();
-            if (!ModelState.IsValid)
+            var _Task = DC.Set<VOS_Task>().Where(x => x.ID.ToString().Equals(id)).FirstOrDefault();
+            DC.Set<VOS_Task>().Update(_Task).State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
+
+            if (DC.SaveChanges() < 0)
             {
-                return PartialView(vm);
+                return FFResult().Alert("删除失败");
             }
             else
             {
-                return FFResult().CloseDialog().RefreshGrid();
+                return FFResult().CloseDialog().RefreshGrid().Alert(WalkingTec.Mvvm.Core.Program._localizer?["OprationSuccess"]);
             }
         }
         #endregion
@@ -154,7 +155,7 @@ namespace VOS.Controllers
         {
             if (!ModelState.IsValid || !vm.DoBatchEdit())
             {
-                return PartialView("BatchEdit",vm);
+                return PartialView("BatchEdit", vm);
             }
             else
             {
@@ -178,7 +179,7 @@ namespace VOS.Controllers
         {
             if (!ModelState.IsValid || !vm.DoBatchDelete())
             {
-                return PartialView("BatchDelete",vm);
+                return PartialView("BatchDelete", vm);
             }
             else
             {
@@ -217,6 +218,7 @@ namespace VOS.Controllers
             ViewBag.id = id;
             var vm = CreateVM<VOS_PEmployeeListVM>();
             vm.SearcherMode = ListVMSearchModeEnum.Custom1;
+            MemoryCacheHelper.Set_TaskID = id;
             return PartialView(vm);
         }
 
@@ -289,16 +291,31 @@ namespace VOS.Controllers
         }
         #endregion
 
-        #region BrushAlone 填写刷单单号
+        #region BrushAlone 填写刷单单号或已完成
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="VOrderCode"></param>
+        /// <param name="b">true 填写单号并更改状态为已完成</param>
+        /// <returns></returns>
         [ActionDescription("填写刷单单号")]
         [HttpPost]
-        public ActionResult BrushAlone(Guid ID, string VOrderCode)
+        public ActionResult BrushAlone(Guid ID, string VOrderCode, bool b = false)
         {
             try
             {
                 var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
                 vOS_Task.VOrderCode = VOrderCode;
-                return Json(DC.SaveChanges() > 0);
+                if (b == true)
+                {
+                    if (vOS_Task.TaskType == TaskType.隔天单 && DateTime.Now.AddHours(-24)> vOS_Task.ImplementStartTime) {
+                        return Json("0");
+                    }
+                    vOS_Task.OrderState = OrderState.已完成;
+                }
+                DC.SaveChanges();
+                return Json(true);
             }
             catch (Exception)
             {

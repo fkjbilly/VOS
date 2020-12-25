@@ -2,17 +2,17 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:searchpanel vm="@Model" reset-btn="true">
-<wt:row items-per-row="ItemsPerRowEnum.Three">
-<wt:combobox field="Searcher.TaskType" empty-text="@Localizer["All"]" />
-<wt:combobox field="Searcher.PlanId" items="Searcher.AllPlans" empty-text="@Localizer["All"]" />
-<wt:textbox field="Searcher.CommodityName" />
-<wt:textbox field="Searcher.SearchKeyword" />
-<wt:combobox field="Searcher.IsLock" empty-text="@Localizer["All"]" />
-<wt:combobox field="Searcher.DistributorId" items="Searcher.AllDistributors" empty-text="@Localizer["All"]" />
-<wt:combobox field="Searcher.EmployeeId" items="Searcher.AllEmployees" empty-text="@Localizer["All"]" />
-<wt:textbox field="Searcher.VOrderCode" />
-<wt:textbox field="Searcher.TBAccount" />
-</wt:row>
+    <wt:row items-per-row="ItemsPerRowEnum.Three">
+        <wt:combobox field="Searcher.TaskType" empty-text="@Localizer["All"]" />
+        <wt:combobox field="Searcher.PlanId" items="Searcher.AllPlans" empty-text="@Localizer["All"]" />
+        <wt:textbox field="Searcher.CommodityName" />
+        <wt:textbox field="Searcher.SearchKeyword" />
+        <wt:combobox field="Searcher.IsLock" empty-text="@Localizer["All"]" />
+        <wt:combobox field="Searcher.DistributorId" items="Searcher.AllDistributors" empty-text="@Localizer["All"]" />
+        <wt:combobox field="Searcher.EmployeeId" items="Searcher.AllEmployees" empty-text="@Localizer["All"]" />
+        <wt:textbox field="Searcher.VOrderCode" />
+        @*<wt:textbox field="Searcher.TBAccount" />*@
+    </wt:row>
 </wt:searchpanel>
 <wt:quote>
     <wt:row items-per-row="ItemsPerRowEnum.Four">
@@ -24,7 +24,7 @@
         <span class="layui-badge" style="background-color: #CCFF99; color:#000000;">已返款</span>
     </wt:row>
 </wt:quote>
-<wt:grid vm="@Model" url="/Business/VOS_Task/Search"/>
+<wt:grid vm="@Model" url="/Business/VOS_Task/Search" />
 <script type="text/javascript">
     var table, layer;
     layui.use(['table', 'layer'], function () {
@@ -32,7 +32,7 @@
         layer = layui.layer;
         $(document).on("dblclick", ".brushAlone", function () {
             var ID = $(this).data("code");
-            layer.open({
+            var index = layer.open({
                type: 1
                , area: ["500px", "200px"]
                , scrollbar: false
@@ -40,25 +40,35 @@
                , anim: 1
                , id:"LAY_layuipro"
                , title: ["填写单号: （<span style='color:#FF0000;'>注:填写后仍可双击更改单号</span>）", "font-weight:700"]
-               , btn: ["确定", "取消"]
+               , btn: ["确定并完成","确定填写单号", "取消"]
                , content: '<div class="layui-inline" style="padding-top:35px;padding-left:40px;"><label class="layui-form-label">刷单单号：</label><div class="layui-inline"><input type="text" style="width:300px;" class="layui-input" value="' + $(this).val() + '" placeholder="输入刷单单号" id="VOrderCode" /></div></div>'
                , yes: function (index, layero) {
-                   var VOrderCode = $.trim($("#VOrderCode").val());
-                   if (VOrderCode == "") {
-                       layer.msg("请填写单号！！！");
-                       return false;
-                   }
-                   $.post('@Url.Action("BrushAlone", "VOS_Task")', { "ID": ID, "VOrderCode": VOrderCode }, function (r) {
-                      if (r.Data == true) {
-                          layer.alert('填写完毕', { icon: 1 });
-                          table.reload($('table')[0].id);//刷新table
-                          layer.close(index);
-                      } else {
-                          layer.alert('单号有问题，请检查！！！', { icon: 5 });
-                      }
-                   });
-               },
+                    BrushAlone(ID, true,index);
+               }
+               , btn2: function () {
+                    BrushAlone(ID, false, index);
+                    return false;
+               }
             });
         });
+       
+        function BrushAlone(ID, b, index) {
+            var VOrderCode = $.trim($("#VOrderCode").val());
+            if (VOrderCode == "") {
+                layer.msg("请填写单号！！！");
+                return false;
+            }
+            $.post('@Url.Action("BrushAlone", "VOS_Task")', { "ID": ID, "VOrderCode": VOrderCode, "b": b }, function (r) {
+                if (r.Data == "0") {
+                    layer.alert('隔天单！请24小是后提交完成', { icon: 4 });
+                }else if (r.Data == true) {
+                   layer.alert('已提交', { icon: 1 });
+                   table.reload($('table')[0].id);//刷新table
+                   layer.close(index);
+               } else {
+                   layer.alert('单号有问题，请检查！！！', { icon: 5 });
+               }
+            });
+        }
     });
 </script>

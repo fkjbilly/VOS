@@ -9,3 +9,10 @@
 </wt:row>
 </wt:searchpanel>
 <wt:grid vm="@Model" url="/BasicData/VOS_Rule/Search"/>
+<script type="text/javascript">
+    function Refresh() {
+        $.get('@Url.Action("RefreshCache")', function (r) {
+            layer.msg("已刷新");
+        })
+    }
+</script>

@@ -5,6 +5,8 @@ using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
 using VOS.ViewModel.BasicData.VOS_RuleVMs;
+using VOS.Model;
+using System.Linq;
 
 namespace VOS.Controllers
 {
@@ -203,6 +205,16 @@ namespace VOS.Controllers
             {
                 return FFResult().CloseDialog().RefreshGrid().Alert(WalkingTec.Mvvm.Core.Program._localizer["ImportSuccess", vm.EntityList.Count.ToString()]);
             }
+        }
+        #endregion
+
+        #region 刷新缓存
+        [ActionDescription("刷新缓存")]
+        [HttpGet]
+        public ActionResult RefreshCache() {
+            var result = DC.Set<VOS_Rule>().ToList();
+            MemoryCacheHelper.Set(MemoryCacheHelper._RuleCaches, result, new TimeSpan(4, 0, 0));
+            return Json(true);
         }
         #endregion
 

@@ -13,7 +13,26 @@ namespace VOS.Model
     /// </summary>
     public static class MemoryCacheHelper
     {
+
         private static readonly MemoryCache Cache = new MemoryCache(new MemoryCacheOptions());
+
+        #region 自定义缓存Key
+        /// <summary>
+        /// 规则缓存Key
+        /// </summary>
+        public static string _RuleCaches
+        {
+            get
+            {
+                return "_RuleCaches";
+            }
+        }
+
+        /// <summary>
+        /// 借助 《VOS_Task表 ID》
+        /// </summary>
+        public static string Set_TaskID { get; set; }
+        #endregion
 
         /// <summary>
         /// 验证缓存项是否存在

@@ -4,8 +4,8 @@
 <wt:form vm="@Model">
 <wt:row items-per-row="ItemsPerRowEnum.Two">
 <wt:textbox field="Entity.RuleName" />
-<wt:combobox field="Entity.RuleType" />
-<wt:textbox field="Entity.Num" />
+<wt:combobox field="Entity.RuleType" change-func="interval"/>
+<wt:textbox id="interval" field="Entity.Num" />
 <wt:textbox field="Entity.Cycle" />
 <wt:switch field="Entity.IsUse" />
 <wt:textbox field="Entity.Remark" />
@@ -15,3 +15,12 @@
         <wt:closebutton />
     </wt:row>
 </wt:form>
+<script type="text/javascript">
+    function interval(data) {
+        if (data.value == 2) {
+            $("#interval").prop("readonly", "true").val(1);
+        } else {
+            $("#interval").removeProp("disabled");
+        }
+    }
+</script>
