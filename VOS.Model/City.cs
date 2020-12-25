@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using WalkingTec.Mvvm.Core;
 
@@ -18,5 +19,12 @@ namespace VOS.Model
         public City Parent { get; set; }
         [Display(Name = "父级")]
         public Guid? ParentId { get; set; }
+
+        [NotMapped]
+        public string Sheng { get; set; }
+        [NotMapped]
+        public string Shi { get; set; }
+        [NotMapped]
+        public string Qu { get; set; }
     }
 }
