@@ -62,19 +62,49 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
     {
         public override bool BatchSaveData()
         {
-            this.SetEntityList();
-            List<VOS_Task> newList = new List<VOS_Task>();
-            foreach (var item in EntityList)
+            using (var transaction = DC.BeginTransaction())
             {
-                //单量是否大于1
-                if (item.VOS_Number > 1)
+                try
                 {
-                    for (int i = 1; i < item.VOS_Number; i++)
+                    this.SetEntityList();
+                    List<VOS_Task> newList = new List<VOS_Task>();
+                    foreach (var item in EntityList)
                     {
-                        newList.Add(new VOS_Task()
+                        //单量是否大于1
+                        if (item.VOS_Number > 1)
                         {
-                            IsValid=true,
-                            Task_no = item.Task_no +"-"+ i,
+                            for (int i = 1; i < item.VOS_Number; i++)
+                            {
+                                newList.Add(new VOS_Task()
+                                {
+                                    IsValid = true,
+                                    Task_no = item.Task_no + "-" + i,
+                                    TaskType = item.TaskType,
+                                    PlanId = item.PlanId,
+                                    ComDis = item.ComDis,
+                                    ShopCharge = item.ShopCharge,
+                                    ImplementStartTime = item.ImplementStartTime,
+                                    TaskCateId = item.TaskCateId,
+                                    CommodityName = item.CommodityName,
+                                    CommodityLink = item.CommodityLink,
+                                    CommodityPrice = item.CommodityPrice,
+                                    Commission = item.Commission,
+                                    OtherExpenses = item.OtherExpenses,
+                                    TRequirement = item.TRequirement,
+                                    AreaRequirement = item.AreaRequirement,
+                                    SearchKeyword = item.SearchKeyword,
+                                    SKU = item.SKU,
+                                    EmployeeCommission = item.EmployeeCommission,
+                                    IsLock = false,
+                                    IsTP = false,
+
+                                });
+                            }
+                        }
+                        VOS_Task vOS_Task = new VOS_Task()
+                        {
+                            IsValid = true,
+                            Task_no = item.Task_no,
                             TaskType = item.TaskType,
                             PlanId = item.PlanId,
                             ComDis = item.ComDis,
@@ -91,37 +121,21 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                             SearchKeyword = item.SearchKeyword,
                             SKU = item.SKU,
                             EmployeeCommission = item.EmployeeCommission,
-                        });
+                            IsLock = false,
+                            IsTP = false,
+                        };
+                        newList.Add(vOS_Task);
                     }
+                    this.EntityList = newList;
+                    transaction.Commit();
+                    return base.BatchSaveData();
                 }
-                VOS_Task vOS_Task = new VOS_Task()
+                catch (Exception exception)
                 {
-                    IsValid = true,
-                    Task_no = item.Task_no,
-                    TaskType = item.TaskType,
-                    PlanId = item.PlanId,
-                    ComDis = item.ComDis,
-                    ShopCharge = item.ShopCharge,
-                    ImplementStartTime = item.ImplementStartTime,
-                    TaskCateId = item.TaskCateId,
-                    CommodityName = item.CommodityName,
-                    CommodityLink = item.CommodityLink,
-                    CommodityPrice = item.CommodityPrice,
-                    Commission = item.Commission,
-                    OtherExpenses = item.OtherExpenses,
-                    TRequirement = item.TRequirement,
-                    AreaRequirement = item.AreaRequirement,
-                    SearchKeyword = item.SearchKeyword,
-                    SKU = item.SKU,
-                    EmployeeCommission = item.EmployeeCommission,
-
-                };
-                newList.Add(vOS_Task);
+                    transaction.Rollback();
+                }
             }
-
-
-            this.EntityList = newList;
-            return base.BatchSaveData();
+            return false;
         }
     }
 
