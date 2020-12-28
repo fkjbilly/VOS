@@ -56,7 +56,12 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             else
             {
                 return new List<GridColumn<VOS_Task_View>>{
-                this.MakeGridHeader(x => x.Task_no),
+                this.MakeGridHeader(x => x.Task_no).SetBackGroundFunc((x)=>{
+                   if(x.IsLock == false){
+                    return "#FFB800";
+                    }
+                   return "";
+                }),
                 this.MakeGridHeader(x => x.TaskType),
                 this.MakeGridHeader(x => x.Name_view),
                 this.MakeGridHeader(x => x.CommodityName),
@@ -72,25 +77,25 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     }
                     return "true";
                 }),
-                this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
-                    switch (x.OrderState)
-                    {
-                        case OrderState.未分配:
-                            return "#009688";
-                        case OrderState.已分配:
-                          return "#5FB878";
-                        case OrderState.进行中:
-                            return "#FF5722";
-                        case OrderState.已完成:
-                           return "#1E9FFF";
-                        case OrderState.已返款:
-                            return "#CCFF99";
-                        default:
-                            return "";
-                    }
-                }).SetForeGroundFunc((x)=>{
-                    return "#000000";
-                }),
+                //this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
+                //    switch (x.OrderState)
+                //    {
+                //        case OrderState.未分配:
+                //            return "#009688";
+                //        case OrderState.已分配:
+                //          return "#5FB878";
+                //        case OrderState.进行中:
+                //            return "#FF5722";
+                //        case OrderState.已完成:
+                //           return "#1E9FFF";
+                //        case OrderState.已返款:
+                //            return "#CCFF99";
+                //        default:
+                //            return "";
+                //    }
+                //}).SetForeGroundFunc((x)=>{
+                //    return "#000000";
+                //}),
                 this.MakeGridHeaderAction(width: 200)
             };
             }
@@ -131,7 +136,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 .CheckEqual(Searcher.TaskType, x => x.TaskType)
                 //.CheckEqual(Searcher.PlanId, x => x.PlanId)//计划编号
                 .CheckContain(Searcher.CommodityName, x => x.CommodityName)
-                //.CheckContain(Searcher.SearchKeyword, x => x.SearchKeyword)//商品权重
+                .CheckContain(Searcher.SearchKeyword, x => x.SearchKeyword)
                 .CheckEqual(Searcher.IsLock, x => x.IsLock)
                 .CheckEqual(Searcher.DistributorId, x => x.DistributorId)
                 .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
@@ -162,7 +167,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         FullName_view = x.Employee.FullName,
                         VOrderCode = x.VOrderCode,
                         OrderState = x.OrderState,
-                        CreateTime=x.CreateTime,
+                        CreateTime = x.CreateTime,
+                        IsLock = x.IsLock,
                     })
                     .OrderByDescending(x => x.CreateTime);
         }

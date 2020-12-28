@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using WalkingTec.Mvvm.Core;
 
@@ -190,5 +191,10 @@ namespace VOS.Model
         public DateTime? RefundTime { get; set; }
         [Display(Name = "任务状态")]
         public OrderState OrderState { get; set; }
+
+        [Display(Name = "单量")]
+        [NotMapped]
+        [RegularExpression(@"^[1-9]\d*$", ErrorMessage = "请输入正确单量")]
+        public int? VOS_Number { get; set; }
     }
 }

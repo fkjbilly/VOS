@@ -24,7 +24,7 @@ namespace VOS.Model
         {
             get
             {
-                return "_RuleCaches";
+                return "_RULESCACHE";
             }
         }
 

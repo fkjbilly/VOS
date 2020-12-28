@@ -27,7 +27,6 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
     public class VOS_Task_BatchEdit : BaseVM
     {
         [Display(Name = "刷手")]
-        [Required(ErrorMessage = "必填")]
         public Guid? EmployeeId { get; set; }
 
         [Display(Name = "刷手")]

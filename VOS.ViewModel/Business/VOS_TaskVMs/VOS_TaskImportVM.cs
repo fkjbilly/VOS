@@ -46,8 +46,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public ExcelPropety SKU_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.SKU);
         [Display(Name = "刷手佣金")]
         public ExcelPropety EmployeeCommission_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.EmployeeCommission);
-        [Display(Name = "数量")]
-        public ExcelPropety quantity_Excel { get; set; }
+        [Display(Name = "单量")]
+        public ExcelPropety VOS_Number_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.VOS_Number);
 
         protected override void InitVM()
         {
@@ -60,7 +60,69 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
     public class VOS_TaskImportVM : BaseImportVM<VOS_TaskTemplateVM, VOS_Task>
     {
+        public override bool BatchSaveData()
+        {
+            this.SetEntityList();
+            List<VOS_Task> newList = new List<VOS_Task>();
+            foreach (var item in EntityList)
+            {
+                //单量是否大于1
+                if (item.VOS_Number > 1)
+                {
+                    for (int i = 1; i < item.VOS_Number; i++)
+                    {
+                        newList.Add(new VOS_Task()
+                        {
+                            IsValid=true,
+                            Task_no = item.Task_no +"-"+ i,
+                            TaskType = item.TaskType,
+                            PlanId = item.PlanId,
+                            ComDis = item.ComDis,
+                            ShopCharge = item.ShopCharge,
+                            ImplementStartTime = item.ImplementStartTime,
+                            TaskCateId = item.TaskCateId,
+                            CommodityName = item.CommodityName,
+                            CommodityLink = item.CommodityLink,
+                            CommodityPrice = item.CommodityPrice,
+                            Commission = item.Commission,
+                            OtherExpenses = item.OtherExpenses,
+                            TRequirement = item.TRequirement,
+                            AreaRequirement = item.AreaRequirement,
+                            SearchKeyword = item.SearchKeyword,
+                            SKU = item.SKU,
+                            EmployeeCommission = item.EmployeeCommission,
+                        });
+                    }
+                }
+                VOS_Task vOS_Task = new VOS_Task()
+                {
+                    IsValid = true,
+                    Task_no = item.Task_no,
+                    TaskType = item.TaskType,
+                    PlanId = item.PlanId,
+                    ComDis = item.ComDis,
+                    ShopCharge = item.ShopCharge,
+                    ImplementStartTime = item.ImplementStartTime,
+                    TaskCateId = item.TaskCateId,
+                    CommodityName = item.CommodityName,
+                    CommodityLink = item.CommodityLink,
+                    CommodityPrice = item.CommodityPrice,
+                    Commission = item.Commission,
+                    OtherExpenses = item.OtherExpenses,
+                    TRequirement = item.TRequirement,
+                    AreaRequirement = item.AreaRequirement,
+                    SearchKeyword = item.SearchKeyword,
+                    SKU = item.SKU,
+                    EmployeeCommission = item.EmployeeCommission,
 
+                };
+                newList.Add(vOS_Task);
+            }
+
+
+            this.EntityList = newList;
+            return base.BatchSaveData();
+        }
     }
 
 }

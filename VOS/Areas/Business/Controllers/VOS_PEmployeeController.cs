@@ -114,7 +114,7 @@ namespace VOS.Controllers
         public ActionResult Delete(string id, IFormCollection nouse)
         {
             var vm = CreateVM<VOS_PEmployeeVM>(id);
-            vm.DoRealDelete();
+            vm.DoDelete();
             if (!ModelState.IsValid)
             {
                 return PartialView(vm);

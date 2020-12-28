@@ -36,6 +36,8 @@ namespace VOS.ViewModel.BasicData.CategoryVMs
 
         public override void DoDelete()
         {
+            var _Category = DC.Set<Category>().Where(x=>x.ID.Equals(Entity.ID)).FirstOrDefault();
+            _Category.IsValid = false;
             base.DoDelete();
         }
 

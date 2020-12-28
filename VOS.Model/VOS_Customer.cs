@@ -25,7 +25,7 @@ namespace VOS.Model
 
         [Display(Name = "客户编号")]
         [Required(ErrorMessage = "客户编号不能为空")]
-        [StringLength(10, ErrorMessage = "客户编号长度超过限制")]
+        [StringLength(20, ErrorMessage = "客户编号长度超过限制")]
         public string cust_no { get; set; }
         [Display(Name = "客户名称")]
         [Required(ErrorMessage = "客户名称不能为空")]

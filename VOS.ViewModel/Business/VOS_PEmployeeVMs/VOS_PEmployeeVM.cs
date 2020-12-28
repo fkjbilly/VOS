@@ -56,6 +56,9 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 
         public override void DoDelete()
         {
+            var _PEmployee = DC.Set<VOS_PEmployee>().Where(x => x.ID.Equals(Entity.ID)).FirstOrDefault();
+            _PEmployee.IsValid = false;
+            DC.Set<VOS_PEmployee>().Update(_PEmployee).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             base.DoDelete();
         }
         public override DuplicatedInfo<VOS_PEmployee> SetDuplicatedCheck()

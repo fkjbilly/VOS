@@ -33,7 +33,10 @@ namespace VOS.ViewModel.BasicData.VOS_RuleVMs
 
         public override void DoDelete()
         {
-            base.DoDelete();
+            var _Rule = DC.Set<VOS_Rule>().Where(x => x.ID.Equals(Entity.ID)).SingleOrDefault();
+            DC.Set<VOS_Rule>().Update(_Rule).State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
+            DC.SaveChanges();
+            //base.DoDelete();
         }
 
         public override DuplicatedInfo<VOS_Rule> SetDuplicatedCheck()

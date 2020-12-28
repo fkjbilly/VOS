@@ -117,10 +117,9 @@ namespace VOS.Controllers
         [HttpPost]
         public ActionResult Delete(string id, IFormCollection nouse)
         {
-            var _Task = DC.Set<VOS_Task>().Where(x => x.ID.ToString().Equals(id)).FirstOrDefault();
-            DC.Set<VOS_Task>().Update(_Task).State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
-
-            if (DC.SaveChanges() < 0)
+            var vm = CreateVM<VOS_TaskVM>(id);
+            vm.DoDelete();
+            if (!ModelState.IsValid)
             {
                 return FFResult().Alert("删除失败");
             }
@@ -175,6 +174,7 @@ namespace VOS.Controllers
 
         [HttpPost]
         [ActionDescription("BatchDelete")]
+        [ValidateFormItemOnly]
         public ActionResult DoBatchDelete(VOS_TaskBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchDelete())
@@ -264,7 +264,7 @@ namespace VOS.Controllers
             {
                 try
                 {
-                    const string str = "进行中,已完成,已返款";
+                    const string str = "已完成,已返款";
                     string[] IDs = ids.Split(',');//任务编号
                     foreach (var item in IDs)
                     {
@@ -273,9 +273,12 @@ namespace VOS.Controllers
                         {
                             continue;
                         }
+                        if (vOS_Task.OrderState == OrderState.未分配)
+                        {
+                            vOS_Task.OrderState = OrderState.已分配;
+                        }
                         vOS_Task.ExecutorId = id;
                         vOS_Task.DistributionTime = DateTime.Now;
-                        vOS_Task.OrderState = OrderState.已分配;
                     }
 
                     DC.SaveChanges();
@@ -309,8 +312,10 @@ namespace VOS.Controllers
                 vOS_Task.VOrderCode = VOrderCode;
                 if (b == true)
                 {
-                    if (vOS_Task.TaskType == TaskType.隔天单 && DateTime.Now.AddHours(-24)> vOS_Task.ImplementStartTime) {
-                        return Json("0");
+                    if (vOS_Task.TaskType == TaskType.隔天单 && DateTime.Now < vOS_Task.DistributionTime.Value.AddHours(24))
+                    {
+                        var a = (DateTime.Now - vOS_Task.DistributionTime).Value.Hours;
+                        return Json(a+1);
                     }
                     vOS_Task.OrderState = OrderState.已完成;
                 }

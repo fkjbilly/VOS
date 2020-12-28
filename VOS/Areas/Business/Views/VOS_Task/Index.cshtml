@@ -4,7 +4,7 @@
 <wt:searchpanel vm="@Model" reset-btn="true">
     <wt:row items-per-row="ItemsPerRowEnum.Three">
         <wt:combobox field="Searcher.TaskType" empty-text="@Localizer["All"]" />
-        <wt:combobox field="Searcher.PlanId" items="Searcher.AllPlans" empty-text="@Localizer["All"]" />
+        @*<wt:combobox field="Searcher.PlanId" items="Searcher.AllPlans" empty-text="@Localizer["All"]" />*@
         <wt:textbox field="Searcher.CommodityName" />
         <wt:textbox field="Searcher.SearchKeyword" />
         <wt:combobox field="Searcher.IsLock" empty-text="@Localizer["All"]" />
@@ -51,22 +51,27 @@
                }
             });
         });
-       
+
         function BrushAlone(ID, b, index) {
             var VOrderCode = $.trim($("#VOrderCode").val());
+            var _Code = /^[^\u4e00-\u9fa5]+$/
             if (VOrderCode == "") {
                 layer.msg("请填写单号！！！");
                 return false;
+            } else if (!_Code.test(VOrderCode)) {
+                layer.msg("请填写正确单号！！！");
+                return false;
             }
             $.post('@Url.Action("BrushAlone", "VOS_Task")', { "ID": ID, "VOrderCode": VOrderCode, "b": b }, function (r) {
-                if (r.Data == "0") {
-                    layer.alert('隔天单！请24小是后提交完成', { icon: 4 });
+                if (r.Data == false) {
+                    layer.alert('单号有问题，请检查！！！', { icon: 5 });
                 }else if (r.Data == true) {
                    layer.alert('已提交', { icon: 1 });
                    table.reload($('table')[0].id);//刷新table
                    layer.close(index);
                } else {
-                   layer.alert('单号有问题，请检查！！！', { icon: 5 });
+                    console.log(r);
+                    layer.alert('隔天单！请' + r.Data + '小时后提交完成', { icon: 4 });
                }
             });
         }

@@ -18,9 +18,32 @@ namespace VOS.ViewModel.BasicData.CityVMs
             LinkedVM = new City_BatchEdit();
         }
 
+        public override bool DoBatchDelete()
+        {
+            using (var transaction = DC.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in Ids)
+                    {
+                        var _City = DC.Set<City>().Where(x => x.ID.ToString().Equals(item)).SingleOrDefault();
+                        DC.Set<City>().Update(_City).State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
+                    }
+                    DC.SaveChanges();
+                    transaction.Commit();
+                    return true;
+                    //base.DoBatchDelete();
+                }
+                catch (Exception exception)
+                {
+                    transaction.Rollback();
+                }
+            }
+            return false;
+        }
     }
 
-	/// <summary>
+    /// <summary>
     /// Class to define batch edit fields
     /// </summary>
     public class City_BatchEdit : BaseVM

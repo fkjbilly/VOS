@@ -18,6 +18,30 @@ namespace VOS.ViewModel.BasicData.VOS_RuleVMs
             LinkedVM = new VOS_Rule_BatchEdit();
         }
 
+        public override bool DoBatchDelete()
+        {
+            using (var transaction = DC.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in Ids)
+                    {
+                        var _Rule = DC.Set<VOS_Rule>().Where(x => x.ID.ToString().Equals(item)).SingleOrDefault();
+                        DC.Set<VOS_Rule>().Update(_Rule).State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
+                    }
+                    DC.SaveChanges();
+                    transaction.Commit();
+                    return true;//base.DoBatchDelete();
+                }
+                catch (Exception exception)
+                {
+                    transaction.Rollback();
+                }
+            }
+            return false;
+           
+        }
+
     }
 
 	/// <summary>
