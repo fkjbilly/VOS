@@ -21,19 +21,11 @@
     function SelectBrushHand(id) {
         var index = layer.index;
         $.post('@Url.Action("BrushHand", "VOS_Task")', { "ID": $("#rwid").val(), "BrushHandID": id }, function (r) {
-            var str, ico = "";
-            if (r.Data == true) {
-                str = "已选择刷手";
-                ico = 1;
-            } else {
-                str = "发生错误";
-                ico = 5;
-            }
-            layer.msg(str, {
-                icon: ico,
+            layer.msg(r.Msg, {
+                icon: r.Data,
                 time: 1000
             }, function () {
-                    parent.layui.table.reload($('table')[0].id);//刷新父页面table
+                parent.layui.table.reload($('table')[0].id);//刷新父页面table
                 layer.close(index);
             });
         });

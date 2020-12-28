@@ -17,7 +17,7 @@ namespace VOS.ViewModel.BasicData.VOS_RuleVMs
         {
             return new List<GridAction>
             {
-                this.MakeAction("Login","Login","刷新","", GridActionParameterTypesEnum.NoId).SetOnClickScript("Refresh();"),
+                this.MakeAction("Login","Login","刷新规则","", GridActionParameterTypesEnum.NoId).SetOnClickScript("Refresh();").SetIconCls("layui-icon layui-icon-refresh-3"),
                 this.MakeStandardAction("VOS_Rule", GridActionStandardTypesEnum.Create, Localizer["Create"],"BasicData", dialogWidth: 800),
                 this.MakeStandardAction("VOS_Rule", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "BasicData", dialogWidth: 800),
                 this.MakeStandardAction("VOS_Rule", GridActionStandardTypesEnum.Delete, Localizer["Delete"], "BasicData", dialogWidth: 800),

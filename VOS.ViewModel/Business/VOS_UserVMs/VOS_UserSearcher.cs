@@ -18,7 +18,8 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
         public String Name { get; set; }
         [Display(Name = "电话号码")]
         public String CellPhone { get; set; }
-
+        [Display(Name ="是否有效")]
+        public bool? IsValid { get; set; }
         protected override void InitVM()
         {
         }

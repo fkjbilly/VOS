@@ -76,7 +76,10 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
 
         public override void DoDelete()
         {
-            base.DoDelete();
+            var _User = DC.Set<VOS_User>().Where(x => x.ID.Equals(Entity.ID)).FirstOrDefault();
+            _User.IsValid = false;
+            DC.SaveChanges();
+            //base.DoDelete();
         }
     }
 }

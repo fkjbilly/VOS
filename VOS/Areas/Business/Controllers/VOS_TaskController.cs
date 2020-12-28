@@ -235,6 +235,10 @@ namespace VOS.Controllers
             try
             {
                 var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
+                if (vOS_Task.IsLock == false)
+                {
+                    return Json("4", 200, "未解锁无法派单");
+                }
                 //执行人   当前登录人信息
                 vOS_Task.ExecutorId = LoginUserInfo.Id;
                 //分配人
@@ -246,11 +250,11 @@ namespace VOS.Controllers
                 vOS_Task.DistributionTime = DateTime.Now;
                 DC.Set<VOS_Task>().Update(vOS_Task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 DC.SaveChanges();
-                return Json(true);
+                return Json("1", 200, "已选择刷手");
             }
             catch (Exception)
             {
-                return Json(false);
+                return Json("5", 200, "未解锁无法分配");
             }
         }
         #endregion
@@ -314,8 +318,8 @@ namespace VOS.Controllers
                 {
                     if (vOS_Task.TaskType == TaskType.隔天单 && DateTime.Now < vOS_Task.DistributionTime.Value.AddHours(24))
                     {
-                        var a = (DateTime.Now - vOS_Task.DistributionTime).Value.Hours;
-                        return Json(a+1);
+                        var a = (vOS_Task.DistributionTime.Value.AddHours(24) - DateTime.Now).Hours + 1;
+                        return Json(a);
                     }
                     vOS_Task.OrderState = OrderState.已完成;
                 }

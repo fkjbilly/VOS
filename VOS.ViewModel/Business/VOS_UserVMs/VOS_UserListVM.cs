@@ -82,23 +82,35 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
         public override IOrderedQueryable<VOS_User_View> GetSearchQuery()
         {
             var query = DC.Set<VOS_User>()
-                .CheckContain(Searcher.ITCode, x => x.ITCode)
-                .CheckContain(Searcher.Name, x => x.Name)
-                .CheckContain(Searcher.CellPhone, x => x.CellPhone)
-                .Select(x => new VOS_User_View
+                    .CheckContain(Searcher.ITCode, x => x.ITCode)
+                    .CheckContain(Searcher.Name, x => x.Name)
+                    .CheckContain(Searcher.CellPhone, x => x.CellPhone);
+            if (SearcherMode == ListVMSearchModeEnum.Custom1)
+            {
+
+                query = query.Where(x => x.IsValid == true);
+
+            }
+            else
+            {
+                query = query
+                    .CheckEqual(Searcher.IsValid, x => x.IsValid);
+
+            }
+            return query.Select(x => new VOS_User_View
                 {
-                    ID = x.ID,
-                    ITCode = x.ITCode,
-                    Name = x.Name,
-                    Sex = x.Sex,
-                    CellPhone = x.CellPhone,
-                    PhotoId = x.PhotoId,
-                    IsValid = x.IsValid,
-                    RoleName_view = x.UserRoles.Select(y => y.Role.RoleName).ToSpratedString(null, ","),
-                    GroupName_view = x.UserGroups.Select(y => y.Group.GroupName).ToSpratedString(null, ","),
+                ID = x.ID,
+                ITCode = x.ITCode,
+                Name = x.Name,
+                Sex = x.Sex,
+                CellPhone = x.CellPhone,
+                PhotoId = x.PhotoId,
+                IsValid = x.IsValid,
+                RoleName_view = x.UserRoles.Select(y => y.Role.RoleName).ToSpratedString(null, ","),
+                GroupName_view = x.UserGroups.Select(y => y.Group.GroupName).ToSpratedString(null, ","),
+                CreateTime = x.CreateTime,
                 })
-                .OrderBy(x => x.ID);
-            return query;
+                .OrderByDescending(x => x.IsValid).ThenByDescending(x => x.CreateTime);
         }
 
     }
