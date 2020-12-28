@@ -77,25 +77,25 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     }
                     return "true";
                 }),
-                //this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
-                //    switch (x.OrderState)
-                //    {
-                //        case OrderState.未分配:
-                //            return "#009688";
-                //        case OrderState.已分配:
-                //          return "#5FB878";
-                //        case OrderState.进行中:
-                //            return "#FF5722";
-                //        case OrderState.已完成:
-                //           return "#1E9FFF";
-                //        case OrderState.已返款:
-                //            return "#CCFF99";
-                //        default:
-                //            return "";
-                //    }
-                //}).SetForeGroundFunc((x)=>{
-                //    return "#000000";
-                //}),
+                this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
+                    switch (x.OrderState)
+                    {
+                        case OrderState.未分配:
+                            return "#009688";
+                        case OrderState.已分配:
+                          return "#5FB878";
+                        case OrderState.进行中:
+                            return "#FF5722";
+                        case OrderState.已完成:
+                           return "#1E9FFF";
+                        case OrderState.已返款:
+                            return "#CCFF99";
+                        default:
+                            return "";
+                    }
+                }).SetForeGroundFunc((x)=>{
+                    return "#000000";
+                }),
                 this.MakeGridHeaderAction(width: 200)
             };
             }

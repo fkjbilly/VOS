@@ -18,7 +18,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
             {
                 return new List<GridAction> {
-                    this.MakeAction(null,null,"选择",null, GridActionParameterTypesEnum.SingleId).SetOnClickScript("SelectAll").SetShowInRow(true).SetHideOnToolBar(true),
+                    this.MakeAction("Login","Login","选择",null, GridActionParameterTypesEnum.SingleId).SetOnClickScript("SelectAll").SetShowInRow(true).SetHideOnToolBar(true),
                 };
             }
             else
