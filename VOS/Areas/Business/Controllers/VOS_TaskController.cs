@@ -240,8 +240,10 @@ namespace VOS.Controllers
                 {
                     return Json("4", 200, "未解锁无法派单");
                 }
-                //执行人   当前登录人信息
-                vOS_Task.ExecutorId = LoginUserInfo.Id;
+                if (vOS_Task.ExecutorId == null) {
+                    //执行人   当前登录人信息
+                    vOS_Task.ExecutorId = LoginUserInfo.Id;
+                }
                 //分配人
                 vOS_Task.DistributorId = LoginUserInfo.Id;
                 //刷手编号
