@@ -341,7 +341,7 @@ namespace VOS.Controllers
         {
             var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
             vOS_Task.EmployeeId = null;
-            vOS_Task.OrderState = OrderState.未分配;
+            vOS_Task.OrderState = OrderState.已分配;
             if (DC.SaveChanges() > 0)
                 return Json(true);
             else

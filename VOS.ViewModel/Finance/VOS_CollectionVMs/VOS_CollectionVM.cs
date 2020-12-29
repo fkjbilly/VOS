@@ -41,11 +41,12 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
                     var Tasks = DC.Set<VOS_Task>().Where(x => x.PlanId == Entity.Plan_noId);
                     foreach (var task in Tasks)
                     {
-                        task.IsLock = false;
+                        task.IsLock = true;
                         task.UnlockerId = LoginUserInfo.Id;
                         task.UnlockTime = DateTime.Now;
                         DC.Set<VOS_Task>().Update(task);
                     }
+                    DC.SaveChanges();
                     transaction.Commit();
                 }
 
