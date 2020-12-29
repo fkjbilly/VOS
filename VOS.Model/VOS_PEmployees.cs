@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using WalkingTec.Mvvm.Core;
 
@@ -68,5 +69,10 @@ namespace VOS.Model
         public string Remark { get; set; }
         [Display(Name ="刷手状态")]
         public state PEstate { get; set; }
+
+
+        
+        [NotMapped]
+        public bool button_show { get; set; }
     }
 }

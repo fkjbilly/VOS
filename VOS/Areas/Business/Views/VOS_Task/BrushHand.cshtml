@@ -11,7 +11,7 @@
     </wt:row>
 </wt:searchpanel>
 <input type="hidden" id="rwid" value="@ViewBag.id" />
-<wt:grid vm="@Model" url="/Business/VOS_PEmployee/Search" hidden-checkbox="true" hidden-grid-index="true"  hidden-panel="true" />
+<wt:grid vm="@Model" name="_PEmployee" url="/Business/VOS_PEmployee/Search" hidden-checkbox="true" hidden-grid-index="true"  hidden-panel="true" />
 <script type="text/javascript">
     var table, layer;
     layui.use(['table', 'layer'], function () {
@@ -19,15 +19,30 @@
         layer = layui.layer;
     });
     function SelectBrushHand(id) {
-        var index = layer.index;
         $.post('@Url.Action("BrushHand", "VOS_Task")', { "ID": $("#rwid").val(), "BrushHandID": id }, function (r) {
             layer.msg(r.Msg, {
                 icon: r.Data,
-                time: 1000
+                time: 1000,
             }, function () {
-                parent.layui.table.reload($('table')[0].id);//刷新父页面table
-                layer.close(index);
+                parent.layui.table.reload($('table')[0].id);
+                layer.closeAll();
             });
         });
+    }
+
+    function ResetBrushHand() {
+         $.post('@Url.Action("ResetBrushHand", "VOS_Task")', { "ID": $("#rwid").val() }, function (r) {
+            if (r.Data) {
+                layer.msg('已重派', {
+                    icon: 1,
+                    time:1000,
+                }, function () {
+                   table.reload($('table[name="_PEmployee"]')[0].id);
+                   parent.layui.table.reload($('table')[0].id);
+                });
+            } else {
+                layer.msg('发生错误，联系管理员', { icon: 2 });
+            }
+         });
     }
 </script>

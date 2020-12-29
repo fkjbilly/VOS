@@ -113,7 +113,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 case OrderState.未分配:
                 case OrderState.已分配:
-                    return "";
+                    return entity.VOrderCode;
                 case OrderState.进行中:
                     return "<input type='text' title='双击填写单号' placeholder='双击填写单号' value='"+ entity.VOrderCode + "' readonly data-code='" + entity.ID + "' class='layui-input brushAlone' style='width:150px;' />";
                 case OrderState.已完成:

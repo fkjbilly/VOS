@@ -254,7 +254,7 @@ namespace VOS.Controllers
             }
             catch (Exception)
             {
-                return Json("5", 200, "未解锁无法分配");
+                return Json("5", 200, "发生错误，联系管理员");
             }
         }
         #endregion
@@ -330,6 +330,22 @@ namespace VOS.Controllers
             {
                 return Json(false);
             }
+        }
+        #endregion
+
+        #region ResetBrushHand 重新派单
+        [ActionDescription("重新派单")]
+        [HttpPost]
+        public ActionResult ResetBrushHand(Guid ID)
+        {
+            var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
+            vOS_Task.EmployeeId = null;
+            vOS_Task.OrderState = OrderState.未分配;
+            if (DC.SaveChanges() > 0)
+                return Json(true);
+            else
+                return Json(false);
+
         }
         #endregion
 
