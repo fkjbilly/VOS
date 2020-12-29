@@ -20,6 +20,7 @@ namespace VOS.Controllers
         public ActionResult Index()
         {
             var vm = CreateVM<VOS_TaskListVM>();
+            vm.SearcherMode = ListVMSearchModeEnum.Custom2;
             return PartialView(vm);
         }
 
