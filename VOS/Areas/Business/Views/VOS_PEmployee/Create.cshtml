@@ -3,6 +3,10 @@
 
 <wt:form vm="@Model">
     <wt:row items-per-row="ItemsPerRowEnum.Two">
+        @if (@ViewBag.IsShow == true)
+        {
+            <wt:combobox field="Entity.DistributionID" items="AllDistribution" empty-text="@Localizer["All"]" />
+        }
         <wt:combobox field="Entity.RecomId" items="AllRecoms" />
         <wt:combobox field="ShengId" items="AllSheng" label-text="籍贯（省）" trigger-url="/BasicData/City/GetChildrenCity" link-field="ShiId" />
         <wt:combobox field="ShiId" items="AllShi" label-text="籍贯（市）" trigger-url="/BasicData/City/GetChildrenCity" link-field="Entity.AreaId" />

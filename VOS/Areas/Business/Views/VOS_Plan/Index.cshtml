@@ -2,11 +2,15 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:searchpanel vm="@Model" reset-btn="true">
-<wt:row items-per-row="ItemsPerRowEnum.Three">
-<wt:textbox field="Searcher.Plan_no" />
-<wt:combobox field="Searcher.ShopnameId" items="Searcher.AllShopnames" empty-text="@Localizer["All"]" />
-<wt:datetime field="Searcher.PlanSatrtTime" range="true" />
-<wt:datetime field="Searcher.PlanEndTime" range="true" />
-</wt:row>
+    <wt:row items-per-row="ItemsPerRowEnum.Three">
+        <wt:textbox field="Searcher.Plan_no" empty-text="输入计划编号" />
+        <wt:textbox field="Searcher.ShopName" empty-text="输入店铺名称" />
+        <wt:datetime field="Searcher.PlanSatrtTime" range="true" />
+        <wt:datetime field="Searcher.PlanEndTime" range="true" />
+        @if (@ViewBag.IsShow == true)
+        {
+            <wt:combobox field="Searcher.DistributionID" items="Searcher.AllDistribution" empty-text="@Localizer["All"]" />
+        }
+    </wt:row>
 </wt:searchpanel>
 <wt:grid vm="@Model" url="/Business/VOS_Plan/Search"/>

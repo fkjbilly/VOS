@@ -5,18 +5,20 @@ using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
 using VOS.ViewModel.Business.VOS_PEmployeeVMs;
+using VOS.Areas.BaseControllers;
 
 namespace VOS.Controllers
 {
     [Area("Business")]
     [ActionDescription("刷手管理")]
-    public partial class VOS_PEmployeeController : BaseController
+    public partial class VOS_PEmployeeController : VOS_BaseControllers
     {
         #region Search
         [ActionDescription("Search")]
         public ActionResult Index()
         {
             var vm = CreateVM<VOS_PEmployeeListVM>();
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 
@@ -41,6 +43,7 @@ namespace VOS.Controllers
         public ActionResult Create()
         {
             var vm = CreateVM<VOS_PEmployeeVM>();
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 
@@ -48,6 +51,10 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create(VOS_PEmployeeVM vm)
         {
+            if (!IsSuperAdministrator) {
+                vm.Entity.DistributionID = GetDistributionID;
+            }
+            vm.Entity.CreateBy = LoginUserInfo.ITCode.ToString();
             if (!ModelState.IsValid)
             {
                 return PartialView(vm);
@@ -73,6 +80,7 @@ namespace VOS.Controllers
         public ActionResult Edit(string id)
         {
             var vm = CreateVM<VOS_PEmployeeVM>(id);
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 

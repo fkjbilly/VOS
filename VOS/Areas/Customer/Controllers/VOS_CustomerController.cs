@@ -5,18 +5,20 @@ using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
 using VOS.ViewModel.Customer.VOS_CustomerVMs;
+using VOS.Areas.BaseControllers;
 
 namespace VOS.Controllers
 {
     [Area("Customer")]
     [ActionDescription("客户管理")]
-    public partial class VOS_CustomerController : BaseController
+    public partial class VOS_CustomerController : VOS_BaseControllers
     {
         #region Search
         [ActionDescription("Search")]
         public ActionResult Index()
         {
             var vm = CreateVM<VOS_CustomerListVM>();
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 
@@ -42,6 +44,7 @@ namespace VOS.Controllers
         {
             var vm = CreateVM<VOS_CustomerVM>();
             vm.Entity.cust_no = "C" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 
@@ -49,6 +52,10 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create(VOS_CustomerVM vm)
         {
+            if (!IsSuperAdministrator)
+            {
+                vm.Entity.DistributionID = GetDistributionID;
+            }
             if (!ModelState.IsValid)
             {
                 return PartialView(vm);
@@ -74,6 +81,7 @@ namespace VOS.Controllers
         public ActionResult Edit(string id)
         {
             var vm = CreateVM<VOS_CustomerVM>(id);
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 

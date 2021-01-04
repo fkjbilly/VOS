@@ -64,6 +64,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 }),
                 this.MakeGridHeader(x => x.TaskType),
                 this.MakeGridHeader(x => x.Name_view),
+                this.MakeGridHeader(x => x._ShopName),
                 this.MakeGridHeader(x => x.CommodityName),
                 this.MakeGridHeader(x => x.CommodityPrice),
                 this.MakeGridHeader(x => x.SearchKeyword),
@@ -96,7 +97,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 }).SetForeGroundFunc((x)=>{
                     return "#000000";
                 }),
-                this.MakeGridHeaderAction(width: 200)
+                this.MakeGridHeaderAction(width: 230)
             };
             }
         }
@@ -141,14 +142,16 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             #region 共有条件
             var query = DC.Set<VOS_Task>()
                 .CheckEqual(Searcher.TaskType, x => x.TaskType)
-                //.CheckEqual(Searcher.PlanId, x => x.PlanId)//计划编号
                 .CheckContain(Searcher.CommodityName, x => x.CommodityName)
                 .CheckContain(Searcher.SearchKeyword, x => x.SearchKeyword)
                 .CheckEqual(Searcher.IsLock, x => x.IsLock)
                 .CheckEqual(Searcher.DistributorId, x => x.DistributorId)
                 .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
                 .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
-                //.CheckContain(Searcher.TBAccount, x => x.TBAccount)
+                .CheckEqual(Searcher.OrderState, x => x.OrderState)
+                .CheckEqual(Searcher.ShopName, x => x.Plan.Shopname.ShopName)
+                .CheckEqual(Searcher.DistributionID,x=>x.Plan.DistributionID)
+                //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.DistributionID)
                 .Where(x => x.IsValid == true);
             #endregion
 
@@ -171,11 +174,12 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         CommodityPrice = x.CommodityPrice,
                         SearchKeyword = x.SearchKeyword,
                         SKU = x.SKU,
-                        FullName_view = x.Employee.FullName,
+                        FullName_view = x.Employee.TaobaAccount+"("+x.Employee.FullName+")",
                         VOrderCode = x.VOrderCode,
                         OrderState = x.OrderState,
                         CreateTime = x.CreateTime,
                         IsLock = x.IsLock,
+                        _ShopName = x.Plan.Shopname.ShopName,
                     })
                     .OrderByDescending(x => x.CreateTime);
         }
@@ -190,6 +194,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public String Name_view { get; set; }
         [Display(Name = "刷手")]
         public String FullName_view { get; set; }
-
+        [Display(Name = "店铺")]
+        public String _ShopName { get; set; }
     }
 }

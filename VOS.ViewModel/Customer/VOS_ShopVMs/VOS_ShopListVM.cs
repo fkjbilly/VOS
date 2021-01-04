@@ -36,6 +36,7 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
                 this.MakeGridHeader(x => x.ShopName),
                 this.MakeGridHeader(x => x.ShopPlat),
                 this.MakeGridHeader(x => x.OpenTime),
+                this.MakeGridHeader(x => x.DistributionName_view),
                 this.MakeGridHeaderAction(width: 200)
             };
         }
@@ -46,6 +47,8 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
                 .CheckEqual(Searcher.CustomerId, x=>x.CustomerId)
                 .CheckContain(Searcher.ShopName, x=>x.ShopName)
                 .CheckEqual(Searcher.ShopPlat, x=>x.ShopPlat)
+                .CheckEqual(Searcher.DistributionID,x=>x.Customer.DistributionID)
+                .DPWhere(LoginUserInfo.DataPrivileges, x => x.Customer.DistributionID)
                 .Select(x => new VOS_Shop_View
                 {
 				    ID = x.ID,
@@ -53,6 +56,7 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
                     ShopName = x.ShopName,
                     ShopPlat = x.ShopPlat,
                     OpenTime = x.OpenTime,
+                    DistributionName_view=x.Customer.Distribution.DistributionName,
                 })
                 .OrderBy(x => x.ID);
             return query;
@@ -63,6 +67,7 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
     public class VOS_Shop_View : VOS_Shop{
         [Display(Name = "客户名称")]
         public String cust_name_view { get; set; }
-
+        [Display(Name = "部门")]
+        public String DistributionName_view { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using WalkingTec.Mvvm.Core;
 
@@ -25,8 +26,13 @@ namespace VOS.Model
         [Required(ErrorMessage = "计划金额不能为空")]
         [RegularExpression(@"(?!^0*(\.0{1,2})?$)^\d{1,13}(\.\d{1,2})?$", ErrorMessage = "请输入正确的计划金额")]
         public string PlanFee { get; set; }
-
         [Display(Name = "备注")]
         public string Remark { get; set; }
+
+        [Display(Name = "组织机构")]
+        public Guid DistributionID { get; set; }
+
+        [Display(Name = "组织机构")]
+        public VOS_Distribution Distribution { get; set; }
     }
 }

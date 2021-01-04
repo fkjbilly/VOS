@@ -69,10 +69,14 @@ namespace VOS.Model
         public string Remark { get; set; }
         [Display(Name ="刷手状态")]
         public state PEstate { get; set; }
-
-
         
         [NotMapped]
         public bool button_show { get; set; }
+
+        [Display(Name = "组织机构")]
+        public Guid DistributionID { get; set; }
+
+        [Display(Name = "组织机构")]
+        public VOS_Distribution Distribution { get; set; }
     }
 }

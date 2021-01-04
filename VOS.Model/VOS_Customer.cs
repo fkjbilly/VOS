@@ -58,5 +58,9 @@ namespace VOS.Model
         public string link_mobile { get; set; }
         [Display(Name = "备注")]
         public string Remark { get; set; }
+        [Display(Name ="组织机构")]
+        public Guid? DistributionID { get; set; }
+        [Display(Name = "组织机构")]
+        public VOS_Distribution Distribution { get; set; }
     }
 }

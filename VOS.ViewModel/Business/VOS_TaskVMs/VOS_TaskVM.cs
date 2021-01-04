@@ -12,7 +12,6 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 {
     public partial class VOS_TaskVM : BaseCRUDVM<VOS_Task>
     {
-        //public VOS_PEmployeeListVM VOS_PEmployeeList { get; set; }
         public List<ComboSelectListItem> AllPlans { get; set; }
         public List<ComboSelectListItem> AllTaskCates { get; set; }
         public List<ComboSelectListItem> AllUnlockers { get; set; }
@@ -23,16 +22,6 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public List<ComboSelectListItem> AllRefunders { get; set; }
 
         #region MyRegion
-        [Display(Name = "姓名")]
-        public String FullName { get; set; }
-        [Display(Name = "联系电话")]
-        public String Mobile { get; set; }
-        [Display(Name = "微信账号")]
-        public String WeChat { get; set; }
-        [Display(Name = "淘宝账号")]
-        public String TaobaAccount { get; set; }
-        [Display(Name = "京东账号")]
-
         public VOS_PEmployeeListVM VOS_PEmployeeListVM { get; set; }
         #endregion
 

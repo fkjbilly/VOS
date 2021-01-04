@@ -49,7 +49,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                     this.MakeGridHeader(x => x.Name),
                     this.MakeGridHeader(x => x.Sex),
                     this.MakeGridHeader(x => x.CellPhone),
-                    this.MakeGridHeader(x => x.IsValid),
+                    this.MakeGridHeader(x => x.DistributionName_view),
                     this.MakeGridHeaderAction(width: 100)
                 };
             }
@@ -64,6 +64,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                     this.MakeGridHeader(x => x.IsValid),
                     this.MakeGridHeader(x => x.RoleName_view),
                     this.MakeGridHeader(x => x.GroupName_view),
+                    this.MakeGridHeader(x => x.DistributionName_view),
                     this.MakeGridHeaderAction(width: 300)
                 };
             }
@@ -84,7 +85,9 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
             var query = DC.Set<VOS_User>()
                     .CheckContain(Searcher.ITCode, x => x.ITCode)
                     .CheckContain(Searcher.Name, x => x.Name)
-                    .CheckContain(Searcher.CellPhone, x => x.CellPhone);
+                    .CheckContain(Searcher.CellPhone, x => x.CellPhone)
+                    .CheckEqual(Searcher.DistributionID, x => x.DistributionID)
+                    .DPWhere(LoginUserInfo.DataPrivileges, x => x.DistributionID);
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
             {
 
@@ -98,7 +101,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
 
             }
             return query.Select(x => new VOS_User_View
-                {
+            {
                 ID = x.ID,
                 ITCode = x.ITCode,
                 Name = x.Name,
@@ -109,7 +112,8 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                 RoleName_view = x.UserRoles.Select(y => y.Role.RoleName).ToSpratedString(null, ","),
                 GroupName_view = x.UserGroups.Select(y => y.Group.GroupName).ToSpratedString(null, ","),
                 CreateTime = x.CreateTime,
-                })
+                DistributionName_view = x.Distribution.DistributionName,
+            })
                 .OrderByDescending(x => x.IsValid).ThenByDescending(x => x.CreateTime);
         }
 
@@ -117,10 +121,12 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
 
     public class VOS_User_View : VOS_User
     {
-        [Display(Name = "RoleName")]
+        [Display(Name = "角色")]
         public String RoleName_view { get; set; }
-        [Display(Name = "GroupName")]
+        [Display(Name = "用户组")]
         public String GroupName_view { get; set; }
+        [Display(Name = "组织机构")]
+        public String DistributionName_view { get; set; }
 
     }
 }

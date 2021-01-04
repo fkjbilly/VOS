@@ -18,6 +18,31 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
             LinkedVM = new VOS_User_BatchEdit();
         }
 
+        public override bool DoBatchDelete()
+        {
+            using (var transaction = DC.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in Ids)
+                    {
+                        var _User = DC.Set<VOS_User>().Where(x => x.ID.ToString().Equals(item)).FirstOrDefault();
+                        _User.IsValid = false;
+                    }
+                    DC.SaveChanges();
+                    transaction.Commit();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return false;
+                }
+            }
+
+            //return base.DoBatchDelete();
+        }
+
     }
 
 	/// <summary>

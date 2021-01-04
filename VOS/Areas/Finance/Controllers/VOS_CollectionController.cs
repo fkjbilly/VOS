@@ -5,18 +5,21 @@ using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
 using VOS.ViewModel.Finance.VOS_CollectionVMs;
+using System.Linq;
+using VOS.Areas.BaseControllers;
 
 namespace VOS.Controllers
 {
     [Area("Finance")]
     [ActionDescription("到账管理")]
-    public partial class VOS_CollectionController : BaseController
+    public partial class VOS_CollectionController : VOS_BaseControllers
     {
         #region Search
         [ActionDescription("Search")]
         public ActionResult Index()
         {
             var vm = CreateVM<VOS_CollectionListVM>();
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 

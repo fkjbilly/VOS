@@ -31,18 +31,26 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public Guid? EmployeeId { get; set; }
         [Display(Name = "刷单单号")]
         public String VOrderCode { get; set; }
-        [Display(Name = "淘宝账号")]
-        public String TBAccount { get; set; }
+        [Display(Name = "任务状态")]
+        public OrderState? OrderState { get; set; }
+
+        [Display(Name = "店铺")]
+        public String ShopName { get; set; }
 
 
         [Display(Name = "执行人")]
         public Guid? ExecutorId { get; set; }
 
+        [Display(Name ="组织机构")]
+        public Guid? DistributionID { get; set; }
+        public List<ComboSelectListItem> AllDistribution { get; set; }
+        
         protected override void InitVM()
         {
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
+            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
         }
 
     }

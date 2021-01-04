@@ -5,18 +5,20 @@ using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
 using VOS.ViewModel.Business.VOS_PlanVMs;
+using VOS.Areas.BaseControllers;
 
 namespace VOS.Controllers
 {
     [Area("Business")]
     [ActionDescription("计划管理")]
-    public partial class VOS_PlanController : BaseController
+    public partial class VOS_PlanController : VOS_BaseControllers
     {
         #region Search
         [ActionDescription("Search")]
         public ActionResult Index()
         {
             var vm = CreateVM<VOS_PlanListVM>();
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 
@@ -42,6 +44,7 @@ namespace VOS.Controllers
         {
             var vm = CreateVM<VOS_PlanVM>();
             vm.Entity.Plan_no = "P" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 
@@ -49,6 +52,10 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create(VOS_PlanVM vm)
         {
+            if (!IsSuperAdministrator)
+            {
+                vm.Entity.DistributionID = GetDistributionID;
+            }
             if (!ModelState.IsValid)
             {
                 return PartialView(vm);
@@ -74,6 +81,7 @@ namespace VOS.Controllers
         public ActionResult Edit(string id)
         {
             var vm = CreateVM<VOS_PlanVM>(id);
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 

@@ -8,8 +8,12 @@
         <wt:textbox field="Searcher.CellPhone" empty-text="手机号" />
         @if (@ViewBag.id == null)
         {
-            <wt:combobox field="Searcher.IsValid" empty-text="@Localizer["All"]" />
+            <wt:combobox field="Searcher.IsValid" default-value="true" empty-text="@Localizer["All"]" />
 
+        }
+        @if (@ViewBag.IsShow == true)
+        {
+            <wt:combobox field="Searcher.DistributionID" items="Searcher.AllDistribution" empty-text="@Localizer["All"]" />
         }
     </wt:row>
 </wt:searchpanel>

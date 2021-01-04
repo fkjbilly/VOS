@@ -2,14 +2,21 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:searchpanel vm="@Model" reset-btn="true">
-<wt:row items-per-row="ItemsPerRowEnum.Three">
-<wt:textbox field="Searcher.FullName" />
-<wt:textbox field="Searcher.Mobile" />
-<wt:textbox field="Searcher.WeChat" />
-<wt:textbox field="Searcher.TaobaAccount" />
-<wt:textbox field="Searcher.JDAccount" />
-<wt:combobox field="Searcher.PEstate" empty-text="@Localizer["All"]" />
-</wt:row>
+    <wt:row items-per-row="ItemsPerRowEnum.Three">
+        <wt:textbox field="Searcher.CreateBy" empty-text="输入创建人" />
+        <wt:datetime field="Searcher.StartTime" />
+        <wt:datetime field="Searcher.EndTime" />
+        <wt:textbox field="Searcher.FullName" empty-text="输入姓名" />
+        <wt:textbox field="Searcher.Mobile" empty-text="输入联系电话" />
+        <wt:textbox field="Searcher.WeChat" empty-text="输入微信账号" />
+        <wt:textbox field="Searcher.TaobaAccount" empty-text="输入淘宝账号" />
+        <wt:textbox field="Searcher.JDAccount" empty-text="输入京东账号" />
+        <wt:combobox field="Searcher.PEstate" empty-text="@Localizer["All"]" />
+        @if (@ViewBag.IsShow == true)
+        {
+            <wt:combobox field="Searcher.DistributionID" items="Searcher.AllDistribution" empty-text="@Localizer["All"]" />
+        }
+    </wt:row>
 </wt:searchpanel>
 <wt:quote>
     <wt:row items-per-row="ItemsPerRowEnum.Three">

@@ -8,18 +8,20 @@ using VOS.ViewModel.Business.VOS_TaskVMs;
 using VOS.Model;
 using VOS.ViewModel.Business.VOS_PEmployeeVMs;
 using System.Linq;
+using VOS.Areas.BaseControllers;
 
 namespace VOS.Controllers
 {
     [Area("Business")]
     [ActionDescription("任务管理")]
-    public partial class VOS_TaskController : BaseController
+    public partial class VOS_TaskController : VOS_BaseControllers
     {
         #region Search
         [ActionDescription("Search")]
         public ActionResult Index()
         {
             var vm = CreateVM<VOS_TaskListVM>();
+            ViewBag.IsShow = IsSuperAdministrator;
             vm.SearcherMode = ListVMSearchModeEnum.Custom2;
             return PartialView(vm);
         }
@@ -339,19 +341,26 @@ namespace VOS.Controllers
         #region ResetBrushHand 重新派单
         [ActionDescription("重新派单")]
         [HttpPost]
+        [Public]
         public ActionResult ResetBrushHand(Guid ID)
         {
-            var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
-            vOS_Task.EmployeeId = null;
-            vOS_Task.OrderState = OrderState.已分配;
-            if (DC.SaveChanges() > 0)
-                return Json(true);
-            else
+            try
+            {
+                var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
+                vOS_Task.EmployeeId = null;
+                vOS_Task.OrderState = OrderState.已分配;
+                if (DC.SaveChanges() > 0)
+                    return Json(true);
+                else
+                    return Json(false);
+            }
+            catch (Exception)
+            {
                 return Json(false);
+            }
 
         }
         #endregion
-
         [ActionDescription("Export")]
         [HttpPost]
         public IActionResult ExportExcel(VOS_TaskListVM vm)

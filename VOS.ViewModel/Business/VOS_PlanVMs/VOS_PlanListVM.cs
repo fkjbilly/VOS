@@ -36,6 +36,8 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
                 this.MakeGridHeader(x => x.PlanSatrtTime),
                 this.MakeGridHeader(x => x.PlanEndTime),
                 this.MakeGridHeader(x => x.PlanFee),
+                this.MakeGridHeader(x => x.ShopName_view),
+                this.MakeGridHeader(x => x.DistributionName_view),
                 this.MakeGridHeader(x => x.Remark),
                 this.MakeGridHeaderAction(width: 200)
             };
@@ -44,18 +46,22 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
         public override IOrderedQueryable<VOS_Plan_View> GetSearchQuery()
         {
             var query = DC.Set<VOS_Plan>()
-                .CheckContain(Searcher.Plan_no, x=>x.Plan_no)
-                .CheckEqual(Searcher.ShopnameId, x=>x.ShopnameId)
+                .CheckContain(Searcher.Plan_no, x => x.Plan_no)
+                .CheckContain(Searcher.ShopName, x => x.Shopname.ShopName)
+                .CheckEqual(Searcher.DistributionID, x => x.DistributionID)
                 .CheckBetween(Searcher.PlanSatrtTime?.GetStartTime(), Searcher.PlanSatrtTime?.GetEndTime(), x => x.PlanSatrtTime, includeMax: false)
                 .CheckBetween(Searcher.PlanEndTime?.GetStartTime(), Searcher.PlanEndTime?.GetEndTime(), x => x.PlanEndTime, includeMax: false)
+                .DPWhere(LoginUserInfo.DataPrivileges, x => x.DistributionID)
                 .Select(x => new VOS_Plan_View
                 {
-				    ID = x.ID,
+                    ID = x.ID,
                     Plan_no = x.Plan_no,
                     PlanSatrtTime = x.PlanSatrtTime,
                     PlanEndTime = x.PlanEndTime,
                     PlanFee = x.PlanFee,
                     Remark = x.Remark,
+                    ShopName_view = x.Shopname.ShopName,
+                    DistributionName_view=x.Distribution.DistributionName,
                 })
                 .OrderBy(x => x.ID);
             return query;
@@ -63,7 +69,12 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
 
     }
 
-    public class VOS_Plan_View : VOS_Plan{
+    public class VOS_Plan_View : VOS_Plan
+    {
+        [Display(Name = "店铺名称")]
+        public String ShopName_view { get; set; }
 
+        [Display(Name = "部门")]
+        public String DistributionName_view { get; set; }
     }
 }

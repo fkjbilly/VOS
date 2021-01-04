@@ -24,9 +24,20 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         public String JDAccount { get; set; }
         [Display(Name = "刷手状态")]
         public state? PEstate { get; set; }
+        [Display(Name ="创建人")]
+        public string CreateBy { get; set; }
+        [Display(Name ="开始时间")]
+        public DateTime? StartTime { get; set; }
+        [Display(Name ="结束时间")]
+        public DateTime? EndTime { get; set; }
+
+        public List<ComboSelectListItem> AllDistribution { get; set; }
+        [Display(Name = "组织机构")]
+        public Guid? DistributionID { get; set; }
 
         protected override void InitVM()
         {
+            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
         }
 
     }

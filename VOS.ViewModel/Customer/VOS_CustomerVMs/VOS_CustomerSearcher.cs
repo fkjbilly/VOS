@@ -25,9 +25,13 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
         public String link_name { get; set; }
         [Display(Name = "手机")]
         public String link_mobile { get; set; }
+        [Display(Name ="组织机构")]
+        public String DistributionID { get; set; }
+        public List<ComboSelectListItem> AllDistribution { get; set; }
 
         protected override void InitVM()
         {
+            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
             Allcust_regions = DC.Set<City>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
         }
 

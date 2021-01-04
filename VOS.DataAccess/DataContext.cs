@@ -21,6 +21,8 @@ namespace VOS.DataAccess
         public DbSet<VOS_Rule> VOS_Rules { get; set; }
 
         public DbSet<VOS_User> VOS_User { get; set; }
+
+        public DbSet<VOS_Distribution> VOS_Distribution { get; set; }
         public DataContext(CS cs)
              : base(cs)
         {

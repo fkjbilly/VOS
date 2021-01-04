@@ -12,7 +12,10 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
 {
     public partial class VOS_PlanVM : BaseCRUDVM<VOS_Plan>
     {
+        
         public List<ComboSelectListItem> AllShopnames { get; set; }
+
+        public List<ComboSelectListItem> AllDistribution { get; set; }
 
         public VOS_PlanVM()
         {
@@ -22,6 +25,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
         protected override void InitVM()
         {
             AllShopnames = DC.Set<VOS_Shop>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
+            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
         }
 
         public override void DoAdd()

@@ -90,7 +90,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
             else
             {
                 return new List<GridColumn<VOS_PEmployee_View>>{
-                this.MakeGridHeader(x => x.Name_view),
+                //this.MakeGridHeader(x => x.Name_view),
                 this.MakeGridHeader(x => x.FullName),
                 this.MakeGridHeader(x => x.WeChat),
                 this.MakeGridHeader(x => x.TaobaAccount),
@@ -112,6 +112,9 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 }).SetForeGroundFunc((x)=>{
                     return "#FFFFFF";
                 }),
+                this.MakeGridHeader(x => x.CreateBy),
+                this.MakeGridHeader(x => x.CreateTime),
+                this.MakeGridHeader(x => x.DistributionName_view),
                 this.MakeGridHeaderAction(width: 200)
             };
 
@@ -153,10 +156,15 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                    .CheckContain(Searcher.WeChat, x => x.WeChat)
                    .CheckContain(Searcher.TaobaAccount, x => x.TaobaAccount)
                    .CheckContain(Searcher.JDAccount, x => x.JDAccount)
-                   .CheckEqual(Searcher.PEstate, x => x.PEstate);
+                   .CheckEqual(Searcher.PEstate, x => x.PEstate)
+                   .CheckContain(Searcher.CreateBy, x => x.CreateBy)
+                   .CheckEqual(Searcher.DistributionID, x => x.DistributionID)
+                   .CheckBetween(Searcher.StartTime, Searcher.EndTime, x => x.CreateTime, includeMax: false)
+                   .DPWhere(LoginUserInfo.DataPrivileges, x => x.DistributionID);
             #endregion
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
             {
+                query = query.Where(x => x.PEstate == state.正常);
                 var _Task_EmployeeId = DC.Set<VOS_Task>().Where(x => x.ID.ToString().Equals(MemoryCacheHelper.Set_TaskID)).FirstOrDefault().EmployeeId;
                 if (_Task_EmployeeId != null)
                 {
@@ -245,6 +253,16 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 }
 
             }
+            else
+            {
+                const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
+                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+                if (list.IndexOf(b.RoleName) < 0)
+                {
+                    query = query.Where(x => x.CreateBy.Equals(LoginUserInfo.ITCode));
+                }
+            }
             return query.Select(x => new VOS_PEmployee_View
             {
                 ID = x.ID,
@@ -258,7 +276,10 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 WeChatRealNamePicId = x.WeChatRealNamePicId,
                 PEstate = x.PEstate,
                 button_show = button_show,
-            }).OrderBy(x => x.ID);
+                CreateBy = x.CreateBy,
+                CreateTime = x.CreateTime,
+                DistributionName_view = x.Distribution.DistributionName,
+            }).OrderByDescending(x => x.CreateTime);
         }
         private object RuleCaches()
         {
@@ -280,6 +301,9 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
     {
         [Display(Name = "名称")]
         public String Name_view { get; set; }
+
+        [Display(Name = "部门")]
+        public String DistributionName_view { get; set; }
 
     }
 }

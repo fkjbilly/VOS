@@ -3,11 +3,15 @@
 
 <wt:form vm="@Model">
     <wt:row items-per-row="ItemsPerRowEnum.Two">
-        <wt:textbox field="Entity.ITCode" empty-text="后期不可更改用户名"/>
+        @if (@ViewBag.IsShow == true)
+        {
+            <wt:combobox field="Entity.DistributionID" items="AllDistribution" empty-text="@Localizer["All"]" />
+        }
+        <wt:textbox field="Entity.ITCode" empty-text="后期不可更改用户名" />
         <wt:textbox field="Entity.Password" empty-text="密码必填" is-password="true" />
         <wt:textbox field="Entity.Email" />
         <wt:textbox field="Entity.Name" empty-text="姓名必填" />
-        <wt:radio field="Entity.Sex" default-value="0"/>
+        <wt:radio field="Entity.Sex" default-value="0" />
         <wt:textbox field="Entity.CellPhone" />
         <wt:textbox field="Entity.HomePhone" />
         <wt:textbox field="Entity.Address" />

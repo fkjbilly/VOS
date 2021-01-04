@@ -7,12 +7,13 @@ using WalkingTec.Mvvm.Core.Extensions;
 using VOS.ViewModel.Business.VOS_UserVMs;
 using VOS.Model;
 using System.Linq;
+using VOS.Areas.BaseControllers;
 
 namespace VOS.Controllers
 {
     [Area("Business")]
     [ActionDescription("新用户管理")]
-    public partial class VOS_UserController : BaseController
+    public partial class VOS_UserController : VOS_BaseControllers
     {
         #region Search
         [ActionDescription("Search")]
@@ -24,6 +25,7 @@ namespace VOS.Controllers
                 ViewBag.id = string.Join(',', IDs);
                 vm.SearcherMode = ListVMSearchModeEnum.Custom1;
             }
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 
@@ -48,6 +50,7 @@ namespace VOS.Controllers
         public ActionResult Create()
         {
             var vm = CreateVM<VOS_UserVM>();
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 
@@ -56,6 +59,9 @@ namespace VOS.Controllers
         public ActionResult Create(VOS_UserVM vm)
         {
             vm.Entity.IsValid = true;
+            if (!IsSuperAdministrator) {
+                vm.Entity.DistributionID = GetDistributionID;
+            }
             if (!ModelState.IsValid)
             {
                 return PartialView(vm);
@@ -81,6 +87,7 @@ namespace VOS.Controllers
         public ActionResult Edit(string id)
         {
             var vm = CreateVM<VOS_UserVM>(id);
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 
@@ -225,15 +232,21 @@ namespace VOS.Controllers
         [HttpPost]
         public ActionResult EditPassword1(VOS_UserVM vm)
         {
-            var _User = DC.Set<VOS_User>().Where(x => x.ID == vm.Entity.ID).SingleOrDefault();
-            _User.Password = Utils.GetMD5String(vm.Entity.Password);
-            DC.Set<VOS_User>().Update(_User).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            DC.SaveChanges();
-            return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID);
+            try
+            {
+                var _User = DC.Set<VOS_User>().Where(x => x.ID == vm.Entity.ID).SingleOrDefault();
+                _User.Password = Utils.GetMD5String(vm.Entity.Password);
+                DC.Set<VOS_User>().Update(_User).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                DC.SaveChanges();
+                return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID);
+            }
+            catch (Exception)
+            {
+                return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID).Alert("修改密码失败");
+            }        
         }
 
         #endregion
-
         [ActionDescription("Export")]
         [HttpPost]
         public IActionResult ExportExcel(VOS_UserListVM vm)

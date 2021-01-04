@@ -1,22 +1,23 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
 using VOS.ViewModel.Customer.VOS_ShopVMs;
+using VOS.Areas.BaseControllers;
 
 namespace VOS.Controllers
 {
     [Area("Customer")]
     [ActionDescription("店铺管理")]
-    public partial class VOS_ShopController : BaseController
+    public partial class VOS_ShopController : VOS_BaseControllers
     {
         #region Search
         [ActionDescription("Search")]
         public ActionResult Index()
         {
             var vm = CreateVM<VOS_ShopListVM>();
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
 
