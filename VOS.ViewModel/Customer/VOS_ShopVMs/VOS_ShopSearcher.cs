@@ -20,13 +20,13 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
         [Display(Name = "所属平台")]
         public Plat? ShopPlat { get; set; }
         [Display(Name ="组织机构")]
-        public Guid? DistributionID { get; set; }
-        public List<ComboSelectListItem> AllDistribution { get; set; }
+        public Guid? OrganizationID { get; set; }
+        public List<ComboSelectListItem> AllOrganization { get; set; }
 
         protected override void InitVM()
         {
             AllCustomers = DC.Set<VOS_Customer>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.cust_name);
-            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 
     }

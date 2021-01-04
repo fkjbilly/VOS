@@ -42,15 +42,15 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public Guid? ExecutorId { get; set; }
 
         [Display(Name ="组织机构")]
-        public Guid? DistributionID { get; set; }
-        public List<ComboSelectListItem> AllDistribution { get; set; }
+        public Guid? OrganizationID { get; set; }
+        public List<ComboSelectListItem> AllOrganization { get; set; }
         
         protected override void InitVM()
         {
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
-            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 
     }

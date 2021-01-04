@@ -8,12 +8,12 @@ using WalkingTec.Mvvm.Core.Extensions;
 using VOS.Model;
 
 
-namespace VOS.ViewModel.BasicData.VOS_DistributionVMs
+namespace VOS.ViewModel.BasicData.VOS_OrganizationVMs
 {
-    public partial class VOS_DistributionSearcher : BaseSearcher
+    public partial class VOS_OrganizationSearcher : BaseSearcher
     {
         [Display(Name = "组织机构")]
-        public String DistributionName { get; set; }
+        public String OrganizationName { get; set; }
 
         protected override void InitVM()
         {

@@ -37,7 +37,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
                 this.MakeGridHeader(x => x.PlanEndTime),
                 this.MakeGridHeader(x => x.PlanFee),
                 this.MakeGridHeader(x => x.ShopName_view),
-                this.MakeGridHeader(x => x.DistributionName_view),
+                this.MakeGridHeader(x => x.OrganizationName_view),
                 this.MakeGridHeader(x => x.Remark),
                 this.MakeGridHeaderAction(width: 200)
             };
@@ -48,10 +48,10 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
             var query = DC.Set<VOS_Plan>()
                 .CheckContain(Searcher.Plan_no, x => x.Plan_no)
                 .CheckContain(Searcher.ShopName, x => x.Shopname.ShopName)
-                .CheckEqual(Searcher.DistributionID, x => x.DistributionID)
+                .CheckEqual(Searcher.OrganizationID, x => x.OrganizationID)
                 .CheckBetween(Searcher.PlanSatrtTime?.GetStartTime(), Searcher.PlanSatrtTime?.GetEndTime(), x => x.PlanSatrtTime, includeMax: false)
                 .CheckBetween(Searcher.PlanEndTime?.GetStartTime(), Searcher.PlanEndTime?.GetEndTime(), x => x.PlanEndTime, includeMax: false)
-                .DPWhere(LoginUserInfo.DataPrivileges, x => x.DistributionID)
+                .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID)
                 .Select(x => new VOS_Plan_View
                 {
                     ID = x.ID,
@@ -61,7 +61,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
                     PlanFee = x.PlanFee,
                     Remark = x.Remark,
                     ShopName_view = x.Shopname.ShopName,
-                    DistributionName_view=x.Distribution.DistributionName,
+                    OrganizationName_view = x.Organization.OrganizationName,
                 })
                 .OrderBy(x => x.ID);
             return query;
@@ -74,7 +74,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
         [Display(Name = "店铺名称")]
         public String ShopName_view { get; set; }
 
-        [Display(Name = "部门")]
-        public String DistributionName_view { get; set; }
+        [Display(Name = "组织机构")]
+        public String OrganizationName_view { get; set; }
     }
 }

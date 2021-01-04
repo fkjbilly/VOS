@@ -8,12 +8,12 @@ using WalkingTec.Mvvm.Core.Extensions;
 using VOS.Model;
 
 
-namespace VOS.ViewModel.BasicData.VOS_DistributionVMs
+namespace VOS.ViewModel.BasicData.VOS_OrganizationVMs
 {
-    public partial class VOS_DistributionTemplateVM : BaseTemplateVM
+    public partial class VOS_OrganizationTemplateVM : BaseTemplateVM
     {
         [Display(Name = "组织机构")]
-        public ExcelPropety DistributionName_Excel = ExcelPropety.CreateProperty<VOS_Distribution>(x => x.DistributionName);
+        public ExcelPropety OrganizationName_Excel = ExcelPropety.CreateProperty<VOS_Organization>(x => x.OrganizationName);
 
 	    protected override void InitVM()
         {
@@ -21,7 +21,7 @@ namespace VOS.ViewModel.BasicData.VOS_DistributionVMs
 
     }
 
-    public class VOS_DistributionImportVM : BaseImportVM<VOS_DistributionTemplateVM, VOS_Distribution>
+    public class VOS_OrganizationImportVM : BaseImportVM<VOS_OrganizationTemplateVM, VOS_Organization>
     {
 
     }

@@ -38,7 +38,7 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
                 this.MakeGridHeader(x => x.cust_flag),
                 this.MakeGridHeader(x => x.link_name),
                 this.MakeGridHeader(x => x.link_mobile),
-                this.MakeGridHeader(x => x.DistributionName_view),
+                this.MakeGridHeader(x => x.OrganizationName_view),
                 this.MakeGridHeaderAction(width: 200)
             };
         }
@@ -52,7 +52,8 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
                 .CheckEqual(Searcher.cust_flag, x=>x.cust_flag)
                 .CheckContain(Searcher.link_name, x=>x.link_name)
                 .CheckContain(Searcher.link_mobile, x=>x.link_mobile)
-                .DPWhere(LoginUserInfo.DataPrivileges, x => x.DistributionID)
+                .CheckEqual(Searcher.OrganizationID,x=>x.OrganizationID)
+                .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID)
                 .Select(x => new VOS_Customer_View
                 {
 				    ID = x.ID,
@@ -62,7 +63,7 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
                     cust_flag = x.cust_flag,
                     link_name = x.link_name,
                     link_mobile = x.link_mobile,
-                    DistributionName_view = x.Distribution.DistributionName,
+                    OrganizationName_view = x.Organization.OrganizationName,
                 })
                 .OrderBy(x => x.ID);
             return query;
@@ -72,6 +73,6 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
 
     public class VOS_Customer_View : VOS_Customer{
         [Display(Name = "部门")]
-        public String DistributionName_view { get; set; }
+        public String OrganizationName_view { get; set; }
     }
 }

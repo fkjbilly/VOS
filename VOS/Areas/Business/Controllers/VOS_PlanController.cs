@@ -54,7 +54,7 @@ namespace VOS.Controllers
         {
             if (!IsSuperAdministrator)
             {
-                vm.Entity.DistributionID = GetDistributionID;
+                vm.Entity.OrganizationID = GetOrganizationID;
             }
             if (!ModelState.IsValid)
             {

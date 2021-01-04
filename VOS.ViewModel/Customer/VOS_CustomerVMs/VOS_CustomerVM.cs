@@ -17,7 +17,7 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
 
         public List<ComboSelectListItem> AllShi { get; set; }
         public List<ComboSelectListItem> AllQu { get; set; }
-        public List<ComboSelectListItem> AllDistribution { get; set; }
+        public List<ComboSelectListItem> AllOrganization { get; set; }
 
         public Guid? ShengId { get; set; }
         public Guid? ShiId { get; set; }
@@ -39,7 +39,7 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
                 AllQu = DC.Set<City>().Where(x => x.ParentId == ShiId).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
                 AllShi = DC.Set<City>().Where(x => x.ParentId == ShengId).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
             }
-            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
             citys = new CityListVM();
             citys.CopyContext(this);
         }

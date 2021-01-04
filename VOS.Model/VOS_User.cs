@@ -11,9 +11,9 @@ namespace VOS.Model
     public class VOS_User : FrameworkUserBase
     {
         [Display(Name = "组织机构")]
-        public Guid DistributionID { get; set; }
+        public Guid OrganizationID { get; set; }
 
         [Display(Name = "组织机构")]
-        public VOS_Distribution Distribution { get; set; }
+        public VOS_Organization Organization { get; set; }
     }
 }

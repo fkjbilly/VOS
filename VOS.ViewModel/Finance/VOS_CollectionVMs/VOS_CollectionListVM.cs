@@ -35,7 +35,7 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
                 this.MakeGridHeader(x => x.Plan_no_view),
                 this.MakeGridHeader(x => x.Collection),
                 this.MakeGridHeader(x => x.Remarks),
-                this.MakeGridHeader(x => x.DistributionName_view),
+                this.MakeGridHeader(x => x.OrganizationName_view),
                 this.MakeGridHeaderAction(width: 200)
             };
         }
@@ -44,15 +44,15 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
         {
             var query = DC.Set<VOS_Collection>()
                 .CheckEqual(Searcher.Plan_noId, x=>x.Plan_noId)
-                .CheckEqual(Searcher.DistributionID,x=>x.Plan_no.DistributionID)
-                .DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan_no.DistributionID)
+                .CheckEqual(Searcher.OrganizationID, x=>x.Plan_no.OrganizationID)
+                .DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan_no.OrganizationID)
                 .Select(x => new VOS_Collection_View
                 {
 				    ID = x.ID,
                     Plan_no_view = x.Plan_no.Plan_no,
                     Collection = x.Collection,
                     Remarks = x.Remarks,
-                    DistributionName_view =x.Plan_no.Distribution.DistributionName,
+                    OrganizationName_view = x.Plan_no.Organization.OrganizationName,
                 })
                 .OrderBy(x => x.ID);
             return query;
@@ -65,7 +65,7 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
         public String Plan_no_view { get; set; }
 
         [Display(Name ="组织机构")]
-        public String DistributionName_view { get; set; }
+        public String OrganizationName_view { get; set; }
 
     }
 }

@@ -150,8 +150,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
                 .CheckEqual(Searcher.OrderState, x => x.OrderState)
                 .CheckEqual(Searcher.ShopName, x => x.Plan.Shopname.ShopName)
-                .CheckEqual(Searcher.DistributionID,x=>x.Plan.DistributionID)
-                //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.DistributionID)
+                //.CheckEqual(Searcher.OrganizationID, x=>x.Plan.OrganizationID)
+                //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID)
                 .Where(x => x.IsValid == true);
             #endregion
 

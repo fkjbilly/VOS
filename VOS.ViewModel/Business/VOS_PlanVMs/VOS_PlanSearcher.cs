@@ -22,13 +22,13 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
         [Display(Name = "结束时间")]
         public DateRange PlanEndTime { get; set; }
 
-        public List<ComboSelectListItem> AllDistribution { get; set; }
+        public List<ComboSelectListItem> AllOrganization { get; set; }
         [Display(Name = "组织机构")]
-        public Guid? DistributionID { get; set; }
+        public Guid? OrganizationID { get; set; }
 
         protected override void InitVM()
         {
-            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
             //AllShopnames = DC.Set<VOS_Shop>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
         }
 

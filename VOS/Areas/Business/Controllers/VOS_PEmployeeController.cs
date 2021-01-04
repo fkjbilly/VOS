@@ -52,7 +52,7 @@ namespace VOS.Controllers
         public ActionResult Create(VOS_PEmployeeVM vm)
         {
             if (!IsSuperAdministrator) {
-                vm.Entity.DistributionID = GetDistributionID;
+                vm.Entity.OrganizationID = GetOrganizationID;
             }
             vm.Entity.CreateBy = LoginUserInfo.ITCode.ToString();
             if (!ModelState.IsValid)

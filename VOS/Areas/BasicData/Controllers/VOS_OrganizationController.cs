@@ -4,25 +4,25 @@ using System;
 using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
-using VOS.ViewModel.BasicData.VOS_DistributionVMs;
+using VOS.ViewModel.BasicData.VOS_OrganizationVMs;
 
 namespace VOS.Controllers
 {
     [Area("BasicData")]
-    [ActionDescription("部门管理")]
-    public partial class VOS_DistributionController : BaseController
+    [ActionDescription("组织机构")]
+    public partial class VOS_OrganizationController : BaseController
     {
         #region Search
         [ActionDescription("Search")]
         public ActionResult Index()
         {
-            var vm = CreateVM<VOS_DistributionListVM>();
+            var vm = CreateVM<VOS_OrganizationListVM>();
             return PartialView(vm);
         }
 
         [ActionDescription("Search")]
         [HttpPost]
-        public string Search(VOS_DistributionListVM vm)
+        public string Search(VOS_OrganizationListVM vm)
         {
             if (ModelState.IsValid)
             {
@@ -40,13 +40,13 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create()
         {
-            var vm = CreateVM<VOS_DistributionVM>();
+            var vm = CreateVM<VOS_OrganizationVM>();
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("Create")]
-        public ActionResult Create(VOS_DistributionVM vm)
+        public ActionResult Create(VOS_OrganizationVM vm)
         {
             if (!ModelState.IsValid)
             {
@@ -72,14 +72,14 @@ namespace VOS.Controllers
         [ActionDescription("Edit")]
         public ActionResult Edit(string id)
         {
-            var vm = CreateVM<VOS_DistributionVM>(id);
+            var vm = CreateVM<VOS_OrganizationVM>(id);
             return PartialView(vm);
         }
 
         [ActionDescription("Edit")]
         [HttpPost]
         [ValidateFormItemOnly]
-        public ActionResult Edit(VOS_DistributionVM vm)
+        public ActionResult Edit(VOS_OrganizationVM vm)
         {
             if (!ModelState.IsValid)
             {
@@ -105,7 +105,7 @@ namespace VOS.Controllers
         [ActionDescription("Delete")]
         public ActionResult Delete(string id)
         {
-            var vm = CreateVM<VOS_DistributionVM>(id);
+            var vm = CreateVM<VOS_OrganizationVM>(id);
             return PartialView(vm);
         }
 
@@ -113,7 +113,7 @@ namespace VOS.Controllers
         [HttpPost]
         public ActionResult Delete(string id, IFormCollection nouse)
         {
-            var vm = CreateVM<VOS_DistributionVM>(id);
+            var vm = CreateVM<VOS_OrganizationVM>(id);
             vm.DoDelete();
             if (!ModelState.IsValid)
             {
@@ -130,7 +130,7 @@ namespace VOS.Controllers
         [ActionDescription("Details")]
         public ActionResult Details(string id)
         {
-            var vm = CreateVM<VOS_DistributionVM>(id);
+            var vm = CreateVM<VOS_OrganizationVM>(id);
             return PartialView(vm);
         }
         #endregion
@@ -140,13 +140,13 @@ namespace VOS.Controllers
         [ActionDescription("BatchEdit")]
         public ActionResult BatchEdit(string[] IDs)
         {
-            var vm = CreateVM<VOS_DistributionBatchVM>(Ids: IDs);
+            var vm = CreateVM<VOS_OrganizationBatchVM>(Ids: IDs);
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("BatchEdit")]
-        public ActionResult DoBatchEdit(VOS_DistributionBatchVM vm, IFormCollection nouse)
+        public ActionResult DoBatchEdit(VOS_OrganizationBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchEdit())
             {
@@ -164,13 +164,13 @@ namespace VOS.Controllers
         [ActionDescription("BatchDelete")]
         public ActionResult BatchDelete(string[] IDs)
         {
-            var vm = CreateVM<VOS_DistributionBatchVM>(Ids: IDs);
+            var vm = CreateVM<VOS_OrganizationBatchVM>(Ids: IDs);
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("BatchDelete")]
-        public ActionResult DoBatchDelete(VOS_DistributionBatchVM vm, IFormCollection nouse)
+        public ActionResult DoBatchDelete(VOS_OrganizationBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchDelete())
             {
@@ -187,13 +187,13 @@ namespace VOS.Controllers
 		[ActionDescription("Import")]
         public ActionResult Import()
         {
-            var vm = CreateVM<VOS_DistributionImportVM>();
+            var vm = CreateVM<VOS_OrganizationImportVM>();
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("Import")]
-        public ActionResult Import(VOS_DistributionImportVM vm, IFormCollection nouse)
+        public ActionResult Import(VOS_OrganizationImportVM vm, IFormCollection nouse)
         {
             if (vm.ErrorListVM.EntityList.Count > 0 || !vm.BatchSaveData())
             {
@@ -208,7 +208,7 @@ namespace VOS.Controllers
 
         [ActionDescription("Export")]
         [HttpPost]
-        public IActionResult ExportExcel(VOS_DistributionListVM vm)
+        public IActionResult ExportExcel(VOS_OrganizationListVM vm)
         {
             return vm.GetExportData();
         }

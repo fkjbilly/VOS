@@ -5,7 +5,7 @@
     <wt:row items-per-row="ItemsPerRowEnum.Two">
         @if (@ViewBag.IsShow == true)
         {
-            <wt:combobox field="Entity.DistributionID" items="AllDistribution" empty-text="@Localizer["All"]" />
+            <wt:combobox field="Entity.OrganizationID" items="AllOrganization" empty-text="@Localizer["All"]" />
         }
         <wt:textbox field="Entity.ITCode" empty-text="后期不可更改用户名" />
         <wt:textbox field="Entity.Password" empty-text="密码必填" is-password="true" />

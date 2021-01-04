@@ -43,7 +43,7 @@ namespace VOS
                     {
                         var pris = new List<IDataPrivilege>
                         {
-                            new DataPrivilegeInfo<VOS_Distribution>("部门", y => y.DistributionName),
+                            new DataPrivilegeInfo<VOS_Organization>("部门", y => y.OrganizationName),
                         };
                         x.AddFrameworkService(dataPrivilegeSettings: pris);
                         //x.AddFrameworkService();

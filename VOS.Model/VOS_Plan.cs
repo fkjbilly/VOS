@@ -30,9 +30,9 @@ namespace VOS.Model
         public string Remark { get; set; }
 
         [Display(Name = "组织机构")]
-        public Guid DistributionID { get; set; }
+        public Guid OrganizationID { get; set; }
 
         [Display(Name = "组织机构")]
-        public VOS_Distribution Distribution { get; set; }
+        public VOS_Organization Organization { get; set; }
     }
 }

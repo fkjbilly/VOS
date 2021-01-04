@@ -20,7 +20,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
         [Display(Name = "用户组")]
         public List<Guid> SelectedUserGroupsIDs { get; set; }
 
-        public List<ComboSelectListItem> AllDistribution { get; set; }
+        public List<ComboSelectListItem> AllOrganization { get; set; }
         public VOS_UserVM()
         {
             SetInclude(x => x.UserRoles);
@@ -29,7 +29,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
 
         protected override void InitVM()
         {
-            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
             AllUserRoless = DC.Set<FrameworkRole>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.RoleName);
             SelectedUserRolesIDs = Entity.UserRoles?.Select(x => x.RoleId).ToList();
             AllUserGroupss = DC.Set<FrameworkGroup>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.GroupName);

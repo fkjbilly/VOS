@@ -8,12 +8,12 @@ using WalkingTec.Mvvm.Core.Extensions;
 using VOS.Model;
 
 
-namespace VOS.ViewModel.BasicData.VOS_DistributionVMs
+namespace VOS.ViewModel.BasicData.VOS_OrganizationVMs
 {
-    public partial class VOS_DistributionVM : BaseCRUDVM<VOS_Distribution>
+    public partial class VOS_OrganizationVM : BaseCRUDVM<VOS_Organization>
     {
 
-        public VOS_DistributionVM()
+        public VOS_OrganizationVM()
         {
         }
 

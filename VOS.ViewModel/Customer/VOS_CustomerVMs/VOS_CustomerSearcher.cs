@@ -26,12 +26,12 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
         [Display(Name = "手机")]
         public String link_mobile { get; set; }
         [Display(Name ="组织机构")]
-        public String DistributionID { get; set; }
-        public List<ComboSelectListItem> AllDistribution { get; set; }
+        public Guid? OrganizationID { get; set; }
+        public List<ComboSelectListItem> AllOrganization { get; set; }
 
         protected override void InitVM()
         {
-            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
             Allcust_regions = DC.Set<City>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
         }
 

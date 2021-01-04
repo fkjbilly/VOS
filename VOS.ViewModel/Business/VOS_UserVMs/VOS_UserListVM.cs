@@ -86,8 +86,8 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                     .CheckContain(Searcher.ITCode, x => x.ITCode)
                     .CheckContain(Searcher.Name, x => x.Name)
                     .CheckContain(Searcher.CellPhone, x => x.CellPhone)
-                    .CheckEqual(Searcher.DistributionID, x => x.DistributionID)
-                    .DPWhere(LoginUserInfo.DataPrivileges, x => x.DistributionID);
+                    .CheckEqual(Searcher.OrganizationID.ToString(), x => x.OrganizationID.ToString())
+                    .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID);
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
             {
 
@@ -112,7 +112,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                 RoleName_view = x.UserRoles.Select(y => y.Role.RoleName).ToSpratedString(null, ","),
                 GroupName_view = x.UserGroups.Select(y => y.Group.GroupName).ToSpratedString(null, ","),
                 CreateTime = x.CreateTime,
-                DistributionName_view = x.Distribution.DistributionName,
+                DistributionName_view = x.Organization.OrganizationName,
             })
                 .OrderByDescending(x => x.IsValid).ThenByDescending(x => x.CreateTime);
         }

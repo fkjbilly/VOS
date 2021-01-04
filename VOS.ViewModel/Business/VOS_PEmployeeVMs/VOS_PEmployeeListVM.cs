@@ -114,7 +114,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 }),
                 this.MakeGridHeader(x => x.CreateBy),
                 this.MakeGridHeader(x => x.CreateTime),
-                this.MakeGridHeader(x => x.DistributionName_view),
+                this.MakeGridHeader(x => x.OrganizationName_view),
                 this.MakeGridHeaderAction(width: 200)
             };
 
@@ -158,9 +158,9 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                    .CheckContain(Searcher.JDAccount, x => x.JDAccount)
                    .CheckEqual(Searcher.PEstate, x => x.PEstate)
                    .CheckContain(Searcher.CreateBy, x => x.CreateBy)
-                   .CheckEqual(Searcher.DistributionID, x => x.DistributionID)
+                   .CheckEqual(Searcher.OrganizationID, x => x.OrganizationID)
                    .CheckBetween(Searcher.StartTime, Searcher.EndTime, x => x.CreateTime, includeMax: false)
-                   .DPWhere(LoginUserInfo.DataPrivileges, x => x.DistributionID);
+                   .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID);
             #endregion
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
             {
@@ -278,7 +278,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 button_show = button_show,
                 CreateBy = x.CreateBy,
                 CreateTime = x.CreateTime,
-                DistributionName_view = x.Distribution.DistributionName,
+                OrganizationName_view = x.Organization.OrganizationName,
             }).OrderByDescending(x => x.CreateTime);
         }
         private object RuleCaches()
@@ -302,8 +302,8 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         [Display(Name = "名称")]
         public String Name_view { get; set; }
 
-        [Display(Name = "部门")]
-        public String DistributionName_view { get; set; }
+        [Display(Name = "组织机构")]
+        public String OrganizationName_view { get; set; }
 
     }
 }

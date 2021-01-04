@@ -34,11 +34,11 @@ namespace VOS.Areas.BaseControllers
         /// <summary>
         /// 当前登录人(组织机构)ID
         /// </summary>
-        public Guid GetDistributionID
+        public Guid GetOrganizationID
         {
             get
             {
-                return DC.Set<VOS_User>().Where(x => x.ID.Equals(LoginUserInfo.Id)).FirstOrDefault().DistributionID;
+                return DC.Set<VOS_User>().Where(x => x.ID.Equals(LoginUserInfo.Id)).FirstOrDefault().OrganizationID;
             }
         }
     }

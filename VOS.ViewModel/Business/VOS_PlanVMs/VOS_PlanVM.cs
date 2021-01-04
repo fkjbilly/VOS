@@ -15,7 +15,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
         
         public List<ComboSelectListItem> AllShopnames { get; set; }
 
-        public List<ComboSelectListItem> AllDistribution { get; set; }
+        public List<ComboSelectListItem> AllOrganization { get; set; }
 
         public VOS_PlanVM()
         {
@@ -25,7 +25,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
         protected override void InitVM()
         {
             AllShopnames = DC.Set<VOS_Shop>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
-            AllDistribution = DC.Set<VOS_Distribution>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.DistributionName);
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 
         public override void DoAdd()
