@@ -8,6 +8,10 @@
         <wt:textbox field="Searcher.TaobaAccount" />
         <wt:textbox field="Searcher.JDAccount" />
         <wt:combobox field="Searcher.PEstate" />
+        @if (@ViewBag.IsShow == true)
+        {
+            <wt:combobox field="Searcher.OrganizationID" items="Searcher.AllOrganization" empty-text="@Localizer["All"]" />
+        }
     </wt:row>
 </wt:searchpanel>
 <input type="hidden" id="rwid" value="@ViewBag.id" />

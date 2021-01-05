@@ -70,9 +70,10 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 
         protected override IEnumerable<IGridColumn<VOS_PEmployee_View>> InitGridHeader()
         {
+            List<GridColumn<VOS_PEmployee_View>> data = null;
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
             {
-                return new List<GridColumn<VOS_PEmployee_View>>{
+                data= new List<GridColumn<VOS_PEmployee_View>>{
                 this.MakeGridHeader(x => x.FullName),
                 this.MakeGridHeader(x => x.WeChat),
                 this.MakeGridHeader(x => x.TaobaAccount),
@@ -110,7 +111,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
             }
             else
             {
-                var data = new List<GridColumn<VOS_PEmployee_View>>{
+                data = new List<GridColumn<VOS_PEmployee_View>>{
                     this.MakeGridHeader(x => x.FullName),
                     this.MakeGridHeader(x => x.WeChat),
                     this.MakeGridHeader(x => x.TaobaAccount),
@@ -136,12 +137,12 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                     this.MakeGridHeader(x => x.CreateTime),
                     this.MakeGridHeaderAction(width: 200)
                 };
-                if (IsSuperAdministrator)
-                {
-                    data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
-                }
-                return data;
             }
+            if (IsSuperAdministrator)
+            {
+                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
+            }
+            return data;
         }
         private List<ColumnFormatInfo> AlipayPicIdFormat(VOS_PEmployee_View entity, object val)
         {

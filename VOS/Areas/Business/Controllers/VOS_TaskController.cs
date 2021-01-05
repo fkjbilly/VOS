@@ -221,6 +221,7 @@ namespace VOS.Controllers
             ViewBag.id = id;
             var vm = CreateVM<VOS_PEmployeeListVM>();
             vm.SearcherMode = ListVMSearchModeEnum.Custom1;
+            ViewBag.IsShow = IsSuperAdministrator;
             MemoryCacheHelper.Set_TaskID = id;
             return PartialView(vm);
         }
