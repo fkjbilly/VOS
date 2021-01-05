@@ -39,7 +39,9 @@
 </wt:form>
 <script src="~/Img.js"></script>
 <script type="text/javascript">
-    $("#VOS_TaskVM_Entity_CommodityPicIdlabel").hover(function () {
+    $("img").attr("title", "点击预览");
+    $("img").css("cursor", "pointer");
+    $("#VOS_TaskVM_Entity_CommodityPicIdlabel").click(function () {
         var _img = $("#VOS_TaskVM_Entity_CommodityPicIdlabel > img")[0];
         ImageAuto(_img);
     });
