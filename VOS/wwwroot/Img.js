@@ -1,4 +1,4 @@
-﻿function ImageAutoZoom(Img) {
+﻿function ImageAuto(Img) {
     var imgHtml = "<img src='" + Img.src + "' width='480px' height='480px'/>";
     layer.open({
         type: 1
