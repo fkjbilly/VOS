@@ -4,8 +4,8 @@
 <wt:searchpanel vm="@Model" reset-btn="true">
     <wt:row items-per-row="ItemsPerRowEnum.Three">
         <wt:textbox field="Searcher.CreateBy" empty-text="输入创建人" />
-        <wt:datetime field="Searcher.StartTime" />
-        <wt:datetime field="Searcher.EndTime" />
+        <wt:datetime field="Searcher.StartTime" type="DateTime"/>
+        <wt:datetime field="Searcher.EndTime" type="DateTime"/>
         <wt:textbox field="Searcher.FullName" empty-text="输入姓名" />
         <wt:textbox field="Searcher.Mobile" empty-text="输入联系电话" />
         <wt:textbox field="Searcher.WeChat" empty-text="输入微信账号" />

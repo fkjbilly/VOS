@@ -12,8 +12,8 @@
         <wt:combobox field="Searcher.EmployeeId" items="Searcher.AllEmployees" empty-text="@Localizer["All"]" />
         <wt:textbox field="Searcher.VOrderCode" empty-text="输入刷单单号" />
         <wt:combobox field="Searcher.OrderState" empty-text="@Localizer["All"]" />
-        <wt:datetime field="Searcher.StartTime" />
-        <wt:datetime field="Searcher.EndTime" />
+        <wt:datetime field="Searcher.StartTime" type="DateTime" />
+        <wt:datetime field="Searcher.EndTime" type="DateTime" />
         @if (@ViewBag.IsShow == true)
         {
             <wt:combobox field="Searcher.OrganizationID" items="Searcher.AllOrganization" empty-text="@Localizer["All"]" />

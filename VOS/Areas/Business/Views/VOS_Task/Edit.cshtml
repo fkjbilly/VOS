@@ -16,7 +16,7 @@
         <wt:combobox field="Entity.TaskCateId" items="AllTaskCates" />
         <wt:textbox field="Entity.CommodityName" />
         <wt:textbox field="Entity.CommodityLink" />
-        <wt:upload field="Entity.CommodityPicId" upload-type="ImageFile" />
+        <wt:upload field="Entity.CommodityPicId" upload-type="ImageFile"/>
         <wt:combobox field="Entity.Eweight" />
         <wt:textbox field="Entity.TaskFen" />
         <wt:textbox field="Entity.CommodityPrice" />
@@ -39,8 +39,22 @@
 </wt:form>
 <script src="~/Img.js"></script>
 <script type="text/javascript">
-    $("#VOS_TaskVM_Entity_CommodityPicIdlabel").hover(function () {
+    $("#VOS_TaskVM_Entity_CommodityPicIdlabel").click(function () {
         var _img = $("#VOS_TaskVM_Entity_CommodityPicIdlabel > img")[0];
-        ImageAuto(_img);
+        if (_img.src.indexOf("http://")>-1) {
+            var _src = _img.src.replace("64", "480");
+            layer.open({
+                type: 2
+                , title: '预览'
+                , area: ["500px", "500px"]
+                , id: 'Lay_Img'
+                , shade: 0.6
+                , maxmin: true
+                , anim: 1
+                , content: _src.replace("64", "480")
+            });
+        } else {
+            ImageAuto(_img);
+        }
     });
 </script>

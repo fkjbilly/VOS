@@ -50,8 +50,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public DateTime? EndTime { get; set; }
         protected override void InitVM()
         {
-            StartTime = DateTime.Now.AddDays(-1);
-            EndTime = DateTime.Now;
+            StartTime = DateTime.Now.AddDays(-1).Date;
+            EndTime = DateTime.Now.AddHours(1);
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
