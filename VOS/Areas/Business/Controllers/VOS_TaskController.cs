@@ -242,7 +242,12 @@ namespace VOS.Controllers
                 {
                     return Json("4", 200, "未解锁无法派单");
                 }
-                if (vOS_Task.ExecutorId == null) {
+                if (vOS_Task.CommodityPic == null || vOS_Task.SearchKeyword == null)
+                {
+                    return Json("3", 200, "图片或关键字没有！无法派单");
+                }
+                if (vOS_Task.ExecutorId == null)
+                {
                     //执行人   当前登录人信息
                     vOS_Task.ExecutorId = LoginUserInfo.Id;
                 }

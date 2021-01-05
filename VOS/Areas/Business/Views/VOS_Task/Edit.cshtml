@@ -16,7 +16,7 @@
         <wt:combobox field="Entity.TaskCateId" items="AllTaskCates" />
         <wt:textbox field="Entity.CommodityName" />
         <wt:textbox field="Entity.CommodityLink" />
-        <wt:upload field="Entity.CommodityPicId" />
+        <wt:upload field="Entity.CommodityPicId" upload-type="ImageFile" />
         <wt:combobox field="Entity.Eweight" />
         <wt:textbox field="Entity.TaskFen" />
         <wt:textbox field="Entity.CommodityPrice" />
@@ -37,3 +37,10 @@
         <wt:closebutton />
     </wt:row>
 </wt:form>
+<script src="~/Img.js"></script>
+<script type="text/javascript">
+    $("#VOS_TaskVM_Entity_CommodityPicIdlabel").hover(function () {
+        var _img = $("#VOS_TaskVM_Entity_CommodityPicIdlabel > img")[0];
+        ImageAutoZoom(_img);
+    });
+</script>

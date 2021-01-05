@@ -1,14 +1,21 @@
 ﻿@model VOS.ViewModel.Business.VOS_TaskVMs.VOS_TaskBatchVM
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
-
 <wt:form vm="@Model">
     <div style="margin-bottom:10px">@Model.Localizer["BatchEditConfirm"] </div>
+    <wt:upload field="LinkedVM.CommodityPicId" upload-type="ImageFile"/>
 <wt:row items-per-row="ItemsPerRowEnum.Two">
-</wt:row>
+    </wt:row>
     <wt:hidden field="Ids" />
-    <wt:grid vm="ListVM" use-local-data="true" height="300"  hidden-checkbox="true" hidden-panel="true"/>
+    <wt:grid vm="ListVM" use-local-data="true" height="300" hidden-checkbox="true" hidden-panel="true" />
     <wt:row align="AlignEnum.Right">
         <wt:submitbutton />
         <wt:closebutton />
     </wt:row>
 </wt:form>
+<script src="~/Img.js"></script>
+<script type="text/javascript">
+    $("#VOS_TaskBatchVM_LinkedVM_CommodityPicIdlabel").hover(function () {
+        var _img = $("#VOS_TaskBatchVM_LinkedVM_CommodityPicIdlabel > img")[0];
+        ImageAutoZoom(_img);
+    });
+</script>

@@ -2,38 +2,45 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:form vm="@Model">
-<wt:row items-per-row="ItemsPerRowEnum.Three">
-<wt:textbox field="Entity.Task_no" />
-<wt:combobox field="Entity.TaskType" />
-<wt:combobox field="Entity.PlanId" items="AllPlans"/>
-<wt:textbox field="Entity.ComDis" />
-<wt:textbox field="Entity.CustomerService" />
-<wt:textbox field="Entity.Contact" />
-<wt:textbox field="Entity.ShopCharge" />
-<wt:textbox field="Entity.ShopChargeContact" />
-<wt:datetime field="Entity.ImplementStartTime" />
-<wt:datetime field="Entity.ImplementEndTime" />
-<wt:combobox field="Entity.TaskCateId" items="AllTaskCates"/>
-<wt:textbox field="Entity.CommodityName" />
-<wt:textbox field="Entity.CommodityLink" />
-<wt:upload field="Entity.CommodityPicId" />
-<wt:combobox field="Entity.Eweight" />
-<wt:textbox field="Entity.TaskFen" />
-<wt:textbox field="Entity.CommodityPrice" />
-<wt:textbox field="Entity.Commission" />
-<wt:textbox field="Entity.OtherExpenses" />
-<wt:textbox field="Entity.ORequirement" />
-<wt:textbox field="Entity.TRequirement" />
-<wt:textbox field="Entity.CRemarks" />
-<wt:textbox field="Entity.AreaRequirement" />
-<wt:switch field="Entity.IsTP" />
-<wt:textbox field="Entity.SearchKeyword" />
-<wt:textbox field="Entity.DealKeyword" />
-<wt:textbox field="Entity.SKU" />
-<wt:switch field="Entity.IsLock" />
-</wt:row>
+    <wt:row items-per-row="ItemsPerRowEnum.Three">
+        <wt:textbox field="Entity.Task_no" />
+        <wt:combobox field="Entity.TaskType" />
+        <wt:combobox field="Entity.PlanId" items="AllPlans" />
+        <wt:textbox field="Entity.ComDis" />
+        <wt:textbox field="Entity.CustomerService" />
+        <wt:textbox field="Entity.Contact" />
+        <wt:textbox field="Entity.ShopCharge" />
+        <wt:textbox field="Entity.ShopChargeContact" />
+        <wt:datetime field="Entity.ImplementStartTime" />
+        <wt:datetime field="Entity.ImplementEndTime" />
+        <wt:combobox field="Entity.TaskCateId" items="AllTaskCates" />
+        <wt:textbox field="Entity.CommodityName" />
+        <wt:textbox field="Entity.CommodityLink" />
+        <wt:upload field="Entity.CommodityPicId" upload-type="ImageFile" />
+        <wt:combobox field="Entity.Eweight" />
+        <wt:textbox field="Entity.TaskFen" />
+        <wt:textbox field="Entity.CommodityPrice" />
+        <wt:textbox field="Entity.Commission" />
+        <wt:textbox field="Entity.OtherExpenses" />
+        <wt:textbox field="Entity.ORequirement" />
+        <wt:textbox field="Entity.TRequirement" />
+        <wt:textbox field="Entity.CRemarks" />
+        <wt:textbox field="Entity.AreaRequirement" />
+        <wt:switch field="Entity.IsTP" />
+        <wt:textbox field="Entity.SearchKeyword" />
+        <wt:textbox field="Entity.DealKeyword" />
+        <wt:textbox field="Entity.SKU" />
+        <wt:switch field="Entity.IsLock" />
+    </wt:row>
     <wt:row align="AlignEnum.Right">
         <wt:submitbutton />
         <wt:closebutton />
     </wt:row>
 </wt:form>
+<script src="~/Img.js"></script>
+<script type="text/javascript">
+    $("#VOS_TaskVM_Entity_CommodityPicIdlabel").hover(function () {
+        var _img = $("#VOS_TaskVM_Entity_CommodityPicIdlabel > img")[0];
+        ImageAutoZoom(_img);
+    });
+</script>

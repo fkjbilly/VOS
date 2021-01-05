@@ -33,10 +33,10 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
         {
             return new List<GridColumn<VOS_Plan_View>>{
                 this.MakeGridHeader(x => x.Plan_no),
+                this.MakeGridHeader(x => x.ShopName_view),
                 this.MakeGridHeader(x => x.PlanSatrtTime),
                 this.MakeGridHeader(x => x.PlanEndTime),
                 this.MakeGridHeader(x => x.PlanFee),
-                this.MakeGridHeader(x => x.ShopName_view),
                 this.MakeGridHeader(x => x.OrganizationName_view),
                 this.MakeGridHeader(x => x.Remark),
                 this.MakeGridHeaderAction(width: 200)
@@ -71,7 +71,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
 
     public class VOS_Plan_View : VOS_Plan
     {
-        [Display(Name = "店铺名称")]
+        [Display(Name = "店铺")]
         public String ShopName_view { get; set; }
 
         [Display(Name = "组织机构")]

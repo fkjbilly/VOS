@@ -22,7 +22,7 @@
         $.post('@Url.Action("BrushHand", "VOS_Task")', { "ID": $("#rwid").val(), "BrushHandID": id }, function (r) {
             layer.msg(r.Msg, {
                 icon: r.Data,
-                time: 1000,
+                time: 1500,
             }, function () {
                 parent.layui.table.reload($('table')[0].id);
                 layer.closeAll();

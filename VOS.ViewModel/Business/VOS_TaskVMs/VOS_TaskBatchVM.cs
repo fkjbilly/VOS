@@ -26,22 +26,15 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
     /// </summary>
     public class VOS_Task_BatchEdit : BaseVM
     {
-        [Display(Name = "刷手")]
-        public Guid? EmployeeId { get; set; }
-
-        [Display(Name = "刷手")]
-        public VOS_PEmployee Employee { get; set; }
-
-        [Display(Name = "任务状态")]
-        public OrderState OrderState { get; set; }
 
 
-
-        public List<ComboSelectListItem> AllEmployees { get; set; }
+        [Display(Name = "商品图片")]
+        [Required(ErrorMessage ="图片不能为空")]
+        public Guid CommodityPicId { get; set; }
 
         protected override void InitVM()
         {
-            AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
+
         }
 
     }

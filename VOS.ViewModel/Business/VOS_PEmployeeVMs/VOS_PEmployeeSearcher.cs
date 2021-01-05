@@ -30,13 +30,14 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         public DateTime? StartTime { get; set; }
         [Display(Name ="结束时间")]
         public DateTime? EndTime { get; set; }
-
         public List<ComboSelectListItem> AllOrganization { get; set; }
         [Display(Name = "组织机构")]
         public Guid? OrganizationID { get; set; }
 
         protected override void InitVM()
         {
+            StartTime = DateTime.Now.AddDays(-1);
+            EndTime = DateTime.Now;
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 
