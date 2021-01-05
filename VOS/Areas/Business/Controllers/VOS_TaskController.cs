@@ -242,7 +242,8 @@ namespace VOS.Controllers
                 {
                     return Json("4", 200, "未解锁无法派单");
                 }
-                if (vOS_Task.CommodityPic == null || vOS_Task.SearchKeyword == null)
+                //图片  关键字
+                if (string.IsNullOrEmpty(vOS_Task.CommodityPicId.ToString())|| string.IsNullOrEmpty(vOS_Task.SearchKeyword))
                 {
                     return Json("3", 200, "图片或关键字没有！无法派单");
                 }

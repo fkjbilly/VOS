@@ -41,17 +41,14 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         [Display(Name = "执行人")]
         public Guid? ExecutorId { get; set; }
 
-        [Display(Name ="组织机构")]
+        [Display(Name = "组织机构")]
         public Guid? OrganizationID { get; set; }
         public List<ComboSelectListItem> AllOrganization { get; set; }
-        [Display(Name ="执行开始")]
-        public DateTime? StartTime { get; set; }
-        [Display(Name ="执行结束")]
-        public DateTime? EndTime { get; set; }
+        [Display(Name = "执行时间")]
+        public DateRange Time { get; set; }
         protected override void InitVM()
         {
-            StartTime = DateTime.Now.AddDays(-1).Date;
-            EndTime = DateTime.Now.AddHours(1);
+            Time = new DateRange(DateTime.Now.AddDays(-1).Date, DateTime.Now.AddHours(1));
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);

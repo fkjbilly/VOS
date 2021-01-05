@@ -14,8 +14,30 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 {
     public partial class VOS_PEmployeeListVM : BasePagedListVM<VOS_PEmployee_View, VOS_PEmployeeSearcher>
     {
+        /// <summary>
+        /// 是否是管理员登录
+        /// </summary>
+        private bool IsSuperAdministrator
+        {
+            get
+            {
+                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+                if (b.RoleName.Equals("超级管理员"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
-        public bool button_show = false;
+        /// <summary>
+        /// 是否显示
+        /// </summary>
+        private bool button_show = false;
         protected override List<GridAction> InitGridAction()
         {
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
@@ -45,7 +67,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 };
             }
         }
-
 
         protected override IEnumerable<IGridColumn<VOS_PEmployee_View>> InitGridHeader()
         {
@@ -89,35 +110,37 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
             }
             else
             {
-                return new List<GridColumn<VOS_PEmployee_View>>{
-                //this.MakeGridHeader(x => x.Name_view),
-                this.MakeGridHeader(x => x.FullName),
-                this.MakeGridHeader(x => x.WeChat),
-                this.MakeGridHeader(x => x.TaobaAccount),
-                this.MakeGridHeader(x => x.JDAccount),
-                this.MakeGridHeader(x => x.AlipayPicId).SetFormat(AlipayPicIdFormat),
-                this.MakeGridHeader(x => x.WeChatPicId).SetFormat(WeChatPicIdFormat),
-                this.MakeGridHeader(x => x.WeChatRealNamePicId).SetFormat(WeChatRealNamePicIdFormat),
-                this.MakeGridHeader(x => x.PEstate).SetBackGroundFunc((x)=>{
-                    switch (x.PEstate)
-                        {
-                            case state.休息:
-                            return "#c2c2c2";
-                            case state.正常:
-                            return "#1E9FFF";
-                            case state.黑名单:
-                            return "#393D49";
-                        }
-                    return "";
-                }).SetForeGroundFunc((x)=>{
-                    return "#FFFFFF";
-                }),
-                this.MakeGridHeader(x => x.CreateBy),
-                this.MakeGridHeader(x => x.CreateTime),
-                this.MakeGridHeader(x => x.OrganizationName_view),
-                this.MakeGridHeaderAction(width: 200)
-            };
-
+                var data = new List<GridColumn<VOS_PEmployee_View>>{
+                    this.MakeGridHeader(x => x.FullName),
+                    this.MakeGridHeader(x => x.WeChat),
+                    this.MakeGridHeader(x => x.TaobaAccount),
+                    this.MakeGridHeader(x => x.JDAccount),
+                    this.MakeGridHeader(x => x.AlipayPicId).SetFormat(AlipayPicIdFormat),
+                    this.MakeGridHeader(x => x.WeChatPicId).SetFormat(WeChatPicIdFormat),
+                    this.MakeGridHeader(x => x.WeChatRealNamePicId).SetFormat(WeChatRealNamePicIdFormat),
+                    this.MakeGridHeader(x => x.PEstate).SetBackGroundFunc((x)=>{
+                        switch (x.PEstate)
+                            {
+                                case state.休息:
+                                return "#c2c2c2";
+                                case state.正常:
+                                return "#1E9FFF";
+                                case state.黑名单:
+                                return "#393D49";
+                            }
+                        return "";
+                    }).SetForeGroundFunc((x)=>{
+                        return "#FFFFFF";
+                    }),
+                    this.MakeGridHeader(x => x.CreateBy),
+                    this.MakeGridHeader(x => x.CreateTime),
+                    this.MakeGridHeaderAction(width: 200)
+                };
+                if (IsSuperAdministrator)
+                {
+                    data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
+                }
+                return data;
             }
         }
         private List<ColumnFormatInfo> AlipayPicIdFormat(VOS_PEmployee_View entity, object val)
@@ -167,12 +190,12 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 query = query.Where(x => x.PEstate == state.正常);
                 var _Task_EmployeeId = DC.Set<VOS_Task>().Where(x => x.ID.ToString().Equals(MemoryCacheHelper.Set_TaskID)).FirstOrDefault().EmployeeId;
                 if (_Task_EmployeeId != null)
-                {
+                {//已分配
                     query = query.Where(x => x.ID.ToString().Equals(_Task_EmployeeId.ToString()));
                     button_show = true;
                 }
                 else
-                {
+                {//未分配
                     #region 规则
                     foreach (var item in RuleCaches() as List<VOS_Rule>)
                     {
@@ -251,17 +274,13 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                     }
                     #endregion
                 }
-
             }
-            else
+            const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
+            var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+            var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+            if (list.IndexOf(b.RoleName) < 0)
             {
-                const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
-                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-                if (list.IndexOf(b.RoleName) < 0)
-                {
-                    query = query.Where(x => x.CreateBy.Equals(LoginUserInfo.ITCode));
-                }
+                query = query.Where(x => x.CreateBy.Equals(LoginUserInfo.ITCode));
             }
             return query.Select(x => new VOS_PEmployee_View
             {
@@ -295,6 +314,8 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 return result;
             }
         }
+
+        
     }
 
     public class VOS_PEmployee_View : VOS_PEmployee
@@ -304,6 +325,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 
         [Display(Name = "组织机构")]
         public String OrganizationName_view { get; set; }
+
 
     }
 }

@@ -12,7 +12,7 @@ namespace VOS.Areas.BaseControllers
     public class VOS_BaseControllers : BaseController
     {
         /// <summary>
-        /// 是否是管理员登录
+        /// 是否是超级管理员登录
         /// </summary>
         public bool IsSuperAdministrator
         {

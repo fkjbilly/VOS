@@ -13,6 +13,25 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
 {
     public partial class VOS_CustomerListVM : BasePagedListVM<VOS_Customer_View, VOS_CustomerSearcher>
     {
+        /// <summary>
+        /// 是否是超级管理员登录
+        /// </summary>
+        private bool IsSuperAdministrator
+        {
+            get
+            {
+                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+                if (b.RoleName.Equals("超级管理员"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         protected override List<GridAction> InitGridAction()
         {
             return new List<GridAction>
@@ -31,16 +50,19 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
 
         protected override IEnumerable<IGridColumn<VOS_Customer_View>> InitGridHeader()
         {
-            return new List<GridColumn<VOS_Customer_View>>{
+           var data =  new List<GridColumn<VOS_Customer_View>>{
                 this.MakeGridHeader(x => x.cust_name),
                 this.MakeGridHeader(x => x.cust_level),
                 this.MakeGridHeader(x => x.cust_telephone),
                 this.MakeGridHeader(x => x.cust_flag),
                 this.MakeGridHeader(x => x.link_name),
                 this.MakeGridHeader(x => x.link_mobile),
-                this.MakeGridHeader(x => x.OrganizationName_view),
                 this.MakeGridHeaderAction(width: 200)
             };
+            if (IsSuperAdministrator) {
+                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
+            }
+            return data;
         }
 
         public override IOrderedQueryable<VOS_Customer_View> GetSearchQuery()

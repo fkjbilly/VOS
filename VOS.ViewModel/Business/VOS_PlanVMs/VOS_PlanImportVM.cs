@@ -24,11 +24,14 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
         public ExcelPropety PlanFee_Excel = ExcelPropety.CreateProperty<VOS_Plan>(x => x.PlanFee);
         [Display(Name = "备注")]
         public ExcelPropety Remark_Excel = ExcelPropety.CreateProperty<VOS_Plan>(x => x.Remark);
-
-	    protected override void InitVM()
+        [Display(Name = "组织机构")]
+        public ExcelPropety Organization_Excel = ExcelPropety.CreateProperty<VOS_Plan>(x => x.OrganizationID);
+        protected override void InitVM()
         {
             Shopname_Excel.DataType = ColumnDataType.ComboBox;
             Shopname_Excel.ListItems = DC.Set<VOS_Shop>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
+            Organization_Excel.DataType = ColumnDataType.ComboBox;
+            Organization_Excel.ListItems = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 
     }

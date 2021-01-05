@@ -13,6 +13,26 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
 {
     public partial class VOS_ShopListVM : BasePagedListVM<VOS_Shop_View, VOS_ShopSearcher>
     {
+        /// <summary>
+        /// 是否是超级管理员登录
+        /// </summary>
+        private bool IsSuperAdministrator
+        {
+            get
+            {
+                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+                if (b.RoleName.Equals("超级管理员"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         protected override List<GridAction> InitGridAction()
         {
             return new List<GridAction>
@@ -31,14 +51,18 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
 
         protected override IEnumerable<IGridColumn<VOS_Shop_View>> InitGridHeader()
         {
-            return new List<GridColumn<VOS_Shop_View>>{
+            var data = new List<GridColumn<VOS_Shop_View>>{
                 this.MakeGridHeader(x => x.cust_name_view),
                 this.MakeGridHeader(x => x.ShopName),
                 this.MakeGridHeader(x => x.ShopPlat),
                 this.MakeGridHeader(x => x.OpenTime),
-                this.MakeGridHeader(x => x.OrganizationName_view),
                 this.MakeGridHeaderAction(width: 200)
             };
+            if (IsSuperAdministrator)
+            {
+                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
+            }
+            return data;
         }
 
         public override IOrderedQueryable<VOS_Shop_View> GetSearchQuery()

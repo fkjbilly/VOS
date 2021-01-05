@@ -13,6 +13,25 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
 {
     public partial class VOS_UserListVM : BasePagedListVM<VOS_User_View, VOS_UserSearcher>
     {
+        /// <summary>
+        /// 是否是超级管理员登录
+        /// </summary>
+        private bool IsSuperAdministrator
+        {
+            get
+            {
+                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+                if (b.RoleName.Equals("超级管理员"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         protected override List<GridAction> InitGridAction()
         {
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
@@ -42,20 +61,21 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
 
         protected override IEnumerable<IGridColumn<VOS_User_View>> InitGridHeader()
         {
+            List<GridColumn<VOS_User_View>> data = null;
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
             {
-                return new List<GridColumn<VOS_User_View>>{
+                data = new List<GridColumn<VOS_User_View>>{
                     this.MakeGridHeader(x => x.ITCode),
                     this.MakeGridHeader(x => x.Name),
                     this.MakeGridHeader(x => x.Sex),
                     this.MakeGridHeader(x => x.CellPhone),
-                    this.MakeGridHeader(x => x.DistributionName_view),
+                    
                     this.MakeGridHeaderAction(width: 100)
                 };
             }
             else
             {
-                return new List<GridColumn<VOS_User_View>>{
+                 data = new List<GridColumn<VOS_User_View>>{
                     this.MakeGridHeader(x => x.ITCode),
                     this.MakeGridHeader(x => x.Name),
                     this.MakeGridHeader(x => x.Sex),
@@ -64,11 +84,15 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                     this.MakeGridHeader(x => x.IsValid),
                     this.MakeGridHeader(x => x.RoleName_view),
                     this.MakeGridHeader(x => x.GroupName_view),
-                    this.MakeGridHeader(x => x.DistributionName_view),
+                    this.MakeGridHeader(x => x.OrganizationName_view),
                     this.MakeGridHeaderAction(width: 300)
                 };
             }
-
+            if (IsSuperAdministrator)
+            {
+                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
+            }
+            return data;
         }
         private List<ColumnFormatInfo> PhotoIdFormat(VOS_User_View entity, object val)
         {
@@ -96,8 +120,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
             }
             else
             {
-                query = query
-                    .CheckEqual(Searcher.IsValid, x => x.IsValid);
+                query = query.CheckEqual(Searcher.IsValid, x => x.IsValid);
 
             }
             return query.Select(x => new VOS_User_View
@@ -112,7 +135,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                 RoleName_view = x.UserRoles.Select(y => y.Role.RoleName).ToSpratedString(null, ","),
                 GroupName_view = x.UserGroups.Select(y => y.Group.GroupName).ToSpratedString(null, ","),
                 CreateTime = x.CreateTime,
-                DistributionName_view = x.Organization.OrganizationName,
+                OrganizationName_view = x.Organization.OrganizationName,
             })
                 .OrderByDescending(x => x.IsValid).ThenByDescending(x => x.CreateTime);
         }
@@ -126,7 +149,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
         [Display(Name = "用户组")]
         public String GroupName_view { get; set; }
         [Display(Name = "组织机构")]
-        public String DistributionName_view { get; set; }
+        public String OrganizationName_view { get; set; }
 
     }
 }
