@@ -73,41 +73,41 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
             List<GridColumn<VOS_PEmployee_View>> data = null;
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
             {
-                data= new List<GridColumn<VOS_PEmployee_View>>{
-                this.MakeGridHeader(x => x.FullName),
-                this.MakeGridHeader(x => x.WeChat),
-                this.MakeGridHeader(x => x.TaobaAccount),
-                this.MakeGridHeader(x => x.JDAccount),
-                this.MakeGridHeader(x => x.PEstate).SetBackGroundFunc((x)=>{
-                    switch (x.PEstate)
-                        {
-                            case state.休息:
-                            return "#c2c2c2";
-                            case state.正常:
-                            return "#1E9FFF";
-                            case state.黑名单:
-                            return "#393D49";
-                        }
-                    return "";
-                }).SetForeGroundFunc((x)=>{
-                    return "#000000";
-                }),
-                //选择按钮隐藏与显示
-                this.MakeGridHeader(x=> "btn_show").SetHide().SetFormat((x,y)=>{
-                    if(x.button_show)
-                        return "false";
-                    else
-                        return "true";
-                }),
-                //重派按钮隐藏与显示
-                this.MakeGridHeader(x=> "btn_hide").SetHide().SetFormat((x,y)=>{
-                   if(x.button_show)
-                        return "true";
-                    else
-                        return "false";
-                }),
-                this.MakeGridHeaderAction(width: 200)
-            };
+                data = new List<GridColumn<VOS_PEmployee_View>>{
+                    this.MakeGridHeader(x => x.FullName),
+                    this.MakeGridHeader(x => x.WeChat),
+                    this.MakeGridHeader(x => x.TaobaAccount),
+                    this.MakeGridHeader(x => x.JDAccount),
+                    this.MakeGridHeader(x => x.PEstate).SetBackGroundFunc((x)=>{
+                        switch (x.PEstate)
+                            {
+                                case state.休息:
+                                return "#c2c2c2";
+                                case state.正常:
+                                return "#1E9FFF";
+                                case state.黑名单:
+                                return "#393D49";
+                            }
+                        return "";
+                    }).SetForeGroundFunc((x)=>{
+                        return "#000000";
+                    }),
+                    //选择按钮隐藏与显示
+                    this.MakeGridHeader(x=> "btn_show").SetHide().SetFormat((x,y)=>{
+                        if(x.button_show)
+                            return "false";
+                        else
+                            return "true";
+                    }),
+                    //重派按钮隐藏与显示
+                    this.MakeGridHeader(x=> "btn_hide").SetHide().SetFormat((x,y)=>{
+                       if(x.button_show)
+                            return "true";
+                        else
+                            return "false";
+                    }),
+                    this.MakeGridHeaderAction(width: 200)
+                };
             }
             else
             {
@@ -276,13 +276,19 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                     #endregion
                 }
             }
-            const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
-            var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-            var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-            if (list.IndexOf(b.RoleName) < 0)
+            else
             {
-                query = query.Where(x => x.CreateBy.Equals(LoginUserInfo.ITCode));
+                const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
+                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+                if (list.IndexOf(b.RoleName) < 0)
+                {
+                    query = query.Where(x => x.CreateBy.Equals(LoginUserInfo.ITCode));
+                }
             }
+
+
+
             return query.Select(x => new VOS_PEmployee_View
             {
                 ID = x.ID,
@@ -301,6 +307,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 OrganizationName_view = x.Organization.OrganizationName,
             }).OrderByDescending(x => x.CreateTime);
         }
+
         private object RuleCaches()
         {
             string key = MemoryCacheHelper._RuleCaches;
@@ -315,8 +322,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 return result;
             }
         }
-
-        
     }
 
     public class VOS_PEmployee_View : VOS_PEmployee

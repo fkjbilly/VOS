@@ -69,7 +69,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         public override DuplicatedInfo<VOS_PEmployee> SetDuplicatedCheck()
         {
             var rv = CreateFieldsInfo(SimpleField(a => a.FullName));
-            rv.AddGroup(SimpleField(a => a.Mobile));
+            //rv.AddGroup(SimpleField(a => a.Mobile));
             rv.AddGroup(SimpleField(a => a.JDAccount));
             rv.AddGroup(SimpleField(a => a.TaobaAccount));
             rv.AddGroup(SimpleField(a => a.WeChat));

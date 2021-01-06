@@ -41,7 +41,8 @@ namespace VOS.Model
         public EnumSex? Sex { get; set; }
         [Display(Name = "联系电话")]
         [Required(ErrorMessage = "联系电话不能为空")]
-        [RegularExpression(@"^1[3|4|5|7|8][0-9]{9}$",ErrorMessage ="请输入正确的手机号")]
+        //[RegularExpression(@"^1[3|4|5|7|8][0-9]{9}$",ErrorMessage ="请输入正确的手机号")]
+        [RegularExpression(@"^1[0-9]{10}$",ErrorMessage ="请输入正确的手机号")]
         public string Mobile { get; set; }
         [Display(Name = "微信账号")]
         [Required(ErrorMessage = "微信账号不能为空")]
