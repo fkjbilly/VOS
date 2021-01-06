@@ -182,7 +182,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                    .CheckEqual(Searcher.PEstate, x => x.PEstate)
                    .CheckContain(Searcher.CreateBy, x => x.CreateBy)
                    .CheckEqual(Searcher.OrganizationID, x => x.OrganizationID)
-                   .CheckContain(Searcher.WeChat, x => x.WeChat)
                    .CheckBetween(Searcher.StartTime, Searcher.EndTime, x => x.CreateTime, includeMax: false)
                    .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID);
             #endregion
@@ -197,6 +196,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 }
                 else
                 {//未分配
+                    query = query.CheckContain(Searcher.WeChat, x => x.WeChat);
                     #region 规则
                     foreach (var item in RuleCaches() as List<VOS_Rule>)
                     {
@@ -278,6 +278,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
             }
             else
             {
+                query = query.CheckContain(Searcher.WeChat, x => x.WeChat);
                 const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
                 var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
                 var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();

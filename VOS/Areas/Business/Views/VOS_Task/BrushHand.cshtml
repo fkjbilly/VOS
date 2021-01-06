@@ -8,6 +8,8 @@
         <wt:textbox field="Searcher.TaobaAccount" />
         <wt:textbox field="Searcher.JDAccount" />
         <wt:combobox field="Searcher.PEstate" />
+        <wt:hidden field="Searcher.StartTime"  default-value="" />
+        <wt:hidden field="Searcher.EndTime"  default-value="" />
         @if (@ViewBag.IsShow == true)
         {
             <wt:combobox field="Searcher.OrganizationID" items="Searcher.AllOrganization" empty-text="@Localizer["All"]" />
