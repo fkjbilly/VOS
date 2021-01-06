@@ -182,6 +182,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                    .CheckEqual(Searcher.PEstate, x => x.PEstate)
                    .CheckContain(Searcher.CreateBy, x => x.CreateBy)
                    .CheckEqual(Searcher.OrganizationID, x => x.OrganizationID)
+                   .CheckContain(Searcher.WeChat, x => x.WeChat)
                    .CheckBetween(Searcher.StartTime, Searcher.EndTime, x => x.CreateTime, includeMax: false)
                    .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID);
             #endregion
@@ -196,7 +197,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 }
                 else
                 {//未分配
-                    query = query.CheckContain(Searcher.WeChat, x => x.WeChat);
                     #region 规则
                     foreach (var item in RuleCaches() as List<VOS_Rule>)
                     {
