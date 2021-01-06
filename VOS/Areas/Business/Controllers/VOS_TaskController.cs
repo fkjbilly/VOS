@@ -221,6 +221,7 @@ namespace VOS.Controllers
             ViewBag.id = id;
             var vm = CreateVM<VOS_PEmployeeListVM>();
             vm.SearcherMode = ListVMSearchModeEnum.Custom1;
+            vm.Searcher.WeChat = "请输入微信账号";
             ViewBag.IsShow = IsSuperAdministrator;
             MemoryCacheHelper.Set_TaskID = id;
             return PartialView(vm);

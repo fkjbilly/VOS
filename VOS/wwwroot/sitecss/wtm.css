@@ -32,7 +32,6 @@
 /* 列表中chebox样式*/
 [lay-skin=primary].layui-form-checkbox span {
     padding-left: 22px !important;
-    overflow: visible !important;
 }   
 /* 下拉框 Text 图标 */
 
@@ -42,4 +41,8 @@
   top: 30%;
   transition: all .3s;
   -webkit-transition: all .3s;
+}
+
+.layui-layer-page .layui-layer-content {
+    overflow: visible !important;
 }
