@@ -31,10 +31,10 @@
 </wt:quote>
 <wt:grid vm="@Model" url="/Business/VOS_Task/Search" />
 <script type="text/javascript">
-    var table, layer;
     layui.use(['table', 'layer'], function () {
-        table = layui.table;
+        var table = layui.table,
         layer = layui.layer;
+
         $(document).on("dblclick", ".brushAlone", function () {
             var ID = $(this).data("code");
             var index = layer.open({

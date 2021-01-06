@@ -177,7 +177,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
             var query = DC.Set<VOS_PEmployee>()
                    .CheckContain(Searcher.FullName, x => x.FullName)
                    .CheckContain(Searcher.Mobile, x => x.Mobile)
-                   .CheckContain(Searcher.WeChat, x => x.WeChat)
                    .CheckContain(Searcher.TaobaAccount, x => x.TaobaAccount)
                    .CheckContain(Searcher.JDAccount, x => x.JDAccount)
                    .CheckEqual(Searcher.PEstate, x => x.PEstate)
@@ -197,6 +196,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 }
                 else
                 {//未分配
+                    query = query.CheckContain(Searcher.WeChat, x => x.WeChat);
                     #region 规则
                     foreach (var item in RuleCaches() as List<VOS_Rule>)
                     {

@@ -84,7 +84,6 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                     this.MakeGridHeader(x => x.IsValid),
                     this.MakeGridHeader(x => x.RoleName_view),
                     this.MakeGridHeader(x => x.GroupName_view),
-                    this.MakeGridHeader(x => x.OrganizationName_view),
                     this.MakeGridHeaderAction(width: 300)
                 };
             }
