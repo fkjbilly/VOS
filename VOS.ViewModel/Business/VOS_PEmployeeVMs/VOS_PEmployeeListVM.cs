@@ -181,6 +181,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                    .CheckContain(Searcher.JDAccount, x => x.JDAccount)
                    .CheckEqual(Searcher.PEstate, x => x.PEstate)
                    .CheckContain(Searcher.CreateBy, x => x.CreateBy)
+                   .CheckContain(Searcher.WeChat, x => x.WeChat)
                    .CheckEqual(Searcher.OrganizationID, x => x.OrganizationID)
                    .CheckBetween(Searcher.StartTime, Searcher.EndTime, x => x.CreateTime, includeMax: false)
                    .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID);
@@ -195,90 +196,100 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                     button_show = true;
                 }
                 else
-                {//未分配
-                    query = query.CheckContain(Searcher.WeChat, x => x.WeChat);
-                    #region 规则
-                    foreach (var item in RuleCaches() as List<VOS_Rule>)
+                {
+                    if (!string.IsNullOrEmpty(Searcher.FullName) ||
+                        !string.IsNullOrEmpty(Searcher.Mobile) ||
+                        !string.IsNullOrEmpty(Searcher.TaobaAccount) ||
+                        !string.IsNullOrEmpty(Searcher.JDAccount) ||
+                        !string.IsNullOrEmpty(Searcher.CreateBy) ||
+                        !string.IsNullOrEmpty(Searcher.WeChat))
                     {
-                        //规则未启用
-                        if (item.IsUse == false)
+                        //未分配
+                        #region 规则
+                        foreach (var item in RuleCaches() as List<VOS_Rule>)
                         {
-                            continue;
+                            //规则未启用
+                            if (item.IsUse == false)
+                            {
+                                continue;
+                            }
+                            var _vOS_Task = DC.Set<VOS_Task>().AsQueryable();
+                            #region 转换
+                            //规则《周期》
+                            long Cycle = item.Cycle == "" ? 0 : Convert.ToInt64(item.Cycle);
+                            //规则《单量》
+                            long Num = item.Num == "" ? 0 : Convert.ToInt64(item.Num);
+                            #endregion
+                            switch (item.RuleType)
+                            {
+                                case RuleTypes.类目:
+                                    #region 类目规则
+                                    //类目单量
+                                    string _CycleNum = "";
+                                    var _Category = DC.Set<Category>().AsQueryable();
+                                    //时间：任务分配时间要大于规则《类目规则》周期时间                  
+                                    var _TaskCateId = _vOS_Task.Where(x => x.DistributionTime > DateTime.Now.AddDays(-Cycle) && x.ID.ToString() == MemoryCacheHelper.Set_TaskID).SingleOrDefault();
+                                    if (_TaskCateId != null)
+                                    {
+                                        _CycleNum = DC.Set<Category>().Where(x => x.ID.Equals(_TaskCateId.TaskCateId)).SingleOrDefault().CycleNum;
+                                    }
+                                    var CycleNum = _CycleNum == "" ? -1 : Convert.ToInt64(_CycleNum);
+                                    //使用以VOS_Task为主表联查
+                                    var _data_Category = from _Task in _vOS_Task
+                                                         join q in query on _Task.EmployeeId equals q.ID
+                                                         select new
+                                                         {
+                                                             _Task.TaskCateId,//类目
+                                                             q.ID//刷手编号
+                                                         };
+                                    query = query.Where(x =>
+                                       CycleNum < 0 ? _data_Category.Where(y => x.ID.Equals(y.ID)).Count() < Num
+                                       : _vOS_Task.Where(y => y.EmployeeId.Equals(x.ID)).Count() < CycleNum);
+                                    #endregion
+                                    break;
+                                case RuleTypes.店铺:
+                                    #region 店铺规则
+                                    var data_vOS_Task = from _Task in _vOS_Task
+                                                        join _Shop in DC.Set<VOS_Plan>() on _Task.PlanId equals _Shop.ID
+                                                        where _Task.EmployeeId != null
+                                                        select new
+                                                        {
+                                                            _Task.DistributionTime,
+                                                            _Task.EmployeeId,
+                                                            _Shop.Shopname,
+                                                            _Shop.Plan_no,
+                                                        };
+                                    //时间：任务分配时间要大于规则《周期规则》周期时间
+                                    query = query.Where(x => data_vOS_Task.Where(y => y.DistributionTime > DateTime.Now.AddDays(-Cycle) && x.ID.Equals(y.EmployeeId)).Count() < Num);
+                                    #endregion
+                                    break;
+                                case RuleTypes.间隔:
+                                    #region 间隔规则
+                                    _vOS_Task = _vOS_Task.Where(x =>
+                                        //时间：任务分配时间要大于规则《间隔规则》周期时间
+                                        x.DistributionTime > DateTime.Now.AddDays(-Cycle));
+                                    query = query.Where(x =>
+                                      _vOS_Task.Where(y => y.EmployeeId.Equals(x.ID)).Count() < 1);
+                                    #endregion
+                                    break;
+                                case RuleTypes.周期:
+                                    #region 周期规则
+                                    //时间：任务分配时间要大于规则《周期规则》周期时间
+                                    _vOS_Task = _vOS_Task.Where(x => x.DistributionTime > DateTime.Now.AddDays(-Cycle));
+                                    query = query.Where(x => _vOS_Task.Where(y => y.EmployeeId.Equals(x.ID)).Count() < Num);
+                                    #endregion
+                                    break;
+                            }
                         }
-                        var _vOS_Task = DC.Set<VOS_Task>().AsQueryable();
-                        #region 转换
-                        //规则《周期》
-                        long Cycle = item.Cycle == "" ? 0 : Convert.ToInt64(item.Cycle);
-                        //规则《单量》
-                        long Num = item.Num == "" ? 0 : Convert.ToInt64(item.Num);
                         #endregion
-                        switch (item.RuleType)
-                        {
-                            case RuleTypes.类目:
-                                #region 类目规则
-                                //类目单量
-                                string _CycleNum = "";
-                                var _Category = DC.Set<Category>().AsQueryable();
-                                //时间：任务分配时间要大于规则《类目规则》周期时间                  
-                                var _TaskCateId = _vOS_Task.Where(x => x.DistributionTime > DateTime.Now.AddDays(-Cycle) && x.ID.ToString() == MemoryCacheHelper.Set_TaskID).SingleOrDefault();
-                                if (_TaskCateId != null)
-                                {
-                                    _CycleNum = DC.Set<Category>().Where(x => x.ID.Equals(_TaskCateId.TaskCateId)).SingleOrDefault().CycleNum;
-                                }
-                                var CycleNum = _CycleNum == "" ? -1 : Convert.ToInt64(_CycleNum);
-                                //使用以VOS_Task为主表联查
-                                var _data_Category = from _Task in _vOS_Task
-                                                     join q in query on _Task.EmployeeId equals q.ID
-                                                     select new
-                                                     {
-                                                         _Task.TaskCateId,//类目
-                                                         q.ID//刷手编号
-                                                     };
-                                query = query.Where(x =>
-                                   CycleNum < 0 ? _data_Category.Where(y => x.ID.Equals(y.ID)).Count() < Num
-                                   : _vOS_Task.Where(y => y.EmployeeId.Equals(x.ID)).Count() < CycleNum);
-                                #endregion
-                                break;
-                            case RuleTypes.店铺:
-                                #region 店铺规则
-                                var data_vOS_Task = from _Task in _vOS_Task
-                                                    join _Shop in DC.Set<VOS_Plan>() on _Task.PlanId equals _Shop.ID
-                                                    where _Task.EmployeeId != null
-                                                    select new
-                                                    {
-                                                        _Task.DistributionTime,
-                                                        _Task.EmployeeId,
-                                                        _Shop.Shopname,
-                                                        _Shop.Plan_no,
-                                                    };
-                                //时间：任务分配时间要大于规则《周期规则》周期时间
-                                query = query.Where(x => data_vOS_Task.Where(y => y.DistributionTime > DateTime.Now.AddDays(-Cycle) && x.ID.Equals(y.EmployeeId)).Count() < Num);
-                                #endregion
-                                break;
-                            case RuleTypes.间隔:
-                                #region 间隔规则
-                                _vOS_Task = _vOS_Task.Where(x =>
-                                    //时间：任务分配时间要大于规则《间隔规则》周期时间
-                                    x.DistributionTime > DateTime.Now.AddDays(-Cycle));
-                                query = query.Where(x =>
-                                  _vOS_Task.Where(y => y.EmployeeId.Equals(x.ID)).Count() < 1);
-                                #endregion
-                                break;
-                            case RuleTypes.周期:
-                                #region 周期规则
-                                //时间：任务分配时间要大于规则《周期规则》周期时间
-                                _vOS_Task = _vOS_Task.Where(x => x.DistributionTime > DateTime.Now.AddDays(-Cycle));
-                                query = query.Where(x => _vOS_Task.Where(y => y.EmployeeId.Equals(x.ID)).Count() < Num);
-                                #endregion
-                                break;
-                        }
                     }
-                    #endregion
+                    else {
+                        query = query.Where(x=>x.ID.Equals("-1231231"));
+                    }
                 }
             }
             else
             {
-                query = query.CheckContain(Searcher.WeChat, x => x.WeChat);
                 const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
                 var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
                 var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();

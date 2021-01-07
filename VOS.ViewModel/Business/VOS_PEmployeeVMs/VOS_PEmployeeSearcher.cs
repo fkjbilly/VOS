@@ -36,8 +36,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 
         protected override void InitVM()
         {
-            StartTime = DateTime.Now.AddDays(-1).Date;
-            EndTime = DateTime.Now.AddHours(1);
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 

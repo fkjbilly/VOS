@@ -23,19 +23,23 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             else
             {
                 return new List<GridAction>
-            {
-                this.MakeAction("VOS_Task","BrushHand","派单","刷手分配",GridActionParameterTypesEnum.SingleId,"Business",800,600)
-                .SetShowInRow(true).SetHideOnToolBar(true).SetBindVisiableColName("OrderStateHide"),
-                this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
-                this.MakeAction("VOS_User","Index","设置执行人","执行人分配",GridActionParameterTypesEnum.MultiIds,"Business",900,600).SetIconCls("_wtmicon _wtmicon-icon_shezhi"),
-                this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Delete, Localizer["Delete"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Details, Localizer["Details"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.BatchEdit, Localizer["BatchEdit"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.BatchDelete, Localizer["BatchDelete"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Import, Localizer["Import"], "Business", dialogWidth: 800),
-                this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.ExportExcel, Localizer["Export"], "Business"),
-            };
+                {
+                    this.MakeAction("VOS_Task","BrushHand","更改","更改信息",GridActionParameterTypesEnum.SingleId,"Business",800,600)
+                    .SetShowInRow(true).SetHideOnToolBar(true).SetBindVisiableColName("OrderStateShow"),
+                    
+                    this.MakeAction("VOS_Task","BrushHand","派单","刷手分配",GridActionParameterTypesEnum.SingleId,"Business",800,600)
+                    .SetShowInRow(true).SetHideOnToolBar(true).SetBindVisiableColName("OrderStateHide"),
+                    
+                    this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
+                    this.MakeAction("VOS_User","Index","设置执行人","执行人分配",GridActionParameterTypesEnum.MultiIds,"Business",900,600).SetIconCls("_wtmicon _wtmicon-icon_shezhi"),
+                    this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Delete, Localizer["Delete"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Details, Localizer["Details"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.BatchEdit, Localizer["BatchEdit"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.BatchDelete, Localizer["BatchDelete"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Import, Localizer["Import"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.ExportExcel, Localizer["Export"], "Business"),
+                };
             }
         }
 
@@ -77,6 +81,13 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         return "false";
                     }
                     return "true";
+                }),
+                this.MakeGridHeader(x=> "OrderStateShow").SetHide().SetFormat((a,b)=>{
+                    if(a.OrderState == OrderState.已完成 || a.OrderState == OrderState.已返款 )
+                    {
+                        return "true";
+                    }
+                    return "false";
                 }),
                 this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
                     switch (x.OrderState)
@@ -175,7 +186,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         CommodityPrice = x.CommodityPrice,
                         SearchKeyword = x.SearchKeyword,
                         SKU = x.SKU,
-                        FullName_view = x.Employee.TaobaAccount+"("+x.Employee.FullName+")",
+                        FullName_view = x.Employee.TaobaAccount,
                         VOrderCode = x.VOrderCode,
                         OrderState = x.OrderState,
                         CreateTime = x.CreateTime,
@@ -193,7 +204,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public String Plan_no_view { get; set; }
         [Display(Name = "类目名称")]
         public String Name_view { get; set; }
-        [Display(Name = "刷手")]
+        [Display(Name = "刷手旺旺号")]
         public String FullName_view { get; set; }
         [Display(Name = "店铺")]
         public String _ShopName { get; set; }

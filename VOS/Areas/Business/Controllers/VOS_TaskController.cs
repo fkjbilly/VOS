@@ -221,7 +221,6 @@ namespace VOS.Controllers
             ViewBag.id = id;
             var vm = CreateVM<VOS_PEmployeeListVM>();
             vm.SearcherMode = ListVMSearchModeEnum.Custom1;
-            vm.Searcher.WeChat = "请输入微信账号";
             ViewBag.IsShow = IsSuperAdministrator;
             MemoryCacheHelper.Set_TaskID = id;
             return PartialView(vm);
@@ -366,9 +365,13 @@ namespace VOS.Controllers
             {
                 return Json(false);
             }
-
         }
         #endregion
+
+        #region accomplish_VOrderCodeAndEmployee 完成后更改单号刷手
+
+        #endregion
+
         [ActionDescription("Export")]
         [HttpPost]
         public IActionResult ExportExcel(VOS_TaskListVM vm)
