@@ -21,15 +21,6 @@ namespace VOS.Controllers
         public ActionResult Index()
         {
             var vm = CreateVM<VOS_TaskListVM>();
-            ViewBag.shopname = vm.GroupShopName();
-            ViewBag.IsShow = IsSuperAdministrator;
-            vm.SearcherMode = ListVMSearchModeEnum.Custom2;
-            return PartialView(vm);
-        }
-        [HttpPost]
-        public ActionResult Index(VOS_TaskListVM vm)
-        {
-            ViewBag.shopname = vm.GroupShopName();
             ViewBag.IsShow = IsSuperAdministrator;
             vm.SearcherMode = ListVMSearchModeEnum.Custom2;
             return PartialView(vm);
@@ -48,7 +39,6 @@ namespace VOS.Controllers
                 return vm.GetError();
             }
         }
-
         #endregion
 
         #region Create

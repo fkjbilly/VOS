@@ -13,7 +13,6 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 {
     public partial class VOS_TaskListVM : BasePagedListVM<VOS_Task_View, VOS_TaskSearcher>
     {
-        public List<GroupShopName> GroupShopNames { get; set; }
         protected override List<GridAction> InitGridAction()
         {
             if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
@@ -60,17 +59,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             else
             {
                 return new List<GridColumn<VOS_Task_View>>{
-                //任务编号
-                /*this.MakeGridHeader(x => x.Task_no).SetBackGroundFunc((x)=>{
-                   if(x.IsLock == false){
-                    return "#FFB800";
-                    }
-                   return "";
-                }),*/
                 this.MakeGridHeader(x => x.TaskType),
-                //this.MakeGridHeader(x => x.Name_view),//类目名称
                 this.MakeGridHeader(x => x._ShopName),
-                //this.MakeGridHeader(x => x.CommodityName),//商品名称
                 this.MakeGridHeader(x => x.CommodityPrice),
                 this.MakeGridHeader(x => x.SearchKeyword),
                 this.MakeGridHeader(x => x.SKU),
@@ -155,10 +145,10 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
                 .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
                 .CheckEqual(Searcher.OrderState, x => x.OrderState)
-                .CheckEqual(Searcher.ShopName, x => x.Plan.Shopname.ShopName)
+                .CheckContain(Searcher.ShopNames, x => x.Plan.Shopname.ID)
                 .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
                 .CheckBetween(Searcher.Time?.GetStartTime(), Searcher.Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
-                //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID)
+                //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID)//数据权限
                 .Where(x => x.IsValid == true);
             const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
             var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
@@ -167,7 +157,6 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 query = query.Where(x => x.ExecutorId.Equals(LoginUserInfo.Id));
             }
-
             return query
                     .Select(x => new VOS_Task_View
                     {
@@ -189,41 +178,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     .OrderByDescending(x => x.CreateTime);
         }
 
-        public List<GroupShopName> GroupShopName()
-        {
-            #region 共有条件
-            var query = DC.Set<VOS_Task>()
-                .CheckEqual(Searcher.TaskType, x => x.TaskType)
-                .CheckContain(Searcher.CommodityName, x => x.CommodityName)
-                .CheckContain(Searcher.SearchKeyword, x => x.SearchKeyword)
-                .CheckEqual(Searcher.IsLock, x => x.IsLock)
-                .CheckEqual(Searcher.DistributorId, x => x.DistributorId)
-                .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
-                .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
-                .CheckEqual(Searcher.OrderState, x => x.OrderState)
-                .CheckEqual(Searcher.ShopName, x => x.Plan.Shopname.ShopName)
-                .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
-                .CheckBetween(Searcher.Time?.GetStartTime(), Searcher.Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
-                .Where(x => x.IsValid == true);
-            #endregion
-            const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
-            var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-            var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-            if (list.IndexOf(b.RoleName) < 0)
-            {
-                query = query.Where(x => x.ExecutorId.Equals(LoginUserInfo.Id));
-            }
-            var data = query.GroupBy(x => x.Plan.Shopname.ShopName).Select(x => new { a = x.Key, b = x.Count() }).ToDictionary(x => x.a, x => x.b);
-            GroupShopNames = new List<GroupShopName>();
-            foreach (var item in data)
-            {
-                GroupShopNames.Add(new GroupShopName()
-                {
-                    ShopName = item.Key + ": " + (item.Value == 0 ? 0 : item.Value),
-                });
-            }
-            return GroupShopNames;
-        }
+
+
     }
 
     public class VOS_Task_View : VOS_Task
@@ -236,10 +192,5 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public String FullName_view { get; set; }
         [Display(Name = "店铺")]
         public String _ShopName { get; set; }
-    }
-
-    public class GroupShopName
-    {
-        public string ShopName { get; set; }
     }
 }
