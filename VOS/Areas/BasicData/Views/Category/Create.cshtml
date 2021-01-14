@@ -2,11 +2,12 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:form vm="@Model">
-<wt:row items-per-row="ItemsPerRowEnum.Two">
-<wt:textbox field="Entity.Name" />
-<wt:combobox field="Entity.ParentId" items="AllParents"/>
-<wt:textbox field="Entity.CycleNum" />
-</wt:row>
+    <wt:row items-per-row="ItemsPerRowEnum.Two">
+        <wt:textbox field="Entity.Name" />
+        <wt:combobox field="Entity.ParentId" items="AllParents" />
+        <wt:textbox field="Entity.CycleNum" />
+        <wt:textbox field="Entity.Cycle" />
+    </wt:row>
     <wt:row align="AlignEnum.Right">
         <wt:submitbutton />
         <wt:closebutton />

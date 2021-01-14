@@ -11,8 +11,8 @@ namespace VOS.Model
     {
         public enum RuleTypes
         {
-            类目,
-            店铺,
+            //类目,
+            店铺=1,
             间隔,
             周期
         }

@@ -1,7 +1,7 @@
 ﻿@model VOS.ViewModel.Business.VOS_TaskVMs.VOS_TaskListVM
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
-<wt:searchpanel vm="@Model" reset-btn="true">
+<wt:searchpanel vm="@Model" reset-btn="true" old-post="true">
     <wt:row items-per-row="ItemsPerRowEnum.Three">
         <wt:combobox field="Searcher.TaskType" empty-text="@Localizer["All"]" />
         <wt:textbox field="Searcher.CommodityName" empty-text="输入商品名称" />
@@ -12,7 +12,7 @@
         <wt:combobox field="Searcher.EmployeeId" items="Searcher.AllEmployees" empty-text="@Localizer["All"]" />
         <wt:textbox field="Searcher.VOrderCode" empty-text="输入刷单单号" />
         <wt:combobox field="Searcher.OrderState" empty-text="@Localizer["All"]" />
-        <wt:datetime field="Searcher.Time" type="DateTime" range="true"/>
+        <wt:datetime field="Searcher.Time" type="DateTime" range="true" />
         @if (@ViewBag.IsShow == true)
         {
             <wt:combobox field="Searcher.OrganizationID" items="Searcher.AllOrganization" empty-text="@Localizer["All"]" />
@@ -20,13 +20,11 @@
     </wt:row>
 </wt:searchpanel>
 <wt:quote>
-    <wt:row items-per-row="ItemsPerRowEnum.Four">
-        <span class="layui-badge" style="background-color: #FFB800; color:#000000;">未解锁</span>
-        <span class="layui-badge" style="background-color: #009688; color:#000000;">未分配</span>
-        <span class="layui-badge" style="background-color: #5FB878; color:#000000;">已分配</span>
-        <span class="layui-badge" style="background-color: #FF5722; color:#000000;">进行中</span>
-        <span class="layui-badge" style="background-color: #1E9FFF; color:#000000;">已完成</span>
-        <span class="layui-badge" style="background-color: #CCFF99; color:#000000;">已返款</span>
+    <wt:row items-per-row="ItemsPerRowEnum.Six">
+        @foreach (var item in @ViewBag.shopname as IEnumerable<VOS.ViewModel.Business.VOS_TaskVMs.GroupShopName>)
+        {
+            <label class="layui-form-label">@item.ShopName</label>
+        }
     </wt:row>
 </wt:quote>
 <wt:grid vm="@Model" url="/Business/VOS_Task/Search" />

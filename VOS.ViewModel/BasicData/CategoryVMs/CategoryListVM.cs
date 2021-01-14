@@ -35,6 +35,7 @@ namespace VOS.ViewModel.BasicData.CategoryVMs
                 this.MakeGridHeader(x => x.Name),
                 this.MakeGridHeader(x => x.Name_view),
                 this.MakeGridHeader(x => x.CycleNum),
+                this.MakeGridHeader(x => x.Cycle),
                 this.MakeGridHeaderAction(width: 200)
             };
         }
@@ -49,6 +50,7 @@ namespace VOS.ViewModel.BasicData.CategoryVMs
 				    ID = x.ID,
                     Name = x.Name,
                     Name_view = x.Parent.Name,
+                    Cycle= x.Cycle,
                     CycleNum = x.CycleNum,
                 })
                 .OrderBy(x => x.ID);

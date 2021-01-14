@@ -18,7 +18,12 @@ namespace VOS.Model
         public Category Parent { get; set; }
         [Display(Name = "父级类目")]
         public Guid? ParentId { get; set; }
+        [Display(Name="周期")]
+        [Required(ErrorMessage = "周期不能为空")]
+        [RegularExpression(@"^[1-9]\d*$", ErrorMessage = "请输入正确周期")]
+        public string Cycle { get; set; }
         [Display(Name = "周期单量")]
+        [Required(ErrorMessage = "周期单量不能为空")]
         [RegularExpression(@"^[1-9]\d*$", ErrorMessage = "请输入正确单量")]
         public string CycleNum { get; set; }
     }

@@ -78,20 +78,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                     this.MakeGridHeader(x => x.WeChat),
                     this.MakeGridHeader(x => x.TaobaAccount),
                     this.MakeGridHeader(x => x.JDAccount),
-                    this.MakeGridHeader(x => x.PEstate).SetBackGroundFunc((x)=>{
-                        switch (x.PEstate)
-                            {
-                                case state.休息:
-                                return "#c2c2c2";
-                                case state.正常:
-                                return "#1E9FFF";
-                                case state.黑名单:
-                                return "#393D49";
-                            }
-                        return "";
-                    }).SetForeGroundFunc((x)=>{
-                        return "#000000";
-                    }),
+                    this.MakeGridHeader(x=>x.CreateBy),
                     //选择按钮隐藏与显示
                     this.MakeGridHeader(x=> "btn_show").SetHide().SetFormat((x,y)=>{
                         if(x.button_show)
@@ -197,13 +184,19 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(Searcher.FullName) ||
-                        !string.IsNullOrEmpty(Searcher.Mobile) ||
-                        !string.IsNullOrEmpty(Searcher.TaobaAccount) ||
-                        !string.IsNullOrEmpty(Searcher.JDAccount) ||
-                        !string.IsNullOrEmpty(Searcher.CreateBy) ||
-                        !string.IsNullOrEmpty(Searcher.WeChat))
+                    //假显示
+                    if (string.IsNullOrEmpty(Searcher.FullName) &&
+                        string.IsNullOrEmpty(Searcher.Mobile) &&
+                        string.IsNullOrEmpty(Searcher.TaobaAccount) &&
+                        string.IsNullOrEmpty(Searcher.JDAccount) &&
+                        string.IsNullOrEmpty(Searcher.CreateBy) &&
+                        string.IsNullOrEmpty(Searcher.WeChat))
                     {
+                        query = query.Where(x => x.ID.Equals("-1231231"));
+                    }
+                    else
+                    {
+                        var _vOS_Task = DC.Set<VOS_Task>().AsQueryable();
                         //未分配
                         #region 规则
                         foreach (var item in RuleCaches() as List<VOS_Rule>)
@@ -213,7 +206,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                             {
                                 continue;
                             }
-                            var _vOS_Task = DC.Set<VOS_Task>().AsQueryable();
                             #region 转换
                             //规则《周期》
                             long Cycle = item.Cycle == "" ? 0 : Convert.ToInt64(item.Cycle);
@@ -222,6 +214,9 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                             #endregion
                             switch (item.RuleType)
                             {
+
+                                #region 类目规则弃用2021/1/14
+                                /*
                                 case RuleTypes.类目:
                                     #region 类目规则
                                     //类目单量
@@ -247,6 +242,8 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                                        : _vOS_Task.Where(y => y.EmployeeId.Equals(x.ID)).Count() < CycleNum);
                                     #endregion
                                     break;
+                                    */
+                                #endregion
                                 case RuleTypes.店铺:
                                     #region 店铺规则
                                     var data_vOS_Task = from _Task in _vOS_Task
@@ -282,24 +279,43 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                             }
                         }
                         #endregion
-                    }
-                    else {
-                        query = query.Where(x=>x.ID.Equals("-1231231"));
+                        #region 新类目规则
+                        var _TaskCateId = DC.Set<VOS_Task>().Where(x => x.ID.ToString() == MemoryCacheHelper.Set_TaskID).SingleOrDefault().TaskCateId;
+                        if (_TaskCateId != null)
+                        {
+                            var _Category = DC.Set<Category>().Where(x => x.ID == _TaskCateId).SingleOrDefault();
+                            //类目规则《周期》
+                            long _Cycle = _Category.Cycle == "" ? 0 : Convert.ToInt64(_Category.Cycle);
+                            //类目规则《周期单量》
+                            long _Num = _Category.CycleNum == "" ? 0 : Convert.ToInt64(_Category.CycleNum);
+                            if (_Cycle != 0 && _Num != 0)
+                            {
+                                _vOS_Task = _vOS_Task.Where(x => x.DistributionTime > DateTime.Now.AddDays(-_Cycle));
+                                query = query.Where(x => _vOS_Task.Where(y => y.EmployeeId.Equals(x.ID)).Count() < _Num);
+                            }
+                        }
+                        #endregion
                     }
                 }
             }
             else
             {
-                const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
-                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-                if (list.IndexOf(b.RoleName) < 0)
+                if (string.IsNullOrEmpty(Searcher.FullName) &&
+                        string.IsNullOrEmpty(Searcher.Mobile) &&
+                        string.IsNullOrEmpty(Searcher.TaobaAccount) &&
+                        string.IsNullOrEmpty(Searcher.JDAccount) &&
+                        string.IsNullOrEmpty(Searcher.CreateBy) &&
+                        string.IsNullOrEmpty(Searcher.WeChat))
                 {
-                    query = query.Where(x => x.CreateBy.Equals(LoginUserInfo.ITCode));
+                    const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
+                    var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+                    var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+                    if (list.IndexOf(b.RoleName) < 0)
+                    {
+                        query = query.Where(x => x.CreateBy.Equals(LoginUserInfo.ITCode));
+                    }
                 }
             }
-
-
 
             return query.Select(x => new VOS_PEmployee_View
             {
@@ -343,7 +359,5 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 
         [Display(Name = "组织机构")]
         public String OrganizationName_view { get; set; }
-
-
     }
 }
