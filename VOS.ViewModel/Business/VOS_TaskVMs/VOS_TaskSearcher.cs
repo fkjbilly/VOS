@@ -48,13 +48,13 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public List<ComboSelectListItem> AllShopName { get; set; }
         protected override void InitVM()
         {
-            var _task =   DC.Set<VOS_Task>().GroupBy(x => x.Plan.Shopname.ShopName).Select(x => new { a = x.Key }).ToDictionary(x => x.a).ToList();
+            var _task = DC.Set<VOS_Task>().Select(x => new { shopid = x.Plan.Shopname.ID }).Distinct(x => x.shopid).ToList();
             string str = "";
             foreach (var item in _task)
             {
-                str += item.Key + ",";
+                str += item.shopid + ",";
             }
-            AllShopName = DC.Set<VOS_Shop>().Where(x => str.Contains(x.ShopName)).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
+            AllShopName = DC.Set<VOS_Shop>().Where(x => str.Contains(x.ID.ToString())).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
             Time = new DateRange(DateTime.Now.AddDays(-1).Date, DateTime.Now.AddHours(1));
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
