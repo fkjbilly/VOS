@@ -54,7 +54,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 str += item.shopid + ",";
             }
-            AllShopName = DC.Set<VOS_Shop>().Where(x => str.Contains(x.ID.ToString())).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
+            AllShopName = DC.Set<VOS_Shop>().Where(x => str.IndexOf(x.ID.ToString()) >= 0).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
             Time = new DateRange(DateTime.Now.AddDays(-1).Date, DateTime.Now.AddHours(1));
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
