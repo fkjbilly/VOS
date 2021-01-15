@@ -48,19 +48,37 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public List<ComboSelectListItem> AllShopName { get; set; }
         protected override void InitVM()
         {
-            var _task = DC.Set<VOS_Task>().Select(x => new { shopid = x.Plan.Shopname.ID }).Distinct(x => x.shopid).ToList();
-            string str = "";
-            foreach (var item in _task)
-            {
-                str += item.shopid + ",";
-            }
-            AllShopName = DC.Set<VOS_Shop>().Where(x => str.IndexOf(x.ID.ToString()) >= 0).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
             Time = new DateRange(DateTime.Now.AddDays(-1).Date, DateTime.Now.AddHours(1));
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
+            MyInitVM();
         }
 
+        public void MyInitVM() {
+            AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
+            AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
+            AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
+            var query = DC.Set<VOS_Task>()
+                .CheckEqual(TaskType, x => x.TaskType)
+                .CheckContain(CommodityName, x => x.CommodityName)
+                .CheckContain(SearchKeyword, x => x.SearchKeyword)
+                .CheckEqual(IsLock, x => x.IsLock)
+                .CheckEqual(DistributorId, x => x.DistributorId)
+                .CheckEqual(EmployeeId, x => x.EmployeeId)
+                .CheckContain(VOrderCode, x => x.VOrderCode)
+                .CheckEqual(OrderState, x => x.OrderState)
+                .CheckEqual(OrganizationID, x => x.Plan.OrganizationID)
+                .CheckBetween(Time?.GetStartTime(), Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
+                .Where(x => x.IsValid == true).Select(x => new { shopid = x.Plan.Shopname.ID }).Distinct(x => x.shopid).ToList();
+            string str = "";
+            foreach (var item in query)
+            {
+                str += item.shopid + ",";
+            }
+            AllShopName = DC.Set<VOS_Shop>().Where(x => str.IndexOf(x.ID.ToString()) >= 0).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
+        }
     }
 }

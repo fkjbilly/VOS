@@ -26,6 +26,15 @@ namespace VOS.Controllers
             return PartialView(vm);
         }
 
+        [HttpPost]
+        public ActionResult Index(VOS_TaskListVM vm)
+        {
+            ViewBag.IsShow = IsSuperAdministrator;
+            vm.SearcherMode = ListVMSearchModeEnum.Custom2;
+            vm.Searcher.MyInitVM();
+            return PartialView(vm);
+        }
+
         [ActionDescription("Search")]
         [HttpPost]
         public string Search(VOS_TaskListVM vm)
