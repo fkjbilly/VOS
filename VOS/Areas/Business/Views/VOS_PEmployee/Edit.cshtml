@@ -1,32 +1,72 @@
 ﻿@model VOS.ViewModel.Business.VOS_PEmployeeVMs.VOS_PEmployeeVM
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
-
-<wt:form vm="@Model">
-    <wt:row items-per-row="ItemsPerRowEnum.Two">
-        @if (@ViewBag.IsShow == true)
-        {
-            <wt:combobox field="Entity.OrganizationID" items="AllOrganization" empty-text="@Localizer["All"]" />
+    <style type="text/css">
+        img {
+            cursor: pointer;
         }
-        <wt:combobox field="Entity.RecomId" items="AllRecoms" />
-        <wt:combobox field="ShengId" items="AllSheng" label-text="籍贯（省）" trigger-url="/BasicData/City/GetChildrenCity" link-field="ShiId" />
-        <wt:combobox field="ShiId" items="AllShi" label-text="籍贯（市）" trigger-url="/BasicData/City/GetChildrenCity" link-field="Entity.AreaId" />
-        <wt:combobox field="Entity.AreaId" items="AllQu" label-text="籍贯（区）" />
-        <wt:textbox field="Entity.Address" />
-        <wt:textbox field="Entity.FullName" />
-        <wt:combobox field="Entity.Sex" />
-        <wt:textbox field="Entity.Mobile" />
-        <wt:textbox field="Entity.WeChat" />
-        <wt:textbox field="Entity.TaobaAccount" />
-        <wt:textbox field="Entity.JDAccount" />
-        <wt:upload field="Entity.AlipayPicId" />
-        <wt:upload field="Entity.WeChatPicId" />
-        <wt:upload field="Entity.WeChatRealNamePicId" />
-        <wt:textbox field="Entity.Remark" />
-        <wt:combobox field="Entity.PEstate" />
-    </wt:row>
-    <wt:hidden field="Entity.ID" />
-    <wt:row align="AlignEnum.Right">
-        <wt:submitbutton />
-        <wt:closebutton />
-    </wt:row>
-</wt:form>
+    </style>
+    <wt:form vm="@Model">
+        <wt:row items-per-row="ItemsPerRowEnum.Two">
+            @if (@ViewBag.IsShow == true)
+            {
+                <wt:combobox field="Entity.OrganizationID" items="AllOrganization" empty-text="@Localizer["All"]" />
+            }
+            <wt:combobox field="Entity.RecomId" items="AllRecoms" />
+            <wt:combobox field="ShengId" items="AllSheng" label-text="籍贯（省）" trigger-url="/BasicData/City/GetChildrenCity" link-field="ShiId" />
+            <wt:combobox field="ShiId" items="AllShi" label-text="籍贯（市）" trigger-url="/BasicData/City/GetChildrenCity" link-field="Entity.AreaId" />
+            <wt:combobox field="Entity.AreaId" items="AllQu" label-text="籍贯（区）" />
+            <wt:textbox field="Entity.Address" />
+            <wt:textbox field="Entity.FullName" />
+            <wt:combobox field="Entity.Sex" />
+            <wt:textbox field="Entity.Mobile" />
+            <wt:textbox field="Entity.WeChat" />
+            <wt:textbox field="Entity.TaobaAccount" />
+            <wt:textbox field="Entity.JDAccount" />
+            <wt:upload field="Entity.AlipayPicId" upload-type="ImageFile" padding-text="必填项" />
+            <wt:upload field="Entity.WeChatPicId" upload-type="ImageFile" padding-text="必填项" />
+            <wt:upload field="Entity.WeChatRealNamePicId" upload-type="ImageFile" padding-text="必填项" />
+            <wt:textbox field="Entity.Remark" />
+            <wt:combobox field="Entity.PEstate" />
+        </wt:row>
+        <wt:hidden field="Entity.ID" />
+        <wt:row align="AlignEnum.Right">
+            <wt:submitbutton />
+            <wt:closebutton />
+        </wt:row>
+    </wt:form>
+    <script src="~/Img.js"></script>
+    <script type="text/javascript">
+    //支付宝
+    $("#VOS_PEmployeeVM_Entity_AlipayPicIdlabel").click(function () {
+        var _img = $("#VOS_PEmployeeVM_Entity_AlipayPicIdlabel > img")[0];
+        ImageAuto(_img);
+    });
+    //微信
+    $("#VOS_PEmployeeVM_Entity_WeChatPicIdlabel").click(function () {
+        var _img = $("#VOS_PEmployeeVM_Entity_WeChatPicIdlabel > img")[0];
+        ImageAuto(_img);
+    });
+    //微信实名
+    $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdlabel").click(function () {
+        var _img = $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdlabel > img")[0];
+        ImageAuto(_img);
+    });
+
+    $('button[type="submit"]').on("click", function () {
+        var ZFB = $("#VOS_PEmployeeVM_Entity_AlipayPicId").val(); //支付宝
+        if (ZFB == "" || ZFB == null) {
+            layer.msg('请上传支付宝图片');
+            return false;
+        }
+        var WX = $("#VOS_PEmployeeVM_Entity_WeChatPicId").val(); //微信
+        if (WX == "" || WX == null) {
+            layer.msg('请上传微信图片');
+            return false;
+        }
+        var WXSM = $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicId").val();//微信实名
+        if (WXSM == "" || WXSM == null) {
+            layer.msg('请上传微信实名图片');
+            return false;
+        }
+    })
+    </script>

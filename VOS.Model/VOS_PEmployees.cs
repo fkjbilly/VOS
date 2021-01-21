@@ -49,6 +49,7 @@ namespace VOS.Model
         [StringLength(50, ErrorMessage = "微信账号长度超过限制")]
         public string WeChat { get; set; }
         [Display(Name = "淘宝账号")]
+        [Required(ErrorMessage = "淘宝账号必填项")]
         [StringLength(50, ErrorMessage = "淘宝账号长度超过限制")]
         public string TaobaAccount { get; set; }
         [Display(Name = "京东账号")]

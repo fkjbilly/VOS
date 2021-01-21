@@ -54,6 +54,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 this.MakeGridHeader(x => x.Name_view),
                 this.MakeGridHeader(x => x.CommodityName),
                 this.MakeGridHeader(x => x.TBAccount),
+                this.MakeGridHeader(x=>x._executorName)
                 };
             }
             else
@@ -174,6 +175,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         CreateTime = x.CreateTime,
                         IsLock = x.IsLock,
                         _ShopName = x.Plan.Shopname.ShopName,
+                        _executorName=x.Executor.Name,
                     })
                     .OrderByDescending(x => x.CreateTime);
         }
@@ -192,5 +194,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public String FullName_view { get; set; }
         [Display(Name = "店铺")]
         public String _ShopName { get; set; }
+        [Display(Name ="执行人")]
+        public String _executorName { get; set; }
     }
 }

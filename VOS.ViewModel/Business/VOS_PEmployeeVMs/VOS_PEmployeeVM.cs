@@ -21,8 +21,9 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 
         public List<ComboSelectListItem> AllOrganization { get; set; }
         
-
+        [Required(ErrorMessage ="省必填项")]
         public Guid? ShengId { get; set; }
+        [Required(ErrorMessage="市必填项")]
         public Guid? ShiId { get; set; }
         public VOS_PEmployeeVM()
         {
@@ -68,8 +69,8 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         }
         public override DuplicatedInfo<VOS_PEmployee> SetDuplicatedCheck()
         {
-            var rv = CreateFieldsInfo(SimpleField(a => a.FullName));
-            rv.AddGroup(SimpleField(a => a.Mobile));
+            var rv = CreateFieldsInfo(SimpleField(a => a.Mobile));
+            //rv.AddGroup(SimpleField(a => a.Mobile));
             rv.AddGroup(SimpleField(a => a.JDAccount));
             rv.AddGroup(SimpleField(a => a.TaobaAccount));
             rv.AddGroup(SimpleField(a => a.WeChat));
