@@ -64,6 +64,7 @@ namespace VOS.Controllers
             }
             if (!ModelState.IsValid)
             {
+                ViewBag.IsShow = IsSuperAdministrator;
                 return PartialView(vm);
             }
             else

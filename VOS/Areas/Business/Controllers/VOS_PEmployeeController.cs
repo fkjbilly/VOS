@@ -57,6 +57,7 @@ namespace VOS.Controllers
             vm.Entity.CreateBy = LoginUserInfo.ITCode.ToString();
             if (!ModelState.IsValid)
             {
+                ViewBag.IsShow = IsSuperAdministrator;
                 return PartialView(vm);
             }
             else

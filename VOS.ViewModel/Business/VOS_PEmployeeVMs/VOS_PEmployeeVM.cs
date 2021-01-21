@@ -29,6 +29,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         {
             SetInclude(x => x.Recom);
             SetInclude(x => x.Area);
+            SetInclude(x => x.Organization);
         }
 
         protected override void InitVM()
@@ -47,7 +48,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 AllShi = DC.Set<City>().Where(x => x.ParentId == ShengId).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
             }
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
-
         }
 
         public override void DoAdd()
