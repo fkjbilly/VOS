@@ -211,6 +211,7 @@ namespace VOS.Controllers
         #region 刷新缓存
         [ActionDescription("刷新缓存")]
         [HttpGet]
+        [Public]
         public ActionResult RefreshCache() {
             var result = DC.Set<VOS_Rule>().ToList();
             MemoryCacheHelper.Set(MemoryCacheHelper._RuleCaches, result, new TimeSpan(4, 0, 0));
