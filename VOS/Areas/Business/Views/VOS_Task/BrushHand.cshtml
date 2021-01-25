@@ -16,23 +16,18 @@
 <input type="hidden" id="rwid" value="@ViewBag.id" />
 <wt:grid vm="@Model" name="_PEmployee" url="/Business/VOS_PEmployee/Search" hidden-checkbox="true" hidden-grid-index="true"  hidden-panel="true" />
 <script type="text/javascript">
-    var table, layer;
-    layui.use(['table', 'layer'], function () {
-        table = layui.table;
-        layer = layui.layer;
-    });
     function SelectBrushHand(id) {
         $.post('@Url.Action("BrushHand", "VOS_Task")', { "ID": $("#rwid").val(), "BrushHandID": id }, function (r) {
             layer.msg(r.Msg, {
                 icon: r.Data,
                 time: 1500,
             }, function () {
-                parent.layui.table.reload($('table')[0].id);
-                layer.closeAll();
+                    $(".layui-laypage-btn")[0].click();
+                    //parent.layui.table.reload($('table')[0].id);
+                    layer.closeAll();
             });
         });
     }
-
     function ResetBrushHand() {
          $.post('@Url.Action("ResetBrushHand", "VOS_Task")', { "ID": $("#rwid").val() }, function (r) {
             if (r.Data) {
@@ -41,7 +36,8 @@
                     time:1000,
                 }, function () {
                    table.reload($('table[name="_PEmployee"]')[0].id);
-                   parent.layui.table.reload($('table')[0].id);
+                        $(".layui-laypage-btn")[0].click();
+                   //parent.layui.table.reload($('table')[0].id);
                 });
             } else {
                 layer.msg('发生错误，联系管理员', { icon: 2 });

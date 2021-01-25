@@ -34,7 +34,7 @@
 </wt:searchpanel>
 <wt:grid vm="@Model" url="/Business/VOS_Task/Search" />
 <script type="text/javascript">
-    var table, layer;
+    var table, layer; 
     layui.use(['table', 'layer'], function () {
             table = layui.table,
             layer = layui.layer;
@@ -76,7 +76,8 @@
                     layer.alert('单号有问题，请检查！！！', { icon: 5 });
                 }else if (r.Data == true) {
                     layer.alert('已提交', { icon: 1 });
-                    table.reload($('table')[0].id);//刷新table
+                    $(".layui-laypage-btn")[0].click();
+                    //table.reload($('table')[0].id);//刷新table
                     layer.close(index);
                } else {
                     console.log(r);
