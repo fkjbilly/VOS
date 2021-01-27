@@ -25,10 +25,10 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 {
                     this.MakeAction("VOS_Task","BrushHand","更改","更改信息",GridActionParameterTypesEnum.SingleId,"Business",800,600)
                     .SetShowInRow(true).SetHideOnToolBar(true).SetBindVisiableColName("OrderStateShow"),
-                    
+
                     this.MakeAction("VOS_Task","BrushHand","派单","刷手分配",GridActionParameterTypesEnum.SingleId,"Business",800,600)
                     .SetShowInRow(true).SetHideOnToolBar(true).SetBindVisiableColName("OrderStateHide"),
-                    
+
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
                     this.MakeAction("VOS_User","Index","设置执行人","执行人分配",GridActionParameterTypesEnum.MultiIds,"Business",900,600).SetIconCls("_wtmicon _wtmicon-icon_shezhi"),
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
@@ -113,7 +113,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         /// <returns></returns>
         private string VOrderCodeFormat(VOS_Task_View entity, object val)
         {
-            if (SearcherMode == ListVMSearchModeEnum.Custom2) {
+            if (SearcherMode == ListVMSearchModeEnum.Custom2)
+            {
                 switch (entity.OrderState)
                 {
                     case OrderState.未分配:
@@ -137,26 +138,32 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
         public override IOrderedQueryable<VOS_Task_View> GetSearchQuery()
         {
+
+
+
             var query = DC.Set<VOS_Task>()
-                .CheckEqual(Searcher.TaskType, x => x.TaskType)
-                .CheckContain(Searcher.CommodityName, x => x.CommodityName)
-                .CheckContain(Searcher.SearchKeyword, x => x.SearchKeyword)
-                .CheckEqual(Searcher.IsLock, x => x.IsLock)
-                .CheckEqual(Searcher.DistributorId, x => x.DistributorId)
-                .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
-                .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
-                .CheckEqual(Searcher.OrderState, x => x.OrderState)
-                .CheckContain(Searcher.ShopNames, x => x.Plan.Shopname.ID)
-                .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
-                .CheckBetween(Searcher.Time?.GetStartTime(), Searcher.Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
-                //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID)//数据权限
-                .Where(x => x.IsValid == true);
-            const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
-            var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-            var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-            if (list.IndexOf(b.RoleName) < 0)
+            .CheckEqual(Searcher.TaskType, x => x.TaskType)
+            .CheckContain(Searcher.CommodityName, x => x.CommodityName)
+            .CheckContain(Searcher.SearchKeyword, x => x.SearchKeyword)
+            .CheckEqual(Searcher.IsLock, x => x.IsLock)
+            .CheckEqual(Searcher.DistributorId, x => x.DistributorId)
+            .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
+            .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
+            .CheckEqual(Searcher.OrderState, x => x.OrderState)
+            .CheckContain(Searcher.ShopNames, x => x.Plan.Shopname.ID)
+            .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
+            .CheckBetween(Searcher.Time?.GetStartTime(), Searcher.Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
+            //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID)//数据权限
+            .Where(x => x.IsValid == true);
+            if (SearcherMode != ListVMSearchModeEnum.MasterDetail)
             {
-                query = query.Where(x => x.ExecutorId.Equals(LoginUserInfo.Id));
+                const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
+                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+                if (list.IndexOf(b.RoleName) < 0)
+                {
+                    query = query.Where(x => x.ExecutorId.Equals(LoginUserInfo.Id));
+                }
             }
             return query
                     .Select(x => new VOS_Task_View
@@ -175,7 +182,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         CreateTime = x.CreateTime,
                         IsLock = x.IsLock,
                         _ShopName = x.Plan.Shopname.ShopName,
-                        _executorName=x.Executor.Name,
+                        _executorName = x.Executor.Name,
                     })
                     .OrderByDescending(x => x.CreateTime);
         }
@@ -194,7 +201,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public String FullName_view { get; set; }
         [Display(Name = "店铺")]
         public String _ShopName { get; set; }
-        [Display(Name ="执行人")]
+        [Display(Name = "执行人")]
         public String _executorName { get; set; }
     }
 }
