@@ -81,6 +81,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     }
                     return "false";
                 }),
+                this.MakeGridHeader(x=>x._executorName),
                 this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
                     switch (x.OrderState)
                     {

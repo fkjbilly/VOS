@@ -62,6 +62,9 @@ namespace VOS.Controllers
             }
             else
             {
+                vm.Entity.FullName = vm.Entity.FullName.Trim();
+                vm.Entity.WeChat= vm.Entity.WeChat.Trim();
+                vm.Entity.TaobaAccount = vm.Entity.TaobaAccount.Trim();
                 vm.DoAdd();
                 if (!ModelState.IsValid)
                 {
@@ -96,6 +99,9 @@ namespace VOS.Controllers
             }
             else
             {
+                vm.Entity.FullName = vm.Entity.FullName.Trim();
+                vm.Entity.WeChat = vm.Entity.WeChat.Trim();
+                vm.Entity.TaobaAccount = vm.Entity.TaobaAccount.Trim();
                 vm.DoEdit();
                 if (!ModelState.IsValid)
                 {
