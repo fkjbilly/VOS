@@ -76,12 +76,12 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                             default:
                                  return "#8799a3";
                         }
-                }).SetWidth(80),
-                this.MakeGridHeader(x => x._ShopName).SetWidth(80),
-                this.MakeGridHeader(x => x.CommodityPrice).SetShowTotal(true).SetWidth(80),
+                }).SetWidth(90),
+                this.MakeGridHeader(x => x._ShopName),
+                this.MakeGridHeader(x => x.CommodityPrice).SetShowTotal(true).SetWidth(90),
                 this.MakeGridHeader(x => x.SearchKeyword).SetWidth(140),
-                this.MakeGridHeader(x => x.SKU).SetWidth(60),
-                this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat),
+                this.MakeGridHeader(x => x.SKU),
+                this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(120),
                 this.MakeGridHeader(x => x.FullName_view).SetWidth(140),
                 this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(160),
                 this.MakeGridHeader(x=> "OrderStateHide").SetHide().SetFormat((a,b)=>{
@@ -98,7 +98,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     }
                     return "false";
                 }),
-                this.MakeGridHeader(x=>x.OtherExpenses).SetShowTotal(true).SetWidth(80),
+                this.MakeGridHeader(x=>x.OtherExpenses).SetShowTotal(true).SetWidth(90),
                 this.MakeGridHeader(x=>x._executorName).SetWidth(80),
                 this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
                     switch (x.OrderState)
@@ -118,7 +118,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     }
                 }).SetForeGroundFunc((x)=>{
                     return "#000000";
-                }).SetSort(),
+                }).SetWidth(120).SetSort(),
                 this.MakeGridHeaderAction(width: 180)
             };
             }
