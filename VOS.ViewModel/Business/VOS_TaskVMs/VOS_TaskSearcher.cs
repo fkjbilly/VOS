@@ -46,9 +46,11 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         [Display(Name = "店铺")]
         public List<Guid> ShopNames { get; set; }
         public List<ComboSelectListItem> AllShopName { get; set; }
+
+        private DateTime ti => Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
         protected override void InitVM()
         {
-            Time = new DateRange(DateTime.Now.AddDays(-1).Date, DateTime.Now.AddHours(1));
+            Time = new DateRange(ti, DateTime.Now);
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);

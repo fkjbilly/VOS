@@ -15,14 +15,14 @@
 
     <!-- Header -->
     <ul class="layui-nav layui-layout-left">
-      
+        
     </ul>
     <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
-        @*<li class="layui-nav-item layadmin-flexible" lay-unselect>
+        <li class="layui-nav-item layadmin-flexible" lay-unselect>
             <a href="javascript:;" layadmin-event="flexible" title="@Model.Localizer["HideShow"]">
                 <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
             </a>
-        </li>*@
+        </li>
         <li class="layui-nav-item layui-hide-xs" lay-unselect>
             <a href="https://baidu.com" target="_blank" title="@Model.Localizer["WtmDoc"]">
                 <i class="layui-icon layui-icon-website"></i>
@@ -191,11 +191,11 @@
   <div class="layadmin-body-shade" layadmin-event="shade"></div>
 </div>
 <script type="text/javascript">
-    $("#left-side-menu").mouseout(function () {
+    /*$("#left-side-menu").mouseout(function () {
         $("#LAY_app").removeClass("layadmin-side-shrink");
     });
     $("#left-side-menu").hover(function () {
         $("#LAY_app").addClass("layadmin-side-shrink");
         layui.index.render();
-    });
+    });*/
 </script>

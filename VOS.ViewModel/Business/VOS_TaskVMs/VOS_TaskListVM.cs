@@ -33,7 +33,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     this.MakeAction("VOS_User","Index","设置执行人","执行人分配",GridActionParameterTypesEnum.MultiIds,"Business",900,600).SetIconCls("_wtmicon _wtmicon-icon_shezhi"),
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Delete, Localizer["Delete"], "Business", dialogWidth: 800),
-                    this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Details, Localizer["Details"], "Business", dialogWidth: 800),
+                    this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Details, Localizer["Details"], "Business", dialogWidth: 800).SetShowInRow(false).SetHideOnToolBar(true),
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.BatchEdit, Localizer["BatchEdit"], "Business", dialogWidth: 800),
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.BatchDelete, Localizer["BatchDelete"], "Business", dialogWidth: 800),
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Import, Localizer["Import"], "Business", dialogWidth: 800),
@@ -60,13 +60,30 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             else
             {
                 return new List<GridColumn<VOS_Task_View>>{
-                this.MakeGridHeader(x => x.TaskType),
-                this.MakeGridHeader(x => x._ShopName),
-                this.MakeGridHeader(x => x.CommodityPrice),
-                this.MakeGridHeader(x => x.SearchKeyword),
-                this.MakeGridHeader(x => x.SKU),
-                this.MakeGridHeader(x => x.FullName_view),
-                this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(150),
+                this.MakeGridHeader(x => x.TaskType).SetForeGroundFunc((x)=>{
+                        switch (x.TaskType)
+                        {
+                            case TaskType.搜索单:
+                                 return "#e54d42";
+                            case TaskType.隔天单:
+                                 return "#fbbd08";
+                            case TaskType.非搜单:
+                                  return "#8dc63f";
+                            case TaskType.动销单:
+                                 return "#9c26b0";
+                            case TaskType.其他:
+                                 return "#c2c2c2";
+                            default:
+                                 return "#8799a3";
+                        }
+                }).SetWidth(80),
+                this.MakeGridHeader(x => x._ShopName).SetWidth(80),
+                this.MakeGridHeader(x => x.CommodityPrice).SetShowTotal(true).SetWidth(80),
+                this.MakeGridHeader(x => x.SearchKeyword).SetWidth(140),
+                this.MakeGridHeader(x => x.SKU).SetWidth(60),
+                this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat),
+                this.MakeGridHeader(x => x.FullName_view).SetWidth(140),
+                this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(160),
                 this.MakeGridHeader(x=> "OrderStateHide").SetHide().SetFormat((a,b)=>{
                     if(a.OrderState == OrderState.已完成 || a.OrderState == OrderState.已返款 )
                     {
@@ -81,7 +98,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     }
                     return "false";
                 }),
-                this.MakeGridHeader(x=>x._executorName),
+                this.MakeGridHeader(x=>x.OtherExpenses).SetShowTotal(true).SetWidth(80),
+                this.MakeGridHeader(x=>x._executorName).SetWidth(80),
                 this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
                     switch (x.OrderState)
                     {
@@ -101,7 +119,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 }).SetForeGroundFunc((x)=>{
                     return "#000000";
                 }).SetSort(),
-                this.MakeGridHeaderAction(width: 230)
+                this.MakeGridHeaderAction(width: 180)
             };
             }
         }
@@ -139,9 +157,6 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
         public override IOrderedQueryable<VOS_Task_View> GetSearchQuery()
         {
-
-
-
             var query = DC.Set<VOS_Task>()
             .CheckEqual(Searcher.TaskType, x => x.TaskType)
             .CheckContain(Searcher.CommodityName, x => x.CommodityName)
@@ -184,11 +199,23 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         IsLock = x.IsLock,
                         _ShopName = x.Plan.Shopname.ShopName,
                         _executorName = x.Executor.Name,
+                        OtherExpenses = x.OtherExpenses,
+                        CommodityPicId = x.CommodityPicId,
                     })
-                    .OrderByDescending(x => x.CreateTime);
+                    .OrderBy(x => ((int)x.OrderState == 1 ? 1 :
+                                     ((int)x.OrderState == 0 ? 2 :
+                                     ((int)x.OrderState == 2 ? 3 :
+                                     (int)x.OrderState == 3 ? 4 : 5))));
         }
 
-
+        private List<ColumnFormatInfo> CommodityPicIdFormat(VOS_Task_View entity, object val)
+        {
+            return new List<ColumnFormatInfo>
+            {
+                ColumnFormatInfo.MakeDownloadButton(ButtonTypesEnum.Button,entity.CommodityPicId),
+                ColumnFormatInfo.MakeViewButton(ButtonTypesEnum.Button,entity.CommodityPicId,640,480),
+            };
+        }
 
     }
 
