@@ -66,7 +66,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                             case TaskType.搜索单:
                                  return "#e54d42";
                             case TaskType.隔天单:
-                                 return "#fbbd08";
+                                 return "#45b97c";
                             case TaskType.非搜单:
                                   return "#8dc63f";
                             case TaskType.动销单:
@@ -82,8 +82,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 this.MakeGridHeader(x => x.SearchKeyword).SetWidth(140),
                 this.MakeGridHeader(x => x.SKU),
                 this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(120),
-                this.MakeGridHeader(x => x.FullName_view).SetWidth(140),
-                this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(160),
+                this.MakeGridHeader(x => x.FullName_view),
+                this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat),
                 this.MakeGridHeader(x=> "OrderStateHide").SetHide().SetFormat((a,b)=>{
                     if(a.OrderState == OrderState.已完成 || a.OrderState == OrderState.已返款 )
                     {
@@ -118,7 +118,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     }
                 }).SetForeGroundFunc((x)=>{
                     return "#000000";
-                }).SetWidth(120).SetSort(),
+                }).SetWidth(110).SetSort(),
                 this.MakeGridHeaderAction(width: 180)
             };
             }

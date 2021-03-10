@@ -47,7 +47,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public List<Guid> ShopNames { get; set; }
         public List<ComboSelectListItem> AllShopName { get; set; }
 
-        private DateTime ti => Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+        private DateTime ti => Convert.ToDateTime(DateTime.Now.AddHours(-24));
         protected override void InitVM()
         {
             Time = new DateRange(ti, DateTime.Now);
@@ -58,7 +58,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             MyInitVM();
         }
 
-        public void MyInitVM() {
+        public void MyInitVM()
+        {
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
@@ -73,14 +74,23 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 .CheckContain(VOrderCode, x => x.VOrderCode)
                 .CheckEqual(OrderState, x => x.OrderState)
                 .CheckEqual(OrganizationID, x => x.Plan.OrganizationID)
-                .CheckBetween(Time?.GetStartTime(), Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
-                .Where(x => x.IsValid == true).Select(x => new { shopid = x.Plan.Shopname.ID }).Distinct(x => x.shopid).ToList();
+                .CheckBetween(Time?.GetStartTime(), Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false);
+            const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
+            var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+            var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
+            if (list.IndexOf(b.RoleName) < 0)
+            {
+                query = query.Where(x => x.ExecutorId.ToString() == LoginUserInfo.Id.ToString());
+            }
+            var data = query.Where(x => x.IsValid == true).Select(x => new { shopid = x.Plan.Shopname.ID }).Distinct(x => x.shopid).ToList();
             string str = "";
-            foreach (var item in query)
+            foreach (var item in data)
             {
                 str += item.shopid + ",";
             }
-            AllShopName = DC.Set<VOS_Shop>().Where(x => str.IndexOf(x.ID.ToString()) >= 0).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
+
+            AllShopName = DC.Set<VOS_Shop>().Where(x => str.IndexOf(x.ID.ToString()) >= 0).Take(18).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
+
         }
     }
 }
