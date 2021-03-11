@@ -88,8 +88,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 str += item.shopid + ",";
             }
-
-            AllShopName = DC.Set<VOS_Shop>().Where(x => str.IndexOf(x.ID.ToString()) >= 0).Take(18).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
+            AllShopName = DC.Set<VOS_Shop>().Where(x => str.IndexOf(x.ID.ToString()) >= 0).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
 
         }
     }

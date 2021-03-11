@@ -186,7 +186,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 }
                 else
                 {
-                    //假显示
                     if (string.IsNullOrEmpty(Searcher.FullName) &&
                         string.IsNullOrEmpty(Searcher.Mobile) &&
                         string.IsNullOrEmpty(Searcher.TaobaAccount) &&
@@ -195,82 +194,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                         string.IsNullOrEmpty(Searcher.WeChat))
                     {
                         query = query.Where(x => x.ID.Equals("-1231231"));
-                    }
-                    else
-                    {
-                        var _vOS_Task = DC.Set<VOS_Task>().AsQueryable();
-                        var _TaskModel = _vOS_Task.Where(x => x.ID.ToString().Equals(MemoryCacheHelper.Set_TaskID)).SingleOrDefault();
-                        #region 新类目规则
-                        var _TaskCateId = _TaskModel.TaskCateId.ToString();
-                        if (_TaskCateId != null)
-                        {
-                            var _Category = DC.Set<Category>().Where(x => x.ID.ToString() == _TaskCateId).SingleOrDefault();
-                            //类目规则《周期》
-                            long _Cycle = _Category.Cycle == "" ? 0 : Convert.ToInt64(_Category.Cycle);
-                            //类目规则《周期单量》
-                            long _Num = _Category.CycleNum == "" ? 0 : Convert.ToInt64(_Category.CycleNum);
-                            if (_Cycle != 0 && _Num != 0)
-                            {
-                               var My_vOS_Task = _vOS_Task.Where(x => x.DistributionTime > DateTime.Now.AddDays(-_Cycle) && x.TaskCateId.ToString().Equals(_TaskCateId));
-                                query = query.Where(x => My_vOS_Task.Where(y => y.EmployeeId.ToString().Equals(x.ID.ToString())).Count() < _Num);
-                            }
-                        }
-                        #endregion
-                        #region 规则
-
-                        foreach (var item in RuleCaches() as List<VOS_Rule>)
-                        {
-                            if (item.IsUse == false)
-                            {
-                                continue;
-                            }
-                            #region 转换
-                            //规则《周期》
-                            long Cycle = item.Cycle == "" ? 0 : Convert.ToInt64(item.Cycle);
-                            //规则《单量》
-                            long Num = item.Num == "" ? 0 : Convert.ToInt64(item.Num);
-                            #endregion
-                            switch (item.RuleType)
-                            {
-                                case RuleTypes.店铺:
-                                    var _vOS_Task1 = _vOS_Task;
-                                    #region 店铺规则
-                                    var _ShopnameId = DC.Set<VOS_Plan>().Where(x => x.ID.ToString().Equals(_TaskModel.PlanId.ToString())).SingleOrDefault().ShopnameId;
-                                    var data_vOS_Task = from _Task in _vOS_Task1
-                                                        join _Shop in DC.Set<VOS_Plan>() on _Task.PlanId equals _Shop.ID
-                                                        where _Task.EmployeeId != null
-                                                        select new
-                                                        {
-                                                            _Task.DistributionTime,
-                                                            _Task.EmployeeId,
-                                                            _Shop.Shopname,
-                                                            _Shop.Plan_no,
-                                                            _Shop.ShopnameId,
-                                                        };
-
-                                    query = query.Where(x => data_vOS_Task.Where(y => y.ShopnameId.ToString().Equals(_ShopnameId.ToString()) 
-                                        && y.DistributionTime > DateTime.Now.AddDays(-Cycle) 
-                                        && x.ID.ToString().Equals(y.EmployeeId.ToString())).Count() < Num);
-                                    #endregion
-                                    break;
-                                case RuleTypes.间隔:
-                                    #region 间隔规则
-                                   var  _vOS_Task2 = _vOS_Task.Where(y => y.DistributionTime > DateTime.Now.AddDays(-Cycle)
-                                    && y.EmployeeId != null);
-                                    query = query.Where(x =>
-                                      _vOS_Task2.Where(y => x.ID.ToString().Equals(y.EmployeeId.ToString())).Count() < 1);
-                                    #endregion
-                                    break;
-                                case RuleTypes.周期:
-                                    #region 周期规则
-                                    var _vOS_Task3 = _vOS_Task.Where(x => x.DistributionTime > DateTime.Now.AddDays(-Cycle));
-                                    query = query.Where(x => _vOS_Task3.Where(y => y.EmployeeId.ToString().Equals(x.ID.ToString())).Count() < Num);
-                                    #endregion
-                                    break;
-                            }
-                        }
-                        
-                        #endregion
                     }
                 }
             }
@@ -312,20 +235,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
             }).OrderByDescending(x => x.CreateTime);
         }
 
-        private object RuleCaches()
-        {
-            string key = MemoryCacheHelper._RuleCaches;
-            if (MemoryCacheHelper.Exists(key))
-            {
-                return MemoryCacheHelper.Get(key);
-            }
-            else
-            {
-                var result = DC.Set<VOS_Rule>().ToList();
-                MemoryCacheHelper.Set(key, result, new TimeSpan(4, 0, 0));
-                return result;
-            }
-        }
+      
 
     }
 

@@ -246,6 +246,80 @@ namespace VOS.Controllers
         {
             try
             {
+                var _vOS_Task = DC.Set<VOS_Task>().AsQueryable();
+                var _TaskModel = _vOS_Task.Where(x => x.ID.ToString().Equals(ID.ToString())).SingleOrDefault();
+                 #region 新类目规则
+                var _TaskCateId = _TaskModel.TaskCateId.ToString();
+                if (!string.IsNullOrEmpty(_TaskCateId))
+                {
+                    var _Category = DC.Set<Category>().Where(x => x.ID.ToString() == _TaskCateId).SingleOrDefault();
+                    //类目规则《周期》
+                    long _Cycle = _Category.Cycle == "" ? 0 : Convert.ToInt64(_Category.Cycle);
+                    //类目规则《周期单量》
+                    long _Num = _Category.CycleNum == "" ? 0 : Convert.ToInt64(_Category.CycleNum);
+                    if (_Cycle != 0 && _Num != 0)
+                    {
+                        var My_vOS_Task = _vOS_Task.Where(x => x.EmployeeId.ToString().Equals(BrushHandID.ToString()) && x.DistributionTime > DateTime.Now.AddDays(-_Cycle) && x.TaskCateId.ToString().Equals(_TaskCateId)).Count();
+                        if (My_vOS_Task >= _Num)
+                        {
+                            return Json("5", 200, "类目“" + _TaskModel.TaskCate.Name + "”规则未通过！！！");
+                        }
+                    }
+                }
+                #endregion
+
+                foreach (var item in RuleCaches() as System.Collections.Generic.List<VOS_Rule>)
+                {
+                    if (item.IsUse == false)
+                    {
+                        continue;
+                    }
+                    #region 转换
+                    //规则《周期》
+                    long Cycle = item.Cycle == "" ? 0 : Convert.ToInt64(item.Cycle);
+                    //规则《单量》
+                    long Num = item.Num == "" ? 0 : Convert.ToInt64(item.Num);
+                    #endregion
+
+                    switch (item.RuleType)
+                    {
+                        case VOS_Rule.RuleTypes.店铺:
+                            var _vOS_Task1 = _vOS_Task;
+                            #region 店铺规则
+                            var ShopModel = DC.Set<VOS_Plan>().Where(x => x.ID.ToString().Equals(_TaskModel.PlanId.ToString())).SingleOrDefault();
+
+                            var My_vOS_Task2 = _vOS_Task.Where(x => x.EmployeeId.ToString().Equals(BrushHandID.ToString()) 
+                                                                && x.DistributionTime > DateTime.Now.AddDays(-Cycle) 
+                                                                && x.Plan.Shopname.ID.ToString().Equals(ShopModel.ShopnameId.ToString())).Count();
+                            if (My_vOS_Task2 >= Num)
+                            {
+                                return Json("5", 200, "店铺“" + ShopModel.Shopname+ "”规则未通过！！！");
+                            }
+                            #endregion
+                            break;
+                        case VOS_Rule.RuleTypes.间隔:
+                            #region 间隔规则
+                            var _vOS_Task2 = _vOS_Task.Where(y => y.DistributionTime > DateTime.Now.AddDays(-Cycle)
+                                            && y.EmployeeId.ToString().Equals(BrushHandID.ToString())).Count();
+                            if (_vOS_Task2 >= Num)
+                            {
+                                return Json("5", 200, "间隔规则未通过！！！");
+                            }
+                            #endregion
+                            break;
+                        case VOS_Rule.RuleTypes.周期:
+                            #region 周期规则
+                            var _vOS_Task3 = _vOS_Task.Where(x => x.EmployeeId.ToString().Equals(BrushHandID.ToString()) 
+                                                             && x.DistributionTime > DateTime.Now.AddDays(-Cycle)).Count();
+                            if (_vOS_Task3 >= Num) { 
+                                return Json("5", 200, "周期规则未通过！！！");
+                            }
+                            #endregion
+                            break;
+                    }
+                }
+
+                #region 规则通过
                 var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
                 if (vOS_Task.IsLock == false)
                 {
@@ -271,6 +345,7 @@ namespace VOS.Controllers
                 DC.Set<VOS_Task>().Update(vOS_Task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 DC.SaveChanges();
                 return Json("1", 200, "已选择刷手");
+                #endregion
             }
             catch (Exception)
             {
@@ -376,9 +451,20 @@ namespace VOS.Controllers
         }
         #endregion
 
-        #region accomplish_VOrderCodeAndEmployee 完成后更改单号刷手
-
-        #endregion
+        private object RuleCaches()
+        {
+            string key = MemoryCacheHelper._RuleCaches;
+            if (MemoryCacheHelper.Exists(key))
+            {
+                return MemoryCacheHelper.Get(key);
+            }
+            else
+            {
+                var result = DC.Set<VOS_Rule>().ToList();
+                MemoryCacheHelper.Set(key, result, new TimeSpan(4, 0, 0));
+                return result;
+            }
+        }
 
         [ActionDescription("Export")]
         [HttpPost]
