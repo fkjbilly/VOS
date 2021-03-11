@@ -77,13 +77,13 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                                  return "#8799a3";
                         }
                 }).SetWidth(90),
-                this.MakeGridHeader(x => x._ShopName),
+                this.MakeGridHeader(x => x._ShopName).SetWidth(100),
                 this.MakeGridHeader(x => x.CommodityPrice).SetShowTotal(true).SetWidth(90),
-                this.MakeGridHeader(x => x.SearchKeyword).SetWidth(140),
+                this.MakeGridHeader(x => x.SearchKeyword),
                 this.MakeGridHeader(x => x.SKU),
-                this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(120),
+                this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(110),
                 this.MakeGridHeader(x => x.FullName_view),
-                this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat),
+                this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(110),
                 this.MakeGridHeader(x=> "OrderStateHide").SetHide().SetFormat((a,b)=>{
                     if(a.OrderState == OrderState.已完成 || a.OrderState == OrderState.已返款 )
                     {
@@ -118,8 +118,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     }
                 }).SetForeGroundFunc((x)=>{
                     return "#000000";
-                }).SetWidth(110).SetSort(),
-                this.MakeGridHeaderAction(width: 180)
+                }).SetWidth(102).SetSort(),
+                this.MakeGridHeaderAction(width: 165)
             };
             }
         }
