@@ -81,7 +81,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 this.MakeGridHeader(x => x.CommodityPrice).SetShowTotal(true).SetWidth(90),
                 this.MakeGridHeader(x => x.SearchKeyword),
                 this.MakeGridHeader(x => x.SKU),
-                this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(110),
+                this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(90),
                 this.MakeGridHeader(x => x.FullName_view),
                 this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(110),
                 this.MakeGridHeader(x=> "OrderStateHide").SetHide().SetFormat((a,b)=>{
