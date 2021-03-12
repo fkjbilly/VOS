@@ -47,7 +47,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public List<Guid> ShopNames { get; set; }
         public List<ComboSelectListItem> AllShopName { get; set; }
 
-        private DateTime ti => Convert.ToDateTime(DateTime.Now.AddHours(-24));
+        private DateTime ti => Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
         protected override void InitVM()
         {
             Time = new DateRange(ti, DateTime.Now);
