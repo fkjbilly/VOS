@@ -54,7 +54,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 this.MakeGridHeader(x => x.Name_view).SetWidth(90),
                 this.MakeGridHeader(x => x.CommodityName),
                 //this.MakeGridHeader(x => x.TBAccount),
-                this.MakeGridHeader(x => x.DistributionTime),
+                this.MakeGridHeader(x => x.DistributionTime).SetSort(true),
                 this.MakeGridHeader(x=>x._executorName).SetWidth(100)
                 };
             }
@@ -182,7 +182,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     query = query.Where(x => x.ExecutorId.Equals(LoginUserInfo.Id));
                 }
             }
-            var DATA = query.Select(x => new VOS_Task_View
+             var data = query.Select(x => new VOS_Task_View
             {
                 ID = x.ID,
                 Task_no = x.Task_no,
@@ -206,16 +206,15 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
             if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
             {
-                DATA.OrderByDescending(X => X.DistributionTime);
+                return data.OrderByDescending(x => x.DistributionTime.Value);
             }
-            else
-            {
-                DATA.OrderBy(x => ((int)x.OrderState == 1 ? 1 :
-                                     ((int)x.OrderState == 0 ? 2 :
-                                     ((int)x.OrderState == 2 ? 3 :
-                                     (int)x.OrderState == 3 ? 4 : 5))));
-            }
-            return (IOrderedQueryable<VOS_Task_View>)DATA;
+             else
+             {
+                return data.OrderBy(x => ((int)x.OrderState == 1 ? 1 :
+                                      ((int)x.OrderState == 0 ? 2 :
+                                      ((int)x.OrderState == 2 ? 3 :
+                                      (int)x.OrderState == 3 ? 4 : 5))));
+             }
         }
 
         private List<ColumnFormatInfo> CommodityPicIdFormat(VOS_Task_View entity, object val)
