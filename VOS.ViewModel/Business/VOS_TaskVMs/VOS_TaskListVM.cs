@@ -50,11 +50,12 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 return new List<GridColumn<VOS_Task_View>>
                 {
                 this.MakeGridHeader(x => x.Task_no),
-                this.MakeGridHeader(x => x.TaskType),
-                this.MakeGridHeader(x => x.Name_view),
+                this.MakeGridHeader(x => x.TaskType).SetWidth(90),
+                this.MakeGridHeader(x => x.Name_view).SetWidth(90),
                 this.MakeGridHeader(x => x.CommodityName),
-                this.MakeGridHeader(x => x.TBAccount),
-                this.MakeGridHeader(x=>x._executorName)
+                //this.MakeGridHeader(x => x.TBAccount),
+                this.MakeGridHeader(x => x.DistributionTime),
+                this.MakeGridHeader(x=>x._executorName).SetWidth(100)
                 };
             }
             else
@@ -181,31 +182,40 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     query = query.Where(x => x.ExecutorId.Equals(LoginUserInfo.Id));
                 }
             }
-            return query
-                    .Select(x => new VOS_Task_View
-                    {
-                        ID = x.ID,
-                        Task_no = x.Task_no,
-                        TaskType = x.TaskType,
-                        Name_view = x.TaskCate.Name,
-                        CommodityName = x.CommodityName,
-                        CommodityPrice = x.CommodityPrice,
-                        SearchKeyword = x.SearchKeyword,
-                        SKU = x.SKU,
-                        FullName_view = x.Employee.TaobaAccount,
-                        VOrderCode = x.VOrderCode,
-                        OrderState = x.OrderState,
-                        CreateTime = x.CreateTime,
-                        IsLock = x.IsLock,
-                        _ShopName = x.Plan.Shopname.ShopName,
-                        _executorName = x.Executor.Name,
-                        OtherExpenses = x.OtherExpenses,
-                        CommodityPicId = x.CommodityPicId,
-                    })
-                    .OrderBy(x => ((int)x.OrderState == 1 ? 1 :
+            var DATA = query.Select(x => new VOS_Task_View
+            {
+                ID = x.ID,
+                Task_no = x.Task_no,
+                TaskType = x.TaskType,
+                Name_view = x.TaskCate.Name,
+                CommodityName = x.CommodityName,
+                CommodityPrice = x.CommodityPrice,
+                SearchKeyword = x.SearchKeyword,
+                SKU = x.SKU,
+                FullName_view = x.Employee.TaobaAccount,
+                VOrderCode = x.VOrderCode,
+                OrderState = x.OrderState,
+                CreateTime = x.CreateTime,
+                IsLock = x.IsLock,
+                _ShopName = x.Plan.Shopname.ShopName,
+                _executorName = x.Executor.Name,
+                OtherExpenses = x.OtherExpenses,
+                CommodityPicId = x.CommodityPicId,
+                DistributionTime=x.DistributionTime,
+            });
+
+            if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
+            {
+                DATA.OrderByDescending(X => X.DistributionTime);
+            }
+            else
+            {
+                DATA.OrderBy(x => ((int)x.OrderState == 1 ? 1 :
                                      ((int)x.OrderState == 0 ? 2 :
                                      ((int)x.OrderState == 2 ? 3 :
                                      (int)x.OrderState == 3 ? 4 : 5))));
+            }
+            return (IOrderedQueryable<VOS_Task_View>)DATA;
         }
 
         private List<ColumnFormatInfo> CommodityPicIdFormat(VOS_Task_View entity, object val)

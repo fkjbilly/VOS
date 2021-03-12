@@ -246,9 +246,20 @@ namespace VOS.Controllers
         {
             try
             {
+                var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
+                if (vOS_Task.IsLock == false)
+                {
+                    return Json("4", 200, "未解锁无法派单");
+                }
+                //图片  关键字
+                if (string.IsNullOrEmpty(vOS_Task.CommodityPicId.ToString()) || string.IsNullOrEmpty(vOS_Task.SearchKeyword))
+                {
+                    return Json("3", 200, "图片或关键字没有！无法派单");
+                }
+                #region 规则管理
                 var _vOS_Task = DC.Set<VOS_Task>().AsQueryable();
                 var _TaskModel = _vOS_Task.Where(x => x.ID.ToString().Equals(ID.ToString())).SingleOrDefault();
-                 #region 新类目规则
+                #region 新类目规则
                 var _TaskCateId = _TaskModel.TaskCateId.ToString();
                 if (!string.IsNullOrEmpty(_TaskCateId))
                 {
@@ -318,18 +329,8 @@ namespace VOS.Controllers
                             break;
                     }
                 }
-
+                #endregion
                 #region 规则通过
-                var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
-                if (vOS_Task.IsLock == false)
-                {
-                    return Json("4", 200, "未解锁无法派单");
-                }
-                //图片  关键字
-                if (string.IsNullOrEmpty(vOS_Task.CommodityPicId.ToString())|| string.IsNullOrEmpty(vOS_Task.SearchKeyword))
-                {
-                    return Json("3", 200, "图片或关键字没有！无法派单");
-                }
                 if (vOS_Task.ExecutorId == null)
                 {
                     //执行人   当前登录人信息

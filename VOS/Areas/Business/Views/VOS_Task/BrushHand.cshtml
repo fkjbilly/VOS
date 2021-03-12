@@ -17,8 +17,6 @@
 <wt:grid vm="@Model" name="_PEmployee" url="/Business/VOS_PEmployee/Search" hidden-checkbox="true" hidden-grid-index="true" hidden-panel="true" />
 <script type="text/javascript">
     function SelectBrushHand(id) {
-        console.log("任务编号 " +$("#rwid").val());
-        console.log("刷手编号"+ id);
         $.post('@Url.Action("BrushHand", "VOS_Task")', { "ID": $("#rwid").val(), "BrushHandID": id }, function (r) {
             layer.msg(r.Msg, {
                 icon: r.Data,
