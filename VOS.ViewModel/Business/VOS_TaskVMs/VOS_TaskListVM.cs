@@ -212,7 +212,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         {
             return new List<ColumnFormatInfo>
             {
-                ColumnFormatInfo.MakeDownloadButton(ButtonTypesEnum.Button,entity.CommodityPicId),
+                //ColumnFormatInfo.MakeDownloadButton(ButtonTypesEnum.Button,entity.CommodityPicId),
                 ColumnFormatInfo.MakeViewButton(ButtonTypesEnum.Button,entity.CommodityPicId,640,480),
             };
         }
