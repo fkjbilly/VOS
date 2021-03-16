@@ -60,7 +60,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             }
             else
             {
-               
+
                 var data = new List<GridColumn<VOS_Task_View>>{
                     this.MakeGridHeader(x => x.TaskType).SetForeGroundFunc((x)=>{
                             switch (x.TaskType)
@@ -83,7 +83,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     this.MakeGridHeader(x => x.CommodityPrice).SetShowTotal(true).SetWidth(90),
                     this.MakeGridHeader(x => x.SearchKeyword),
                     this.MakeGridHeader(x => x.SKU),
-                    this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(90),
+
                     this.MakeGridHeader(x => x.FullName_view),
                     this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(110),
                     this.MakeGridHeader(x=> "OrderStateHide").SetHide().SetFormat((a,b)=>{
@@ -100,7 +100,6 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         }
                         return "false";
                     }),
-                   
                     this.MakeGridHeader(x=>x._executorName).SetWidth(80),
                     this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
                         switch (x.OrderState)
@@ -124,9 +123,10 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     this.MakeGridHeaderAction(width: 165)
                 };
 
-                if (SearcherMode != ListVMSearchModeEnum.Export)
+                if (SearcherMode != ListVMSearchModeEnum.CheckExport && SearcherMode != ListVMSearchModeEnum.Export)
                 {
-                    data.Insert(data.Count-2, this.MakeGridHeader(x => x.OtherExpenses).SetShowTotal(true).SetWidth(90));
+                    data.Insert(data.Count - 6, this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(90));
+                    data.Insert(data.Count - 3, this.MakeGridHeader(x => x.OtherExpenses).SetShowTotal(true).SetWidth(90));
                 }
 
                 return data;
