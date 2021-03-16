@@ -60,68 +60,76 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             }
             else
             {
-                return new List<GridColumn<VOS_Task_View>>{
-                this.MakeGridHeader(x => x.TaskType).SetForeGroundFunc((x)=>{
-                        switch (x.TaskType)
+               
+                var data = new List<GridColumn<VOS_Task_View>>{
+                    this.MakeGridHeader(x => x.TaskType).SetForeGroundFunc((x)=>{
+                            switch (x.TaskType)
+                            {
+                                case TaskType.搜索单:
+                                     return "#e54d42";
+                                case TaskType.隔天单:
+                                     return "#45b97c";
+                                case TaskType.非搜单:
+                                      return "#8dc63f";
+                                case TaskType.动销单:
+                                     return "#9c26b0";
+                                case TaskType.其他:
+                                     return "#c2c2c2";
+                                default:
+                                     return "#8799a3";
+                            }
+                    }).SetWidth(90),
+                    this.MakeGridHeader(x => x._ShopName).SetWidth(100),
+                    this.MakeGridHeader(x => x.CommodityPrice).SetShowTotal(true).SetWidth(90),
+                    this.MakeGridHeader(x => x.SearchKeyword),
+                    this.MakeGridHeader(x => x.SKU),
+                    this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(90),
+                    this.MakeGridHeader(x => x.FullName_view),
+                    this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(110),
+                    this.MakeGridHeader(x=> "OrderStateHide").SetHide().SetFormat((a,b)=>{
+                        if(a.OrderState == OrderState.已完成 || a.OrderState == OrderState.已返款 )
                         {
-                            case TaskType.搜索单:
-                                 return "#e54d42";
-                            case TaskType.隔天单:
-                                 return "#45b97c";
-                            case TaskType.非搜单:
-                                  return "#8dc63f";
-                            case TaskType.动销单:
-                                 return "#9c26b0";
-                            case TaskType.其他:
-                                 return "#c2c2c2";
-                            default:
-                                 return "#8799a3";
+                            return "false";
                         }
-                }).SetWidth(90),
-                this.MakeGridHeader(x => x._ShopName).SetWidth(100),
-                this.MakeGridHeader(x => x.CommodityPrice).SetShowTotal(true).SetWidth(90),
-                this.MakeGridHeader(x => x.SearchKeyword),
-                this.MakeGridHeader(x => x.SKU),
-                this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(90),
-                this.MakeGridHeader(x => x.FullName_view),
-                this.MakeGridHeader(x => x.VOrderCode).SetFormat(VOrderCodeFormat).SetWidth(110),
-                this.MakeGridHeader(x=> "OrderStateHide").SetHide().SetFormat((a,b)=>{
-                    if(a.OrderState == OrderState.已完成 || a.OrderState == OrderState.已返款 )
-                    {
-                        return "false";
-                    }
-                    return "true";
-                }),
-                this.MakeGridHeader(x=> "OrderStateShow").SetHide().SetFormat((a,b)=>{
-                    if(a.OrderState == OrderState.已完成 || a.OrderState == OrderState.已返款 )
-                    {
                         return "true";
-                    }
-                    return "false";
-                }),
-                this.MakeGridHeader(x=>x.OtherExpenses).SetShowTotal(true).SetWidth(90),
-                this.MakeGridHeader(x=>x._executorName).SetWidth(80),
-                this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
-                    switch (x.OrderState)
-                    {
-                        case OrderState.未分配:
-                            return "#009688";
-                        case OrderState.已分配:
-                          return "#5FB878";
-                        case OrderState.进行中:
-                            return "#FF5722";
-                        case OrderState.已完成:
-                           return "#1E9FFF";
-                        case OrderState.已返款:
-                            return "#CCFF99";
-                        default:
-                            return "";
-                    }
-                }).SetForeGroundFunc((x)=>{
-                    return "#000000";
-                }).SetWidth(102).SetSort(),
-                this.MakeGridHeaderAction(width: 165)
-            };
+                    }),
+                    this.MakeGridHeader(x=> "OrderStateShow").SetHide().SetFormat((a,b)=>{
+                        if(a.OrderState == OrderState.已完成 || a.OrderState == OrderState.已返款 )
+                        {
+                            return "true";
+                        }
+                        return "false";
+                    }),
+                   
+                    this.MakeGridHeader(x=>x._executorName).SetWidth(80),
+                    this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
+                        switch (x.OrderState)
+                        {
+                            case OrderState.未分配:
+                                return "#009688";
+                            case OrderState.已分配:
+                              return "#5FB878";
+                            case OrderState.进行中:
+                                return "#FF5722";
+                            case OrderState.已完成:
+                               return "#1E9FFF";
+                            case OrderState.已返款:
+                                return "#CCFF99";
+                            default:
+                                return "";
+                        }
+                    }).SetForeGroundFunc((x)=>{
+                        return "#000000";
+                    }).SetWidth(102).SetSort(),
+                    this.MakeGridHeaderAction(width: 165)
+                };
+
+                if (SearcherMode != ListVMSearchModeEnum.Export)
+                {
+                    data.Insert(data.Count-2, this.MakeGridHeader(x => x.OtherExpenses).SetShowTotal(true).SetWidth(90));
+                }
+
+                return data;
             }
         }
 
@@ -182,7 +190,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     query = query.Where(x => x.ExecutorId.Equals(LoginUserInfo.Id));
                 }
             }
-             var data = query.Select(x => new VOS_Task_View
+            var data = query.Select(x => new VOS_Task_View
             {
                 ID = x.ID,
                 Task_no = x.Task_no,
@@ -201,20 +209,20 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 _executorName = x.Executor.Name,
                 OtherExpenses = x.OtherExpenses,
                 CommodityPicId = x.CommodityPicId,
-                DistributionTime=x.DistributionTime,
+                DistributionTime = x.DistributionTime,
             });
 
             if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
             {
                 return data.OrderByDescending(x => x.DistributionTime.Value);
             }
-             else
-             {
+            else
+            {
                 return data.OrderBy(x => ((int)x.OrderState == 1 ? 1 :
                                       ((int)x.OrderState == 0 ? 2 :
                                       ((int)x.OrderState == 2 ? 3 :
                                       (int)x.OrderState == 3 ? 4 : 5))));
-             }
+            }
         }
 
         private List<ColumnFormatInfo> CommodityPicIdFormat(VOS_Task_View entity, object val)
