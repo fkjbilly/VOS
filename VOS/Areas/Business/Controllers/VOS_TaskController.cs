@@ -414,7 +414,8 @@ namespace VOS.Controllers
                 {
                     if (vOS_Task.TaskType == TaskType.隔天单 && DateTime.Now < vOS_Task.DistributionTime.Value.AddHours(24))
                     {
-                        var a = (vOS_Task.DistributionTime.Value.AddHours(24) - DateTime.Now).Hours + 1;
+                        var a = (Convert.ToDateTime(DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")) - vOS_Task.DistributionTime.Value).Hours;
+                        
                         return Json(a);
                     }
                     vOS_Task.OrderState = OrderState.已完成;
