@@ -127,6 +127,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 {
                     data.Insert(data.Count - 6, this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(90));
                     data.Insert(data.Count - 3, this.MakeGridHeader(x => x.OtherExpenses).SetShowTotal(true).SetWidth(90));
+                }else {
+                    data.Insert(data.Count - 1, this.MakeGridHeader(x => x.CompleteTime));
                 }
 
                 return data;
@@ -210,6 +212,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 OtherExpenses = x.OtherExpenses,
                 CommodityPicId = x.CommodityPicId,
                 DistributionTime = x.DistributionTime,
+                CompleteTime=x.CompleteTime,
             });
 
             if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
@@ -233,6 +236,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 ColumnFormatInfo.MakeViewButton(ButtonTypesEnum.Button,entity.CommodityPicId,640,480),
             };
         }
+
+
 
     }
 

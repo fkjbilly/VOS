@@ -414,10 +414,11 @@ namespace VOS.Controllers
                 {
                     if (vOS_Task.TaskType == TaskType.隔天单 && DateTime.Now < vOS_Task.DistributionTime.Value.AddHours(24))
                     {
-                        var a = (Convert.ToDateTime(DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")) - vOS_Task.DistributionTime.Value).Hours;
-                        return Json(a);
+                        var a = Convert.ToDateTime(DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")) - DateTime.Now;
+                        return Json(new { Msg = "隔天单！请" + a.Hours + "小时" + (a.Minutes + 2) + "分钟后提交完成" , State = 4 });
                     }
                     vOS_Task.OrderState = OrderState.已完成;
+                    vOS_Task.CompleteTime = DateTime.Now;
                 }
                 DC.Set<VOS_Task>().Update(vOS_Task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 DC.SaveChanges();
