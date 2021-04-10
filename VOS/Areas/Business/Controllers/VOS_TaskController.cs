@@ -87,7 +87,7 @@ namespace VOS.Controllers
         public ActionResult Edit(string id)
         {
             var vm = CreateVM<VOS_TaskVM>(id);
-            vm.Entity.Task_no = "T" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            //vm.Entity.Task_no = "T" + DateTime.Now.ToString("yyyyMMddHHmmss");
             return PartialView(vm);
         }
 

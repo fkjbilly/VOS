@@ -21,9 +21,9 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 
         public List<ComboSelectListItem> AllOrganization { get; set; }
         
-        [Required(ErrorMessage ="省必填项")]
+       // [Required(ErrorMessage ="省必填项")]
         public Guid? ShengId { get; set; }
-        [Required(ErrorMessage="市必填项")]
+       // [Required(ErrorMessage="市必填项")]
         public Guid? ShiId { get; set; }
         public VOS_PEmployeeVM()
         {

@@ -127,7 +127,9 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 {
                     data.Insert(data.Count - 6, this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(90));
                     data.Insert(data.Count - 3, this.MakeGridHeader(x => x.OtherExpenses).SetShowTotal(true).SetWidth(90));
-                }else {
+                }
+                else
+                {
                     data.Insert(data.Count - 1, this.MakeGridHeader(x => x.CompleteTime));
                 }
 
@@ -191,6 +193,10 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 {
                     query = query.Where(x => x.ExecutorId.Equals(LoginUserInfo.Id));
                 }
+                else
+                {
+                    query = query.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID);
+                }
             }
             var data = query.Select(x => new VOS_Task_View
             {
@@ -212,7 +218,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 OtherExpenses = x.OtherExpenses,
                 CommodityPicId = x.CommodityPicId,
                 DistributionTime = x.DistributionTime,
-                CompleteTime=x.CompleteTime,
+                CompleteTime = x.CompleteTime,
             });
 
             if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
