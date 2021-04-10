@@ -53,11 +53,11 @@
     });
 
         $('button[type="submit"]').on("click", function () {
-            var state = $("#VOS_PEmployeeVM_Entity_PEstate option:selected").text();
-            console.log(state)
-            if (state != "黑名单") {
-                layer.msg('不允许修改其他内容');
-                return false;
+            //var state = $("#VOS_PEmployeeVM_Entity_PEstate option:selected").text();
+            //console.log(state)
+            //if (state != "黑名单") {
+            //    layer.msg('不允许修改其他内容');
+            //    return false;
 
                 var ZFB = $("#VOS_PEmployeeVM_Entity_AlipayPicId").val(); //支付宝
                 if (ZFB == "" || ZFB == null) {
@@ -74,6 +74,6 @@
                     layer.msg('请上传微信实名图片');
                     return false;
                 }
-            }
+            //}
     })
     </script>
