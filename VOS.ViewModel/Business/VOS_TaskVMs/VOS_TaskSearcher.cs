@@ -82,6 +82,10 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 query = query.Where(x => x.ExecutorId.ToString() == LoginUserInfo.Id.ToString());
             }
+            else 
+            {
+                query = query.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID);
+            }
             var data = query.Where(x => x.IsValid == true).Select(x => new { shopid = x.Plan.Shopname.ID }).Distinct(x => x.shopid).ToList();
             string str = "";
             foreach (var item in data)
