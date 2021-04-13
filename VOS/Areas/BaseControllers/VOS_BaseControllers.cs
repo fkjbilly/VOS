@@ -38,7 +38,7 @@ namespace VOS.Areas.BaseControllers
         {
             get
             {
-                return DC.Set<VOS_User>().Where(x => x.ID.Equals(LoginUserInfo.Id)).FirstOrDefault().OrganizationID;
+                return (Guid)DC.Set<VOS_User>().Where(x => x.ID.Equals(LoginUserInfo.Id)).FirstOrDefault().OrganizationID;
             }
         }
     }

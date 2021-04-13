@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 using WalkingTec.Mvvm.Core;
 
 namespace VOS.Model
 {
-    [Table("FrameworkUsers")]
-    public class VOS_User : FrameworkUserBase
+    [Table("FrameworkGroups")]
+    public class VOS_UserGroup: FrameworkGroup
     {
+        [Required(ErrorMessage= "组织机构必填")]
         [Display(Name = "组织机构")]
         public Guid? OrganizationID { get; set; }
 

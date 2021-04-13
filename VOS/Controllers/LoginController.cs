@@ -25,6 +25,11 @@ namespace VOS.Controllers
                 vm.ITCode = "admin";
                 vm.Password = "000000";
             }
+            else 
+            {
+                vm.ITCode = "admin";
+                vm.Password = "000000";
+            }
             return View(vm);
         }
 

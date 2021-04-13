@@ -32,7 +32,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
             AllUserRoless = DC.Set<FrameworkRole>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.RoleName);
             SelectedUserRolesIDs = Entity.UserRoles?.Select(x => x.RoleId).ToList();
-            AllUserGroupss = DC.Set<FrameworkGroup>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.GroupName);
+            AllUserGroupss = DC.Set<VOS_UserGroup>().DPWhere(LoginUserInfo?.DataPrivileges,x=>x.OrganizationID).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.GroupName);
             SelectedUserGroupsIDs = Entity.UserGroups?.Select(x => x.GroupId).ToList();
         }
 

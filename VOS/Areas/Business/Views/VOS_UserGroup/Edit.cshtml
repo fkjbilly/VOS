@@ -1,0 +1,16 @@
+﻿@model VOS.ViewModel.Business.VOS_UserGroupVMs.VOS_UserGroupVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+<wt:row items-per-row="ItemsPerRowEnum.One">
+<wt:combobox field="Entity.OrganizationID" items="AllOrganizations"/>
+<wt:textbox field="Entity.GroupCode" />
+<wt:textbox field="Entity.GroupName" />
+<wt:textarea field="Entity.GroupRemark" />
+</wt:row>
+    <wt:hidden field="Entity.ID" />
+    <wt:row align="AlignEnum.Right">
+        <wt:submitbutton />
+        <wt:closebutton />
+    </wt:row>
+</wt:form>
