@@ -42,7 +42,7 @@ namespace VOS.ViewModel.Business.VOS_UserGroupVMs
 
         public override IOrderedQueryable<VOS_UserGroup_View> GetSearchQuery()
         {
-            var query = DC.Set<VOS_UserGroup>()
+            var query = DC.Set<VOS_UserGroup>().DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID)
                 .Select(x => new VOS_UserGroup_View
                 {
 				    ID = x.ID,
