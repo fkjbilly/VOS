@@ -9,6 +9,10 @@ using VOS.Model;
 using VOS.ViewModel.Business.VOS_PEmployeeVMs;
 using System.Linq;
 using VOS.Areas.BaseControllers;
+using System.Net;
+using System.IO;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace VOS.Controllers
 {
@@ -408,6 +412,11 @@ namespace VOS.Controllers
         {
             try
             {
+               var returnjson = Post(VOrderCode);
+                if (returnjson.IndexOf("\"data\":\"yes\"") > 0) 
+                {
+                    return Json(new { Msg = "淘客订单，不允许完成", State = 5 });
+                }
                 var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
                 vOS_Task.VOrderCode = VOrderCode;
                 if (b == true)
@@ -454,6 +463,58 @@ namespace VOS.Controllers
         }
         #endregion
 
+        /// <summary>
+        /// 基于Sha1的自定义加密字符串方法：输入一个字符串，返回一个由40个字符组成的十六进制的哈希散列（字符串）。
+        /// </summary>
+        /// <param name="str">要加密的字符串</param>
+        /// <returns>加密后的十六进制的哈希散列（字符串）</returns>
+        public string Sha1(string str)
+        {
+            var buffer = Encoding.UTF8.GetBytes(str);
+            var data = SHA1.Create().ComputeHash(buffer);
+
+            var sb = new StringBuilder();
+            foreach (var t in data)
+            {
+                sb.Append(t.ToString("X2"));
+            }
+
+            return sb.ToString();
+        }
+
+        #region Post请求
+        public string Post(string ordercode)
+        {
+            var appId = "607fd31315c5b";
+            var appSecret = "c6621a7abea6cd5f7e49441486726aa738122ec5";
+            var timestamp = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds).ToString();
+            var Url = "https://www.taofake.com/api/account/tbkorder";
+
+            var paramsign = Sha1(ordercode + appId + appSecret + timestamp);
+
+            Url = Url + "?order_id="+ ordercode + "&sign="+ paramsign + "&app_id="+ appId + "&timestamp="+ timestamp;
+
+            //创建Web访问对象
+            HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(Url);
+
+            myRequest.Method = "POST";
+            myRequest.ContentType = "application/json";
+            myRequest.MaximumAutomaticRedirections = 1;
+            myRequest.AllowAutoRedirect = true;
+
+            //获取接口返回值
+            //通过Web访问对象获取响应内容
+            HttpWebResponse myResponse = (HttpWebResponse)myRequest.GetResponse();
+            //通过响应内容流创建StreamReader对象，因为StreamReader更高级更快
+            StreamReader reader = new StreamReader(myResponse.GetResponseStream(), Encoding.UTF8);
+            //string returnXml = HttpUtility.UrlDecode(reader.ReadToEnd());//如果有编码问题就用这个方法
+            string returnjson = reader.ReadToEnd();//利用StreamReader就可以从响应内容从头读到尾
+            reader.Close();
+            myResponse.Close();
+            return returnjson;
+
+        }
+        #endregion
         private object RuleCaches()
         {
             string key = MemoryCacheHelper._RuleCaches;
