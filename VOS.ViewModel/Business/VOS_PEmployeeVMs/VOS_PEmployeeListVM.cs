@@ -232,6 +232,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 CreateBy = x.CreateBy,
                 CreateTime = x.CreateTime,
                 OrganizationName_view = x.Organization.OrganizationName,
+                QQAccount=x.QQAccount,
             }).OrderByDescending(x => x.CreateTime);
         }
 

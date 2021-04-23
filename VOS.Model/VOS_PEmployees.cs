@@ -67,6 +67,9 @@ namespace VOS.Model
         public Guid? WeChatRealNamePicId { get; set; }
         [Display(Name = "微信实名")]
         public FileAttachment WeChatRealNamePic { get; set; }
+        [Display(Name ="QQ")]
+        [StringLength(20, ErrorMessage = "QQ账号长度超过限制")]
+        public string QQAccount { get; set; }
         [Display(Name = "备注")]
         public string Remark { get; set; }
         [Display(Name ="刷手状态")]
