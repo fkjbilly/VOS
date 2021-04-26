@@ -21,7 +21,7 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
 
         protected override void InitVM()
         {
-            AllCustomers = DC.Set<VOS_Customer>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.cust_name);
+            AllCustomers = DC.Set<VOS_Customer>().DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.cust_name);
         }
 
         public override void DoAdd()
