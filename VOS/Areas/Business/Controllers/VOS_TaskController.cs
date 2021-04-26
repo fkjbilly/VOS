@@ -416,7 +416,7 @@ namespace VOS.Controllers
                var returnjson = Post(VOrderCode);
                 if (returnjson.IndexOf("\"data\":\"yes\"") > 0) 
                 {
-                    return Json(new { Msg = "淘客订单，不允许完成", State = 5 });
+                    //return Json(new { Msg = "淘客订单，不允许完成", State = 5 });
                 }
                 var vOS_Task = DC.Set<VOS_Task>().Where(x => x.ID == ID).SingleOrDefault();
                 vOS_Task.VOrderCode = VOrderCode;
@@ -493,7 +493,7 @@ namespace VOS.Controllers
 
             var paramsign = Sha1(ordercode + appId + appSecret + timestamp);
 
-            Url = Url + "?order_id="+ ordercode + "&sign="+ paramsign + "&app_id="+ appId + "&timestamp="+ timestamp;
+            Url = Url + "?order_id="+ ordercode + "&sign="+ paramsign.ToLower() + "&app_id="+ appId + "&timestamp="+ timestamp;
 
             //创建Web访问对象
             HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(Url);
