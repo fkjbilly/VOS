@@ -13,6 +13,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
     public partial class VOS_TaskBatchVM : BaseBatchVM<VOS_Task, VOS_Task_BatchEdit>
     {
         public VOS_PEmployeeListVM VOS_PEmployeeListVM { get; set; }
+
+      
         public VOS_TaskBatchVM()
         {
             ListVM = new VOS_TaskListVM();
@@ -32,9 +34,13 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         [Required(ErrorMessage ="图片不能为空")]
         public Guid CommodityPicId { get; set; }
 
+        [Display(Name = "组织机构")]
+        public Guid? OrganizationID { get; set; }
+
+        public List<ComboSelectListItem> AllOrganization { get; set; }
         protected override void InitVM()
         {
-
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 
     }

@@ -21,14 +21,23 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public String CommodityName { get; set; }
         [Display(Name = "搜索关键字")]
         public String SearchKeyword { get; set; }
-        [Display(Name = "是否解锁")]
-        public Boolean? IsLock { get; set; }
-        public List<ComboSelectListItem> AllDistributors { get; set; }
-        [Display(Name = "分配人")]
-        public Guid? DistributorId { get; set; }
-        public List<ComboSelectListItem> AllEmployees { get; set; }
-        [Display(Name = "刷手")]
-        public Guid? EmployeeId { get; set; }
+        //[Display(Name = "是否解锁")]
+        //public Boolean? IsLock { get; set; }
+        //分配人
+        //public List<ComboSelectListItem> AllDistributors { get; set; }
+        //[Display(Name = "分配人")]
+        //public Guid? DistributorId { get; set; }
+        /// <summary>
+        /// 刷手
+        /// </summary>
+        //public List<ComboSelectListItem> AllEmployees { get; set; }
+        //[Display(Name = "刷手")]
+        //public Guid? EmployeeId { get; set; }
+
+        [Display(Name = "分配人或刷手")]
+        public string Distribution_BrushHands { get; set; }
+
+
         [Display(Name = "刷单单号")]
         public String VOrderCode { get; set; }
         [Display(Name = "任务状态")]
@@ -47,34 +56,34 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public List<Guid> ShopNames { get; set; }
         public List<ComboSelectListItem> AllShopName { get; set; }
 
+        [Display(Name = "店铺")]
+        public string newShopName { get; set; }
+
         private DateTime ti => Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
         protected override void InitVM()
         {
             Time = new DateRange(ti, DateTime.Now);
-            AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
-            AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
-            AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
-            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
+            //AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
+            //AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
+            //AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
+            //AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
             MyInitVM();
         }
 
         public void MyInitVM()
         {
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
-            AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
-            AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
             var query = DC.Set<VOS_Task>()
                 .CheckEqual(TaskType, x => x.TaskType)
                 .CheckContain(CommodityName, x => x.CommodityName)
                 .CheckContain(SearchKeyword, x => x.SearchKeyword)
-                .CheckEqual(IsLock, x => x.IsLock)
-                .CheckEqual(DistributorId, x => x.DistributorId)
-                .CheckEqual(EmployeeId, x => x.EmployeeId)
                 .CheckContain(VOrderCode, x => x.VOrderCode)
                 .CheckEqual(OrderState, x => x.OrderState)
                 .CheckEqual(OrganizationID, x => x.Plan.OrganizationID)
-                .CheckBetween(Time?.GetStartTime(), Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false);
+                .CheckContain(newShopName, x => x.Plan.Shopname.ShopName)
+                .CheckBetween(Time?.GetStartTime(), Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
+                .Where(x => x.Employee.FullName.Contains(Distribution_BrushHands) || x.Distributor.Name.Contains(Distribution_BrushHands));
             const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
             var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
             var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
@@ -82,7 +91,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 query = query.Where(x => x.ExecutorId.ToString() == LoginUserInfo.Id.ToString());
             }
-            else 
+            else
             {
                 query = query.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID);
             }
@@ -92,7 +101,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 str += item.shopid + ",";
             }
-            AllShopName = DC.Set<VOS_Shop>().Where(x => str.IndexOf(x.ID.ToString()) >= 0).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
+            AllShopName = DC.Set<VOS_Shop>().DPWhere(LoginUserInfo.DataPrivileges, x => x.Customer.OrganizationID).Where(x => str.IndexOf(x.ID.ToString()) >= 0).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
 
         }
     }

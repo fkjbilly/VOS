@@ -36,7 +36,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         {
             taskVM.CopyContext(this);
             taskVM.SearcherMode = ListVMSearchModeEnum.MasterDetail;
-            taskVM.Searcher.EmployeeId = Entity.ID;
+            //taskVM.Searcher.EmployeeId = Entity.ID;
             AllRecoms = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
             AllSheng = DC.Set<City>().Where(x => x.ParentId == null).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
             if (Entity.AreaId != null)

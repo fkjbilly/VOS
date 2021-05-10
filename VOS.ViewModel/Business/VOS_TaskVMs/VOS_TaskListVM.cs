@@ -29,7 +29,10 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
                     this.MakeAction("VOS_Task","BrushHand","派单","刷手分配",GridActionParameterTypesEnum.SingleId,"Business",800,600)
                     .SetShowInRow(true).SetHideOnToolBar(true).SetBindVisiableColName("OrderStateHide"),
-
+                    
+                    this.MakeAction("VOS_Task","BatchCreation","批量创建","批量创建任务",GridActionParameterTypesEnum.NoId,"Business",1000,600).SetMax().SetShowInRow(false).SetHideOnToolBar(false).SetIconCls("layui-icon layui-icon-find-fill"),
+                    this.MakeAction("VOS_Task","DistributionOrganization","分配组织机构","分配机构",GridActionParameterTypesEnum.MultiIds,"Business",800,600).SetShowInRow(false).SetHideOnToolBar(false).SetIconCls("_wtmicon _wtmicon-guanfangbanben"),
+                    
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
                     this.MakeAction("VOS_User","Index","设置执行人","执行人分配",GridActionParameterTypesEnum.MultiIds,"Business",900,600).SetIconCls("_wtmicon _wtmicon-icon_shezhi"),
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
@@ -164,15 +167,18 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             .CheckEqual(Searcher.TaskType, x => x.TaskType)
             .CheckContain(Searcher.CommodityName, x => x.CommodityName)
             .CheckContain(Searcher.SearchKeyword, x => x.SearchKeyword)
-            .CheckEqual(Searcher.IsLock, x => x.IsLock)
-            .CheckEqual(Searcher.DistributorId, x => x.DistributorId)
-            .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
+            //.CheckEqual(Searcher.IsLock, x => x.IsLock)
+            //.CheckEqual(Searcher.DistributorId, x => x.DistributorId)
+            //.CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
             .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
             .CheckEqual(Searcher.OrderState, x => x.OrderState)
             .CheckContain(Searcher.ShopNames, x => x.Plan.Shopname.ID)
+            .CheckContain(Searcher.newShopName, x => x.Plan.Shopname.ShopName)
             .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
             .CheckBetween(Searcher.Time?.GetStartTime(), Searcher.Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
             //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID)//数据权限
+            .Where(x => x.Employee.FullName.Contains(Searcher.Distribution_BrushHands)
+                    || x.Distributor.Name.Contains(Searcher.Distribution_BrushHands))
             .Where(x => x.IsValid == true);
             if (SearcherMode != ListVMSearchModeEnum.MasterDetail)
             {

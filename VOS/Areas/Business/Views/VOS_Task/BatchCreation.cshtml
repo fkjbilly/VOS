@@ -1,0 +1,341 @@
+﻿@model VOS.ViewModel.Business.VOS_TaskVMs.VOS_TaskVM
+<style type="text/css">
+    td {
+        width: 220px;
+    }
+
+    tr {
+        height: 30px;
+    }
+
+    .select {
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+</style>
+
+
+<wt:form vm="@Model">
+    <wt:quote>批量添加任务</wt:quote>
+    <wt:row items-per-row="ItemsPerRowEnum.Three">
+        <wt:combobox field="Entity.Plan.OrganizationID" items="AllOrganization" />
+        <wt:textbox field="Entity.Plan.Plan_no" default-value="@ViewBag.Plan_no"></wt:textbox>
+        <wt:combobox field="Entity.Plan.ShopnameId" items="AllShopnames" />
+        <wt:datetime field="Entity.Plan.PlanSatrtTime" />
+        <wt:datetime field="Entity.Plan.PlanEndTime" />
+        <wt:textbox field="Entity.Plan.PlanFee" />
+    </wt:row>
+    <div>
+        <button type="button" style="width:10%;float:right;" class="layui-btn layui-btn-fluid" onclick="CreateTB()">创建</button>
+    </div>
+    <div style="overflow: scroll; width: 100%;height:500px;">
+        <table class="layui-table">
+            <thead>
+                <tr>
+                    <th>任务编号</th>
+                    <th>做单方法</th>
+                    <th>执行开始</th>
+                    <th>商品类目</th>
+                    <th>商品名称</th>
+                    <th>商品图片</th>
+                    <th>商品链接</th>
+                    <th>商品价格</th>
+                    <th>SKU</th>
+                    <th>单量</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="layui_table"></tbody>
+        </table>
+    </div>
+    <wt:row align="AlignEnum.Right">
+        <input type="button" id="SaveTask" class="layui-btn layui-btn-primary" value="提交" />
+        <wt:closebutton />
+    </wt:row>
+</wt:form>
+
+<script type="text/javascript">
+    var RowIndex = 1;
+    var htmloption;
+    $(function () {
+        $.get('@Url.Action("GetCategory", "VOS_Task")', data => {
+            if (data.Msg == "success") {
+                $(data.Data).each(function (index, item) {
+                    htmloption += "<option value=" + item.Value + ">" + item.Text + "</option>";
+                });
+            } else {
+                layer.msg("网络状态不佳");
+            }
+        });
+    });
+    function CreateTB() {
+
+        let oTB = document.getElementById("layui_table");
+        let oTR = oTB.insertRow(oTB.rows.length);
+        //任务编号
+        let oTD0 = oTR.insertCell(0);
+        oTD0.innerHTML = "<div>" + new Date().getTime() + "</div><input id='Task_no' type='text' class='layui-input' style='display:none;'/>";
+        //做单方法
+        let oTD1 = oTR.insertCell(1);
+        oTD1.innerHTML = "<div>其他</div>\
+        <select id='TaskType'class='select' >\
+            <option value='0'>搜索单</option>\
+            <option value='1'>隔天单</option>\
+            <option value='2'>非搜单</option>\
+            <option value='3'>动销单</option>\
+            <option value='4'>其他</option>\
+         </select>";
+        //执行开始
+        let oTD2 = oTR.insertCell(2);
+        oTD2.innerHTML = "<div>" + GetDate() + "</div><input id='ImplementStartTime' type='date'  style='display:none' class='layui-input'>";
+        //商品类目
+        let oTD3 = oTR.insertCell(3);
+        oTD3.innerHTML = "<div>请选择</div><select id='TaskCateId' class='select' style='display:none;'><option>请选择</option>" + htmloption+ "</select>";
+        //商品名称
+        let oTD4 = oTR.insertCell(4);
+        oTD4.innerHTML = "<div>-</div><input type='text' id='CommodityName' class='layui-input' style='display:none;'/>";
+        //商品图片
+        let oTD5 = oTR.insertCell(5);
+        oTD5.innerHTML = "<img src='/images/logo.png' id='fileid' class='FileData' style='width:30px;height:30px;'/><input type='file' id='fileUpload' class='fileUpload' name='fileUpload' style='display:none;' />";
+        //商品链接
+        let oTD6 = oTR.insertCell(6);
+        oTD6.innerHTML = "<div>-</div><input type='text' id='CommodityLink' class='layui-input' style='display:none;'/>";
+        //商品价格
+        let oTD7 = oTR.insertCell(7);
+        oTD7.innerHTML = "<div>0.01</div><input type='number' id='CommodityPrice' class='layui-input' style='display:none;'/>";
+        //SKU
+        let oTD8 = oTR.insertCell(8);
+        oTD8.innerHTML = "<div>-</div><input type='text' id='SKU' class='layui-input' style='display:none;'/>";
+        //单量
+        let oTD9 = oTR.insertCell(9);
+        oTD9.innerHTML = "<div>1</div><input type='number' id='VOS_Number' class='layui-input' style='display:none;'/>";
+        //操作
+        let oTD10 = oTR.insertCell(10);
+        oTD10.innerHTML = "<input type='button' class='layui-btn' value='编辑' onclick=\"edit(this,'show')\"/> <input type='button' class='layui-btn layui-btn-primary layui-border-black' value='删除' onclick='drop(this)'/>";
+
+        RowIndex++;
+    }
+
+    function edit(o, otype) {
+        let oTR = o.parentNode.parentNode;
+        //任务
+        let TaskDiv = oTR.cells[0].getElementsByTagName("div");
+        let TaskInpt = oTR.cells[0].getElementsByTagName("input");
+        //做单方法
+        let MakeDiv = oTR.cells[1].getElementsByTagName("div");
+        let MakeSelect = oTR.cells[1].getElementsByTagName("select");
+        //执行开始
+        let ImplementStartTimeDiv = oTR.cells[2].getElementsByTagName("div");
+        let ImplementStartTimeInput = oTR.cells[2].getElementsByTagName("input");
+        //商品类目
+        let TaskCateDiv = oTR.cells[3].getElementsByTagName("div");
+        let TaskCateSelect = oTR.cells[3].getElementsByTagName("select");
+        //商品名称
+        let CommodityNameDiv = oTR.cells[4].getElementsByTagName("div");
+        let CommodityNameInput = oTR.cells[4].getElementsByTagName("input");
+        //商品图片
+        let CommodityPicIdImg = oTR.cells[5].getElementsByTagName("img");
+        let CommodityPicIdButton = oTR.cells[5].getElementsByTagName("input");
+        //商品链接
+        let CommodityLinkDiv = oTR.cells[6].getElementsByTagName("div");
+        let CommodityLinkInput = oTR.cells[6].getElementsByTagName("input");
+        //商品价格
+        let CommodityPriceDiv = oTR.cells[7].getElementsByTagName("div");
+        let CommodityPriceInput = oTR.cells[7].getElementsByTagName("input");
+        //sku
+        let SKUDiv = oTR.cells[8].getElementsByTagName("div");
+        let SKUInput = oTR.cells[8].getElementsByTagName("input");
+        //单量
+        let VOS_NumberDiv = oTR.cells[9].getElementsByTagName("div");
+        let VOS_NumberInput = oTR.cells[9].getElementsByTagName("input");
+
+        if (otype == "show") {
+            o.value = "确认";
+            o.setAttribute("onclick", "edit(this,'hide')");
+            $(o).next().hide();
+            //任务编号
+            TaskInpt[0].value = TaskDiv[0].childNodes[0].nodeValue;
+            TaskInpt[0].style.display = "block";
+            TaskDiv[0].style.display = "none";
+            //做单方法
+            $(MakeSelect[0]).find("option:selected").text(MakeDiv[0].childNodes[0].nodeValue);
+            MakeSelect[0].style.display = "block";
+            MakeDiv[0].style.display = "none";
+            //执行开始
+            ImplementStartTimeInput[0].value = ImplementStartTimeDiv[0].childNodes[0].nodeValue;
+            ImplementStartTimeInput[0].style.display = "block";
+            ImplementStartTimeDiv[0].style.display = "none";
+            //商品类目
+            TaskCateSelect[0].style.display = "block";
+            TaskCateDiv[0].style.display = "none";
+            $(TaskCateSelect[0]).find("option:selected").text(TaskCateDiv[0].childNodes[0].nodeValue);
+            //商品名称
+            CommodityNameInput[0].value = CommodityNameDiv[0].childNodes[0].nodeValue;
+            CommodityNameInput[0].style.display = "block";
+            CommodityNameDiv[0].style.display = "none";
+            //商品图片
+
+            CommodityPicIdButton[0].style.display = "block";
+            CommodityPicIdImg[0].style.display = "none";
+
+            //商品链接
+            CommodityLinkInput[0].value = CommodityLinkDiv[0].childNodes[0].nodeValue;
+            CommodityLinkInput[0].style.display = "block";
+            CommodityLinkDiv[0].style.display = "none";
+            //商品价格
+            CommodityPriceInput[0].value = CommodityPriceDiv[0].childNodes[0].nodeValue;
+            CommodityPriceInput[0].style.display = "block";
+            CommodityPriceDiv[0].style.display = "none";
+            //SKU
+            SKUInput[0].value = SKUDiv[0].childNodes[0].nodeValue;
+            SKUInput[0].style.display = "block";
+            SKUDiv[0].style.display = "none";
+            //单量
+            VOS_NumberInput[0].value = VOS_NumberDiv[0].childNodes[0].nodeValue;
+            VOS_NumberInput[0].style.display = "block";
+            VOS_NumberDiv[0].style.display = "none";
+            //操作
+        } else if (otype == "hide") {
+            o.value = "编辑";
+            o.setAttribute("onclick", "edit(this,'show')");
+            $(o).next().show();
+            //任务编号
+            TaskDiv[0].childNodes[0].nodeValue = TaskInpt[0].value;
+            TaskInpt[0].style.display = "none";
+            TaskDiv[0].style.display = "block";
+            //做单方法
+            MakeDiv[0].childNodes[0].nodeValue = $(MakeSelect[0]).find("option:selected").text();
+            MakeSelect[0].style.display = "none";
+            MakeDiv[0].style.display = "block";
+            //执行开始
+            ImplementStartTimeDiv[0].childNodes[0].nodeValue = ImplementStartTimeInput[0].value;
+            ImplementStartTimeInput[0].style.display = "none";
+            ImplementStartTimeDiv[0].style.display = "block";
+            //商品类目
+            TaskCateDiv[0].childNodes[0].nodeValue = $(TaskCateSelect[0]).find("option:selected").text();
+            TaskCateSelect[0].style.display = "none";
+            TaskCateDiv[0].style.display = "block";
+            //商品名称
+            CommodityNameDiv[0].childNodes[0].nodeValue = CommodityNameInput[0].value;
+            CommodityNameInput[0].style.display = "none";
+            CommodityNameDiv[0].style.display = "block";
+            //商品图片
+
+            CommodityPicIdButton[0].style.display = "none";
+            CommodityPicIdImg[0].style.display = "block";
+
+            //商品链接
+            CommodityLinkDiv[0].childNodes[0].nodeValue = CommodityLinkInput[0].value;
+            CommodityLinkInput[0].style.display = "none";
+            CommodityLinkDiv[0].style.display = "block";
+            //商品价格
+            CommodityPriceDiv[0].childNodes[0].nodeValue = CommodityPriceInput[0].value < 0.01 ? 0.01 : CommodityPriceInput[0].value;
+            CommodityPriceInput[0].style.display = "none";
+            CommodityPriceDiv[0].style.display = "block";
+            //SKU
+            SKUDiv[0].childNodes[0].nodeValue = SKUInput[0].value;
+            SKUInput[0].style.display = "none";
+            SKUDiv[0].style.display = "block";
+            //单量
+            let single = parseInt(VOS_NumberInput[0].value);
+            VOS_NumberDiv[0].childNodes[0].nodeValue = single < 1 ? 1 : single;
+            VOS_NumberInput[0].style.display = "none";
+            VOS_NumberDiv[0].style.display = "block";
+        }
+    }
+
+    $(document).on("click", "[name='fileUpload']", function () {
+        let _this = this;
+        let img = $(_this).prev()[0];
+        _this.addEventListener('change', function () {
+            let file = this.files[0];
+            if (file.type.indexOf("image") == 0) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    img.src = this.result;
+                }
+                reader.readAsDataURL(file);
+            };
+        });
+    });
+
+    function drop(o) {
+        let oTB = document.getElementById("layui_table");
+        let oDel = o.parentNode.parentNode.sectionRowIndex;
+        oTB.deleteRow(oDel);
+    }
+
+    function GetDate() {
+        let _Date = new Date();
+        let _Year = _Date.getFullYear();
+        let _Month = _Date.getMonth() + 1;
+        let _Today = _Date.getDate();
+        return _Year + '-' + formatDate(_Month) + '-' + formatDate(_Today);
+    };
+
+    function formatDate(str) {
+        var realNum;
+        if (str < 10) {
+            realNum = '0' + str;
+        } else {
+            realNum = str;
+        }
+        return realNum;
+    }
+
+
+    $("#SaveTask").click(function () {
+        /**任务 */
+        var tasklist = [];
+        $('#layui_table tr').each(function (index, item) {
+            var row = {};
+            $(this).find('td').each(function (index2, item2) {
+                var input = $(this).find("input").not('.fileUpload');
+                var select = $(this).find("select");
+                var img = $(".FileData");
+                if (input.val() != undefined) {
+                    row[input[0].id] = input.val();
+                } else if (select.val() != undefined) {
+                    row[select[0].id] = select.val();
+                } else if (img != undefined) {
+                    row[img[0].id] = img[0].src;
+                }
+            });
+            row.Plan_no = $("#VOS_TaskVM_Entity_Plan_Plan_no").val();
+            tasklist.push(row);
+        });
+        /**计划 */
+        var plan = {
+            "OrganizationID": $("#VOS_TaskVM_Entity_Plan_OrganizationID option:selected").val()
+            , "Plan_no": $("#VOS_TaskVM_Entity_Plan_Plan_no").val()
+            , "ShopnameId": $("#VOS_TaskVM_Entity_Plan_ShopnameId").find("option:selected").val()
+            , "PlanSatrtTime": $("#VOS_TaskVM_Entity_Plan_PlanSatrtTime").val()
+            , "PlanEndTime": $("#VOS_TaskVM_Entity_Plan_PlanEndTime").val()
+            , "PlanFee": $("#VOS_TaskVM_Entity_Plan_PlanFee").val()
+        };
+        console.log(tasklist);
+        $.post('@Url.Action("DoBatchCreation", "VOS_Task")', { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist) }, data=>{
+            layer.msg(data.Data.Msg, {
+                icon: data.Data.icon,
+                time: 1500,
+            }, function () {
+                location.reload();
+                layer.closeAll();
+            });
+        });
+    });
+</script>

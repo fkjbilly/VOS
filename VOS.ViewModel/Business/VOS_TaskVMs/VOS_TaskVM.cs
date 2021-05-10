@@ -20,6 +20,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public List<ComboSelectListItem> AllEmployees { get; set; }
         public List<ComboSelectListItem> AllCompleters { get; set; }
         public List<ComboSelectListItem> AllRefunders { get; set; }
+        public List<ComboSelectListItem> AllOrganization { get; set; }
+        public List<ComboSelectListItem> AllShopnames { get; set; }
 
         #region MyRegion
         public VOS_PEmployeeListVM VOS_PEmployeeListVM { get; set; }
@@ -52,6 +54,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
             AllCompleters = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             AllRefunders = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
+            AllShopnames = DC.Set<VOS_Shop>().DPWhere(LoginUserInfo.DataPrivileges, x => x.Customer.OrganizationID).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
         }
 
         public override void DoAdd()

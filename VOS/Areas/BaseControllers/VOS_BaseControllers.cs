@@ -14,7 +14,7 @@ namespace VOS.Areas.BaseControllers
         /// <summary>
         /// 是否是超级管理员登录
         /// </summary>
-        public bool IsSuperAdministrator
+        protected bool IsSuperAdministrator
         {
             get
             {
@@ -34,12 +34,32 @@ namespace VOS.Areas.BaseControllers
         /// <summary>
         /// 当前登录人(组织机构)ID
         /// </summary>
-        public Guid GetOrganizationID
+        protected Guid GetOrganizationID
         {
             get
             {
                 return (Guid)DC.Set<VOS_User>().Where(x => x.ID.Equals(LoginUserInfo.Id)).FirstOrDefault().OrganizationID;
             }
+        }
+
+        /// <summary>
+        /// 获取指定key的value值
+        /// </summary>
+        /// <param name="dic">Dictionary<string, object></param>
+        /// <param name="key">需要获取的Key</param></param>
+        /// <returns></returns>
+        protected object GetAppointValue(Dictionary<string, object> dic, string key)
+        {
+            object result = "";
+            foreach (KeyValuePair<string, object> kvp in dic)
+            {
+                if (kvp.Key.Equals(key))
+                {
+                    result = kvp.Value;
+                    break;
+                }
+            }
+            return result;
         }
     }
 }

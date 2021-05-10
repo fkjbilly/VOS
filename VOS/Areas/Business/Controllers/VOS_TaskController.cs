@@ -14,6 +14,8 @@ using System.IO;
 using System.Text;
 using System.Security.Cryptography;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Drawing;
 
 namespace VOS.Controllers
 {
@@ -304,12 +306,12 @@ namespace VOS.Controllers
                             #region 店铺规则
                             var ShopModel = DC.Set<VOS_Plan>().Where(x => x.ID.ToString().Equals(_TaskModel.PlanId.ToString())).SingleOrDefault();
 
-                            var My_vOS_Task2 = _vOS_Task.Where(x => x.EmployeeId.ToString().Equals(BrushHandID.ToString()) 
-                                                                && x.DistributionTime > DateTime.Now.AddDays(-Cycle) 
+                            var My_vOS_Task2 = _vOS_Task.Where(x => x.EmployeeId.ToString().Equals(BrushHandID.ToString())
+                                                                && x.DistributionTime > DateTime.Now.AddDays(-Cycle)
                                                                 && x.Plan.Shopname.ID.ToString().Equals(ShopModel.ShopnameId.ToString())).Count();
                             if (My_vOS_Task2 >= Num)
                             {
-                                return Json("5", 200, "店铺“" + ShopModel.Shopname+ "”规则未通过！！！");
+                                return Json("5", 200, "店铺“" + ShopModel.Shopname + "”规则未通过！！！");
                             }
                             #endregion
                             break;
@@ -325,9 +327,10 @@ namespace VOS.Controllers
                             break;
                         case VOS_Rule.RuleTypes.周期:
                             #region 周期规则
-                            var _vOS_Task3 = _vOS_Task.Where(x => x.EmployeeId.ToString().Equals(BrushHandID.ToString()) 
+                            var _vOS_Task3 = _vOS_Task.Where(x => x.EmployeeId.ToString().Equals(BrushHandID.ToString())
                                                              && x.DistributionTime > DateTime.Now.AddDays(-Cycle)).Count();
-                            if (_vOS_Task3 >= Num) { 
+                            if (_vOS_Task3 >= Num)
+                            {
                                 return Json("5", 200, "周期规则未通过！！！");
                             }
                             #endregion
@@ -390,7 +393,7 @@ namespace VOS.Controllers
                     transaction.Commit();
                     return true;
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
                     transaction.Rollback();
                 }
@@ -413,8 +416,8 @@ namespace VOS.Controllers
         {
             try
             {
-               var returnjson = Post(VOrderCode);
-                if (returnjson.IndexOf("\"data\":\"yes\"") > 0) 
+                var returnjson = Post(VOrderCode);
+                if (returnjson.IndexOf("\"data\":\"yes\"") > 0)
                 {
                     return Json(new { Msg = "淘客订单，不允许完成", State = 5 });
                 }
@@ -425,7 +428,7 @@ namespace VOS.Controllers
                     if (vOS_Task.TaskType == TaskType.隔天单 && DateTime.Now < vOS_Task.DistributionTime.Value.AddHours(8))
                     {
                         var a = Convert.ToDateTime(DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")) - DateTime.Now;
-                        return Json(new { Msg = "隔天单！请" + a.Hours + "小时" + (a.Minutes + 2) + "分钟后提交完成" , State = 4 });
+                        return Json(new { Msg = "隔天单！请" + a.Hours + "小时" + (a.Minutes + 2) + "分钟后提交完成", State = 4 });
                     }
                     vOS_Task.OrderState = OrderState.已完成;
                     vOS_Task.CompleteTime = DateTime.Now;
@@ -493,7 +496,7 @@ namespace VOS.Controllers
 
             var paramsign = Sha1(ordercode + appId + appSecret + timestamp);
 
-            Url = Url + "?order_id="+ ordercode + "&sign="+ paramsign + "&app_id="+ appId + "&timestamp="+ timestamp;
+            Url = Url + "?order_id=" + ordercode + "&sign=" + paramsign + "&app_id=" + appId + "&timestamp=" + timestamp;
 
             //创建Web访问对象
             HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(Url);
@@ -531,11 +534,208 @@ namespace VOS.Controllers
             }
         }
 
+        #region DistributionOrganization 分配机构
+        [ActionDescription("分配组织机构")]
+        public ActionResult DistributionOrganization(string[] IDs)
+        {
+            var vm = CreateVM<VOS_TaskBatchVM>(Ids: IDs);
+            return PartialView(vm);
+        }
+
+        [HttpPost]
+        [ActionDescription("分配组织机构")]
+        public ActionResult DoDistributionOrganization(VOS_TaskBatchVM vm)
+        {
+            using (var transaction = DC.BeginTransaction())
+            {
+                try
+                {
+                    string OrganizationID = GetAppointValue(vm.FC, "LinkedVM.OrganizationID").ToString();
+                    Guid guid = new Guid(OrganizationID);
+                    var ids = vm.Ids.ToList();
+                    List<string> _PlanId = DC.Set<VOS_Task>().Where(x => ids.Contains(x.ID.ToString())).Select(x => x.PlanId.ToString()).ToList();
+                    foreach (var item in _PlanId)
+                    {
+                        var _Plan = DC.Set<VOS_Plan>().Where(x => x.ID.ToString() == item).SingleOrDefault();
+                        _Plan.OrganizationID = guid;
+                    }
+                    DC.SaveChanges();
+                    transaction.Commit();
+                    return FFResult().CloseDialog().RefreshGrid().Alert("组织已分配");
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return FFResult().CloseDialog().RefreshGrid().Alert("组织分配失败");
+                }
+            }
+        }
+        #endregion
+
+        #region BatchCreation 批量创建相关
+
+        [ActionDescription("批量创建")]
+        public ActionResult BatchCreation()
+        {
+            var vm = CreateVM<VOS_TaskVM>();
+            ViewBag.Plan_no = "P" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            return PartialView(vm);
+        }
+
+        [HttpPost]
+        [ActionDescription("批量创建")]
+        public ActionResult DoBatchCreation(string plan, string tasklist)
+        {
+            using (var transaction = DC.BeginTransaction())
+            {
+                try
+                {
+                    var _plan = JsonConvert.DeserializeObject<VOS_Plan>(plan);
+                    _plan.CreateTime = DateTime.Now;
+                    _plan.CreateBy = LoginUserInfo.ITCode;
+                    _plan.IsValid = true;
+                    DC.Set<VOS_Plan>().Add(_plan).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+                    DC.SaveChanges();
+                    var _Task = JsonConvert.DeserializeObject<List<task>>(tasklist);
+                    var _PlanId = DC.Set<VOS_Plan>().Where(x => x.Plan_no == _plan.Plan_no).FirstOrDefault().ID;
+                    foreach (var item in _Task)
+                    {
+                        byte[] Bytes = Encoding.UTF32.GetBytes(item.fileid.Substring(item.fileid.IndexOf(",") + 1));
+                        if (item.VOS_Number > 1)
+                        {
+                            for (int i = 0; i < item.VOS_Number; i++)
+                            {
+                                VOS_Task _Task_Number = new VOS_Task();
+                                _Task_Number.CommodityLink = item.CommodityLink;
+                                _Task_Number.CommodityName = item.CommodityName;
+                                _Task_Number.CommodityPrice = item.CommodityPrice;
+                                _Task_Number.ImplementStartTime = item.ImplementStartTime;
+                                _Task_Number.SKU = item.SKU;
+                                _Task_Number.TaskType = (TaskType)Enum.Parse(typeof(TaskType), item.TaskType);
+                                _Task_Number.Task_no = item.Task_no + "-" + (i + 1);
+                                _Task_Number.TaskCateId = item.TaskCateId;
+                                _Task_Number.CommodityPicId = SaveImg(Bytes);
+                                _Task_Number.ComDis = "/";
+                                _Task_Number.Commission = "1";
+                                _Task_Number.OtherExpenses = "1";
+                                _Task_Number.PlanId = _PlanId;
+                                _Task_Number.CreateBy = LoginUserInfo.ITCode;
+                                _Task_Number.CreateTime = DateTime.Now;
+                                _Task_Number.IsValid = true;
+                                DC.Set<VOS_Task>().Add(_Task_Number).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+                                DC.SaveChanges();
+                            }
+                        }
+                        else
+                        {
+                            VOS_Task _Task1 = new VOS_Task();
+                            _Task1.CommodityLink = item.CommodityLink;
+                            _Task1.CommodityName = item.CommodityName;
+                            _Task1.CommodityPrice = item.CommodityPrice;
+                            _Task1.ImplementStartTime = item.ImplementStartTime;
+                            _Task1.SKU = item.SKU;
+                            _Task1.TaskType = (TaskType)Enum.Parse(typeof(TaskType), item.TaskType);
+                            _Task1.Task_no = item.Task_no;
+                            _Task1.TaskCateId = item.TaskCateId;
+                            _Task1.CommodityPicId = SaveImg(Bytes);
+                            _Task1.ComDis = "/";
+                            _Task1.Commission = "1";
+                            _Task1.OtherExpenses = "1";
+                            _Task1.PlanId = _PlanId;
+                            _Task1.CreateBy = LoginUserInfo.ITCode;
+                            _Task1.CreateTime = DateTime.Now;
+                            _Task1.IsValid = true;
+                            DC.Set<VOS_Task>().Add(_Task1).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+                            DC.SaveChanges();
+                        }
+                    }
+                    transaction.Commit();
+                    return Json(new { Msg = "已完成批量创建", icon = 1 });
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return Json(new { Msg = "批量创建有误", icon = 5 });
+                }
+            }
+        }
+
+        [HttpGet]
+        [ActionDescription("获取类目")]
+        public JsonResult GetCategory()
+        {
+            var _Category = DC.Set<Category>().Where(x => x.ParentId == null).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name).Select(x => new { x.Value, x.Text }).ToList();
+            return Json(_Category);
+        }
+
+        /// <summary>
+        /// 字节转img获取后缀
+        /// </summary>
+        /// <param name="Bytes"></param>
+        /// <returns></returns>
+        private string ConvertToByteImage(byte[] Bytes)
+        {
+            try
+            {
+
+                MemoryStream ms = new MemoryStream(Bytes);
+                Image img = Image.FromStream(ms);
+                return img.RawFormat.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "jpg";
+            }
+        }
+
+        /// <summary>
+        /// 保存图片并获取图片ID
+        /// </summary>
+        /// <param name="Bytes"></param>
+        /// <returns></returns>
+        private Guid SaveImg(byte[] Bytes)
+        {
+            FileAttachment file = new FileAttachment();
+            file.CreateTime = DateTime.Now;
+            file.CreateBy = LoginUserInfo.ITCode;
+            //图片名称
+            file.FileName = DateTime.Now.ToString("yyyymmddhhmmss") + "." + ConvertToByteImage(Bytes);
+            //图片类型
+            file.FileExt = ConvertToByteImage(Bytes);
+            //长度
+            file.Length = Bytes.Length;
+            file.IsTemprory = true;
+            file.SaveFileMode = SaveFileModeEnum.Database;
+            file.FileData = Bytes;
+            DC.Set<FileAttachment>().Add(file).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+            DC.SaveChanges();
+            return file.ID;
+        }
+
+        #endregion
+
+
+
         [ActionDescription("Export")]
         [HttpPost]
         public IActionResult ExportExcel(VOS_TaskListVM vm)
         {
             return vm.GetExportData();
         }
+
+    }
+
+    class task
+    {
+        public string CommodityLink { get; set; }
+        public string CommodityName { get; set; }
+        public string CommodityPrice { get; set; }
+        public DateTime ImplementStartTime { get; set; }
+        public string SKU { get; set; }
+        public string TaskType { get; set; }
+        public string Task_no { get; set; }
+        public Guid? TaskCateId { get; set; }
+        public int VOS_Number { get; set; }
+        public string fileid { get; set; }
     }
 }
