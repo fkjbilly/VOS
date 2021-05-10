@@ -327,7 +327,6 @@
             , "PlanEndTime": $("#VOS_TaskVM_Entity_Plan_PlanEndTime").val()
             , "PlanFee": $("#VOS_TaskVM_Entity_Plan_PlanFee").val()
         };
-        console.log(tasklist);
         $.post('@Url.Action("DoBatchCreation", "VOS_Task")', { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist) }, data=>{
             layer.msg(data.Data.Msg, {
                 icon: data.Data.icon,
