@@ -16,6 +16,8 @@ using System.Security.Cryptography;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Drawing;
+using System.Web;
+using System.Buffers.Text;
 
 namespace VOS.Controllers
 {
@@ -496,7 +498,7 @@ namespace VOS.Controllers
 
             var paramsign = Sha1(ordercode + appId + appSecret + timestamp);
 
-            Url = Url + "?order_id="+ ordercode + "&sign="+ paramsign + "&app_id="+ appId + "&timestamp="+ timestamp;
+            Url = Url + "?order_id=" + ordercode + "&sign=" + paramsign + "&app_id=" + appId + "&timestamp=" + timestamp;
 
             //创建Web访问对象
             HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(Url);
@@ -586,6 +588,7 @@ namespace VOS.Controllers
         [ActionDescription("批量创建")]
         public ActionResult DoBatchCreation(string plan, string tasklist)
         {
+
             using (var transaction = DC.BeginTransaction())
             {
                 try
@@ -600,7 +603,6 @@ namespace VOS.Controllers
                     var _PlanId = DC.Set<VOS_Plan>().Where(x => x.Plan_no == _plan.Plan_no).FirstOrDefault().ID;
                     foreach (var item in _Task)
                     {
-                        byte[] Bytes = Encoding.UTF32.GetBytes(item.fileid.Substring(item.fileid.IndexOf(",") + 1));
                         if (item.VOS_Number > 1)
                         {
                             for (int i = 0; i < item.VOS_Number; i++)
@@ -614,7 +616,7 @@ namespace VOS.Controllers
                                 _Task_Number.TaskType = (TaskType)Enum.Parse(typeof(TaskType), item.TaskType);
                                 _Task_Number.Task_no = item.Task_no + "-" + (i + 1);
                                 _Task_Number.TaskCateId = item.TaskCateId;
-                                _Task_Number.CommodityPicId = SaveImg(Bytes);
+                                _Task_Number.CommodityPicId = SaveImg(item.base64);
                                 _Task_Number.ComDis = "/";
                                 _Task_Number.Commission = "1";
                                 _Task_Number.OtherExpenses = "1";
@@ -637,7 +639,7 @@ namespace VOS.Controllers
                             _Task1.TaskType = (TaskType)Enum.Parse(typeof(TaskType), item.TaskType);
                             _Task1.Task_no = item.Task_no;
                             _Task1.TaskCateId = item.TaskCateId;
-                            _Task1.CommodityPicId = SaveImg(Bytes);
+                            _Task1.CommodityPicId = SaveImg(item.base64);
                             _Task1.ComDis = "/";
                             _Task1.Commission = "1";
                             _Task1.OtherExpenses = "1";
@@ -658,6 +660,7 @@ namespace VOS.Controllers
                     return Json(new { Msg = "批量创建有误", icon = 5 });
                 }
             }
+
         }
 
         [HttpGet]
@@ -668,52 +671,53 @@ namespace VOS.Controllers
             return Json(_Category);
         }
 
-        /// <summary>
-        /// 字节转img获取后缀
-        /// </summary>
-        /// <param name="Bytes"></param>
-        /// <returns></returns>
-        private string ConvertToByteImage(byte[] Bytes)
-        {
-            try
-            {
-
-                MemoryStream ms = new MemoryStream(Bytes);
-                Image img = Image.FromStream(ms);
-                return img.RawFormat.ToString();
-            }
-            catch (Exception ex)
-            {
-                return "jpg";
-            }
-        }
 
         /// <summary>
         /// 保存图片并获取图片ID
         /// </summary>
         /// <param name="Bytes"></param>
         /// <returns></returns>
-        private Guid SaveImg(byte[] Bytes)
+        private Guid SaveImg(string StringBase64)
         {
-            FileAttachment file = new FileAttachment();
-            file.CreateTime = DateTime.Now;
-            file.CreateBy = LoginUserInfo.ITCode;
-            //图片名称
-            file.FileName = DateTime.Now.ToString("yyyymmddhhmmss") + "." + ConvertToByteImage(Bytes);
-            //图片类型
-            file.FileExt = ConvertToByteImage(Bytes);
-            //长度
-            file.Length = Bytes.Length;
-            file.IsTemprory = true;
-            file.SaveFileMode = SaveFileModeEnum.Database;
-            file.FileData = Bytes;
-            DC.Set<FileAttachment>().Add(file).State = Microsoft.EntityFrameworkCore.EntityState.Added;
-            DC.SaveChanges();
-            return file.ID;
+            try
+            {
+                byte[] base64 = Convert.FromBase64String(StringBase64.Substring(StringBase64.IndexOf(",") + 1));
+                FileAttachment file = new FileAttachment();
+                file.CreateTime = DateTime.Now;
+                file.CreateBy = LoginUserInfo.ITCode;
+                //图片名称
+                file.FileName = DateTime.Now.ToString("yyyymmddhhmmss");
+                //图片类型
+                file.FileExt = GetImageSuffix(base64).RawFormat.ToString();
+                //长度
+                file.Length = base64.Length;
+                file.IsTemprory = true;
+                file.SaveFileMode = SaveFileModeEnum.Database;
+                file.FileData = base64;
+                DC.Set<FileAttachment>().Add(file).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+                DC.SaveChanges();
+                return file.ID;
+            }
+            catch (Exception ex)
+            {
+                return new Guid();
+            }
+        }
+        /// <summary>
+        /// 获取图片后缀
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        private  Image GetImageSuffix(byte[] buffer)
+        {
+            MemoryStream ms = new MemoryStream(buffer);
+            ms.Position = 0;
+            Image img = Image.FromStream(ms);
+            ms.Close();
+            return img;
         }
 
         #endregion
-
 
 
         [ActionDescription("Export")]
@@ -736,6 +740,7 @@ namespace VOS.Controllers
         public string Task_no { get; set; }
         public Guid? TaskCateId { get; set; }
         public int VOS_Number { get; set; }
-        public string fileid { get; set; }
+        public string base64 { get; set; }
+        public string filename { get; set; }
     }
 }

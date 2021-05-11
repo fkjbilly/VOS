@@ -29,20 +29,20 @@
 </style>
 
 
-<wt:form vm="@Model">
+<wt:form vm="@Model" id="formimg" enctype="application/x-www-form-urlencoded">
     <wt:quote>批量添加任务</wt:quote>
     <wt:row items-per-row="ItemsPerRowEnum.Three">
-        <wt:combobox field="Entity.Plan.OrganizationID" items="AllOrganization" />
+        <wt:combobox field="Entity.Plan.OrganizationID" items="AllOrganization"/>
         <wt:textbox field="Entity.Plan.Plan_no" default-value="@ViewBag.Plan_no"></wt:textbox>
         <wt:combobox field="Entity.Plan.ShopnameId" items="AllShopnames" />
         <wt:datetime field="Entity.Plan.PlanSatrtTime" />
-        <wt:datetime field="Entity.Plan.PlanEndTime" />
+        <wt:datetime field="Entity.Plan.PlanEndTime"/>
         <wt:textbox field="Entity.Plan.PlanFee" />
     </wt:row>
     <div>
         <button type="button" style="width:10%;float:right;" class="layui-btn layui-btn-fluid" onclick="CreateTB()">创建</button>
     </div>
-    <div style="overflow: scroll; width: 100%;height:500px;">
+    <div style="overflow: scroll; width: 100%;height:400px;">
         <table class="layui-table">
             <thead>
                 <tr>
@@ -92,13 +92,13 @@
         //做单方法
         let oTD1 = oTR.insertCell(1);
         oTD1.innerHTML = "<div>其他</div>\
-        <select id='TaskType'class='select' >\
-            <option value='0'>搜索单</option>\
-            <option value='1'>隔天单</option>\
-            <option value='2'>非搜单</option>\
-            <option value='3'>动销单</option>\
-            <option value='4'>其他</option>\
-         </select>";
+                          <select id='TaskType'class='select' >\
+                            <option value='0'>搜索单</option>\
+                            <option value='1'>隔天单</option>\
+                            <option value='2'>非搜单</option>\
+                            <option value='3'>动销单</option>\
+                            <option value='4'>其他</option>\
+                         </select>";
         //执行开始
         let oTD2 = oTR.insertCell(2);
         oTD2.innerHTML = "<div>" + GetDate() + "</div><input id='ImplementStartTime' type='date'  style='display:none' class='layui-input'>";
@@ -110,7 +110,7 @@
         oTD4.innerHTML = "<div>-</div><input type='text' id='CommodityName' class='layui-input' style='display:none;'/>";
         //商品图片
         let oTD5 = oTR.insertCell(5);
-        oTD5.innerHTML = "<img src='/images/logo.png' id='fileid' class='FileData' style='width:30px;height:30px;'/><input type='file' id='fileUpload' class='fileUpload' name='fileUpload' style='display:none;' />";
+        oTD5.innerHTML = "<img src='/images/logo.png' id='base64' class='FileData' width='64' height='64'/><input type='file' id='filename' class='fileUpload' name='fileUpload' style='display:none;' />";
         //商品链接
         let oTD6 = oTR.insertCell(6);
         oTD6.innerHTML = "<div>-</div><input type='text' id='CommodityLink' class='layui-input' style='display:none;'/>";
@@ -258,6 +258,7 @@
         }
     }
 
+    //图显示
     $(document).on("click", "[name='fileUpload']", function () {
         let _this = this;
         let img = $(_this).prev()[0];
@@ -288,7 +289,7 @@
     };
 
     function formatDate(str) {
-        var realNum;
+        let realNum;
         if (str < 10) {
             realNum = '0' + str;
         } else {
@@ -299,14 +300,15 @@
 
 
     $("#SaveTask").click(function () {
+
         /**任务 */
         var tasklist = [];
         $('#layui_table tr').each(function (index, item) {
             var row = {};
             $(this).find('td').each(function (index2, item2) {
-                var input = $(this).find("input").not('.fileUpload');
-                var select = $(this).find("select");
-                var img = $(".FileData");
+                let input = $(this).find("input").not('.fileUpload');
+                let select = $(this).find("select");
+                let img = $(this).find("img");
                 if (input.val() != undefined) {
                     row[input[0].id] = input.val();
                 } else if (select.val() != undefined) {
@@ -319,7 +321,7 @@
             tasklist.push(row);
         });
         /**计划 */
-        var plan = {
+        let plan = {
             "OrganizationID": $("#VOS_TaskVM_Entity_Plan_OrganizationID option:selected").val()
             , "Plan_no": $("#VOS_TaskVM_Entity_Plan_Plan_no").val()
             , "ShopnameId": $("#VOS_TaskVM_Entity_Plan_ShopnameId").find("option:selected").val()
@@ -327,7 +329,7 @@
             , "PlanEndTime": $("#VOS_TaskVM_Entity_Plan_PlanEndTime").val()
             , "PlanFee": $("#VOS_TaskVM_Entity_Plan_PlanFee").val()
         };
-        $.post('@Url.Action("DoBatchCreation", "VOS_Task")', { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist) }, data=>{
+         $.post('@Url.Action("DoBatchCreation", "VOS_Task")', { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist) }, data => {
             layer.msg(data.Data.Msg, {
                 icon: data.Data.icon,
                 time: 1500,
@@ -335,6 +337,7 @@
                 location.reload();
                 layer.closeAll();
             });
-        });
+         });
+        
     });
 </script>
