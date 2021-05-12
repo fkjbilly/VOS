@@ -29,10 +29,10 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
                     this.MakeAction("VOS_Task","BrushHand","派单","刷手分配",GridActionParameterTypesEnum.SingleId,"Business",800,600)
                     .SetShowInRow(true).SetHideOnToolBar(true).SetBindVisiableColName("OrderStateHide"),
-                    
+
                     this.MakeAction("VOS_Task","BatchCreation","批量创建","批量创建任务",GridActionParameterTypesEnum.NoId,"Business",1000,600).SetMax().SetShowInRow(false).SetHideOnToolBar(false).SetIconCls("layui-icon layui-icon-find-fill"),
                     this.MakeAction("VOS_Task","DistributionOrganization","分配组织机构","分配机构",GridActionParameterTypesEnum.MultiIds,"Business",800,600).SetShowInRow(false).SetHideOnToolBar(false).SetIconCls("_wtmicon _wtmicon-guanfangbanben"),
-                    
+
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Create, Localizer["Create"],"Business", dialogWidth: 800),
                     this.MakeAction("VOS_User","Index","设置执行人","执行人分配",GridActionParameterTypesEnum.MultiIds,"Business",900,600).SetIconCls("_wtmicon _wtmicon-icon_shezhi"),
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.Edit, Localizer["Edit"], "Business", dialogWidth: 800),
@@ -48,7 +48,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
         protected override IEnumerable<IGridColumn<VOS_Task_View>> InitGridHeader()
         {
-            if (SearcherMode == ListVMSearchModeEnum.MasterDetail){
+            if (SearcherMode == ListVMSearchModeEnum.MasterDetail)
+            {
                 return new List<GridColumn<VOS_Task_View>>{
                 this.MakeGridHeader(x => x.Task_no),
                 this.MakeGridHeader(x => x.TaskType).SetWidth(90),
@@ -57,7 +58,9 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 this.MakeGridHeader(x => x.DistributionTime).SetSort(true),
                 this.MakeGridHeader(x=>x._executorName).SetWidth(100),
                 };
-            }else if(SearcherMode == ListVMSearchModeEnum.CheckExport || SearcherMode == ListVMSearchModeEnum.Export){
+            }
+            else if (SearcherMode == ListVMSearchModeEnum.CheckExport || SearcherMode == ListVMSearchModeEnum.Export)
+            {
                 return new List<GridColumn<VOS_Task_View>>{
                     this.MakeGridHeader(x => x._method),
                     this.MakeGridHeader(x => x._ShopName),
@@ -70,7 +73,9 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     this.MakeGridHeader(x => x.OrderState),
                     this.MakeGridHeader(x => x.CompleteTime),
                 };
-            }else {
+            }
+            else
+            {
                 return new List<GridColumn<VOS_Task_View>>{
                     this.MakeGridHeader(x => x.TaskType).SetForeGroundFunc((x)=>{
                             switch (x.TaskType)
@@ -176,9 +181,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             .CheckContain(Searcher.newShopName, x => x.Plan.Shopname.ShopName)
             .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
             .CheckBetween(Searcher.Time?.GetStartTime(), Searcher.Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
-            //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID)//数据权限
-            .Where(x => x.Employee.FullName.Contains(Searcher.Distribution_BrushHands)
-                    || x.Distributor.Name.Contains(Searcher.Distribution_BrushHands))
+            .CheckContain(Searcher.Distribution_BrushHands, x => x.Employee.FullName)
+            .CheckContain(Searcher.Distribution_BrushHands, x => x.Distributor.Name)
             .Where(x => x.IsValid == true);
             if (SearcherMode != ListVMSearchModeEnum.MasterDetail)
             {

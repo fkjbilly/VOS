@@ -59,7 +59,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         [Display(Name = "店铺")]
         public string newShopName { get; set; }
 
-        private DateTime ti => Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+        private DateTime ti => Convert.ToDateTime(DateTime.Now.AddDays(-50).ToString("yyyy-MM-dd"));
         protected override void InitVM()
         {
             Time = new DateRange(ti, DateTime.Now);
@@ -75,15 +75,18 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
             var query = DC.Set<VOS_Task>()
-                .CheckEqual(TaskType, x => x.TaskType)
-                .CheckContain(CommodityName, x => x.CommodityName)
-                .CheckContain(SearchKeyword, x => x.SearchKeyword)
-                .CheckContain(VOrderCode, x => x.VOrderCode)
-                .CheckEqual(OrderState, x => x.OrderState)
-                .CheckEqual(OrganizationID, x => x.Plan.OrganizationID)
-                .CheckContain(newShopName, x => x.Plan.Shopname.ShopName)
-                .CheckBetween(Time?.GetStartTime(), Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
-                .Where(x => x.Employee.FullName.Contains(Distribution_BrushHands) || x.Distributor.Name.Contains(Distribution_BrushHands));
+            .CheckEqual(TaskType, x => x.TaskType)
+            .CheckContain(CommodityName, x => x.CommodityName)
+            .CheckContain(SearchKeyword, x => x.SearchKeyword)
+            .CheckContain(VOrderCode, x => x.VOrderCode)
+            .CheckEqual(OrderState, x => x.OrderState)
+            .CheckContain(ShopNames, x => x.Plan.Shopname.ID)
+            .CheckContain(newShopName, x => x.Plan.Shopname.ShopName)
+            .CheckEqual(OrganizationID, x => x.Plan.OrganizationID)
+            .CheckBetween(Time?.GetStartTime(), Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
+            .CheckContain(Distribution_BrushHands,x=>x.Employee.FullName)
+            .CheckContain(Distribution_BrushHands,x=>x.Distributor.Name)
+            .Where(x => x.IsValid == true);
             const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
             var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
             var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
@@ -95,11 +98,11 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 query = query.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID);
             }
-            var data = query.Where(x => x.IsValid == true).Select(x => new { shopid = x.Plan.Shopname.ID }).Distinct(x => x.shopid).ToList();
+            var data = query.Where(x => x.IsValid == true).Select(x => x.Plan.Shopname.ID).ToList().Distinct();
             string str = "";
             foreach (var item in data)
             {
-                str += item.shopid + ",";
+                str += item+",";
             }
             AllShopName = DC.Set<VOS_Shop>().DPWhere(LoginUserInfo.DataPrivileges, x => x.Customer.OrganizationID).Where(x => str.IndexOf(x.ID.ToString()) >= 0).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
 
