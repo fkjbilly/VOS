@@ -588,7 +588,6 @@ namespace VOS.Controllers
         [ActionDescription("批量创建")]
         public ActionResult DoBatchCreation(string plan, string tasklist)
         {
-
             using (var transaction = DC.BeginTransaction())
             {
                 try
@@ -599,7 +598,7 @@ namespace VOS.Controllers
                     _plan.IsValid = true;
                     DC.Set<VOS_Plan>().Add(_plan).State = Microsoft.EntityFrameworkCore.EntityState.Added;
                     DC.SaveChanges();
-                    var _Task = JsonConvert.DeserializeObject<List<task>>(tasklist);
+                    var _Task = JsonConvert.DeserializeObject<List<VOS_Task>>(tasklist);
                     var _PlanId = DC.Set<VOS_Plan>().Where(x => x.Plan_no == _plan.Plan_no).FirstOrDefault().ID;
                     foreach (var item in _Task)
                     {
@@ -613,7 +612,7 @@ namespace VOS.Controllers
                                 _Task_Number.CommodityPrice = item.CommodityPrice;
                                 _Task_Number.ImplementStartTime = item.ImplementStartTime;
                                 _Task_Number.SKU = item.SKU;
-                                _Task_Number.TaskType = (TaskType)Enum.Parse(typeof(TaskType), item.TaskType);
+                                _Task_Number.TaskType = item.TaskType;//(TaskType)Enum.Parse(typeof(TaskType), item.TaskType);
                                 _Task_Number.Task_no = item.Task_no + "-" + (i + 1);
                                 _Task_Number.TaskCateId = item.TaskCateId;
                                 _Task_Number.CommodityPicId = SaveImg(item.base64);
@@ -636,7 +635,7 @@ namespace VOS.Controllers
                             _Task1.CommodityPrice = item.CommodityPrice;
                             _Task1.ImplementStartTime = item.ImplementStartTime;
                             _Task1.SKU = item.SKU;
-                            _Task1.TaskType = (TaskType)Enum.Parse(typeof(TaskType), item.TaskType);
+                            _Task1.TaskType = item.TaskType;//(TaskType)Enum.Parse(typeof(TaskType), item.TaskType);
                             _Task1.Task_no = item.Task_no;
                             _Task1.TaskCateId = item.TaskCateId;
                             _Task1.CommodityPicId = SaveImg(item.base64);
@@ -727,20 +726,5 @@ namespace VOS.Controllers
             return vm.GetExportData();
         }
 
-    }
-
-    class task
-    {
-        public string CommodityLink { get; set; }
-        public string CommodityName { get; set; }
-        public string CommodityPrice { get; set; }
-        public DateTime ImplementStartTime { get; set; }
-        public string SKU { get; set; }
-        public string TaskType { get; set; }
-        public string Task_no { get; set; }
-        public Guid? TaskCateId { get; set; }
-        public int VOS_Number { get; set; }
-        public string base64 { get; set; }
-        public string filename { get; set; }
     }
 }

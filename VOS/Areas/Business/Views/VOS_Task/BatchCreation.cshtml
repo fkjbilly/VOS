@@ -26,23 +26,30 @@
         -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
         transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     }
+
+    .div {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+    }
 </style>
-
-
 <wt:form vm="@Model" id="formimg" enctype="application/x-www-form-urlencoded">
     <wt:quote>批量添加任务</wt:quote>
     <wt:row items-per-row="ItemsPerRowEnum.Three">
-        <wt:combobox field="Entity.Plan.OrganizationID" items="AllOrganization"/>
-        <wt:textbox field="Entity.Plan.Plan_no" default-value="@ViewBag.Plan_no"></wt:textbox>
+        <wt:textbox field="Entity.Plan.Plan_no" default-value="@ViewBag.Plan_no" disabled="true"></wt:textbox>
+        <wt:combobox field="Entity.Plan.OrganizationID" items="AllOrganization" />
         <wt:combobox field="Entity.Plan.ShopnameId" items="AllShopnames" />
         <wt:datetime field="Entity.Plan.PlanSatrtTime" />
-        <wt:datetime field="Entity.Plan.PlanEndTime"/>
+        <wt:datetime field="Entity.Plan.PlanEndTime" />
         <wt:textbox field="Entity.Plan.PlanFee" />
     </wt:row>
-    <div>
-        <button type="button" style="width:10%;float:right;" class="layui-btn layui-btn-fluid" onclick="CreateTB()">创建</button>
-    </div>
-    <div style="overflow: scroll; width: 100%;height:400px;">
+
+    <wt:row align="AlignEnum.Right">
+        <button type="button" style="width:10%;float:left;" class="layui-btn layui-btn-fluid" onclick="CreateTB()">创建</button>
+        <input type="button" style="width:10%;" id="SaveTask" class="layui-btn layui-btn-radius layui-btn-normal" value="提交" />
+        <wt:closebutton style="width:10%" class="layui-btn layui-btn-radius layui-btn-primary" />
+    </wt:row>
+    <div style="overflow: scroll; width: 100%;height:80%">
         <table class="layui-table">
             <thead>
                 <tr>
@@ -62,15 +69,19 @@
             <tbody id="layui_table"></tbody>
         </table>
     </div>
-    <wt:row align="AlignEnum.Right">
-        <input type="button" id="SaveTask" class="layui-btn layui-btn-primary" value="提交" />
-        <wt:closebutton />
-    </wt:row>
+
 </wt:form>
 
 <script type="text/javascript">
-    var RowIndex = 1;
-    var htmloption;
+    let RowIndex = 1
+        , htmloption//类目下拉
+        , TaskTypeVal=0
+        , TaskTypeTex ="其他"//做单方法
+        , StartTime//执行开始
+        , TaskCateTex="请选择"//类目
+        , TaskCateVal="-"
+        , CommodityName="-"//商品名称
+        , CommodityPrice=0.01;//商品价格
     $(function () {
         $.get('@Url.Action("GetCategory", "VOS_Task")', data => {
             if (data.Msg == "success") {
@@ -83,50 +94,58 @@
         });
     });
     function CreateTB() {
-
+        if ($("#VOS_TaskVM_Entity_Plan_PlanSatrtTime").val() == ""
+            || $("#VOS_TaskVM_Entity_Plan_PlanEndTime").val() == ""
+            || $("#VOS_TaskVM_Entity_Plan_PlanFee").val() == ""
+            || $("#VOS_TaskVM_Entity_Plan_OrganizationID").val() == ""
+            || $("#VOS_TaskVM_Entity_Plan_ShopnameId").val() == "") {
+            layer.msg("请将上部分填写完毕");
+            return false;
+        }
         let oTB = document.getElementById("layui_table");
         let oTR = oTB.insertRow(oTB.rows.length);
         //任务编号
         let oTD0 = oTR.insertCell(0);
-        oTD0.innerHTML = "<div>" + new Date().getTime() + "</div><input id='Task_no' type='text' class='layui-input' style='display:none;'/>";
+        oTD0.innerHTML = "<div>" + new Date().getTime() + "</div><input id='Task_no' readonly  type='text' class='layui-input layui-btn-disabled' style='display:none;'/>";
         //做单方法
         let oTD1 = oTR.insertCell(1);
-        oTD1.innerHTML = "<div>其他</div>\
-                          <select id='TaskType'class='select' >\
+        oTD1.innerHTML = "<div>" + TaskTypeTex+"</div>\
+                          <select id='TaskType'class='select'>\
                             <option value='0'>搜索单</option>\
                             <option value='1'>隔天单</option>\
                             <option value='2'>非搜单</option>\
                             <option value='3'>动销单</option>\
                             <option value='4'>其他</option>\
                          </select>";
+        $(oTD1).find("select").val(TaskTypeVal);
         //执行开始
         let oTD2 = oTR.insertCell(2);
-        oTD2.innerHTML = "<div>" + GetDate() + "</div><input id='ImplementStartTime' type='date'  style='display:none' class='layui-input'>";
+        oTD2.innerHTML = "<div>" + GetDate() + "</div><input id='ImplementStartTime' value=" + GetDate()+" type='date'  style='display:none' class='layui-input'>";
         //商品类目
         let oTD3 = oTR.insertCell(3);
-        oTD3.innerHTML = "<div>请选择</div><select id='TaskCateId' class='select' style='display:none;'><option>请选择</option>" + htmloption+ "</select>";
+        oTD3.innerHTML = "<div>" + TaskCateTex +"</div><select id='TaskCateId' class='select' style='display:none;'><option value='-'>请选择</option>" + htmloption + "</select>";
+        $(oTD3).find("select").val(TaskCateVal);
         //商品名称
         let oTD4 = oTR.insertCell(4);
-        oTD4.innerHTML = "<div>-</div><input type='text' id='CommodityName' class='layui-input' style='display:none;'/>";
+        oTD4.innerHTML = "<div>" + CommodityName + "</div><input type='text' value=" + CommodityName+" id='CommodityName' class='layui-input' style='display:none;'/>";
         //商品图片
         let oTD5 = oTR.insertCell(5);
         oTD5.innerHTML = "<img src='/images/logo.png' id='base64' class='FileData' width='64' height='64'/><input type='file' id='filename' class='fileUpload' name='fileUpload' style='display:none;' />";
         //商品链接
         let oTD6 = oTR.insertCell(6);
-        oTD6.innerHTML = "<div>-</div><input type='text' id='CommodityLink' class='layui-input' style='display:none;'/>";
+        oTD6.innerHTML = "<div>-</div><input type='text' id='CommodityLink' value='' class='layui-input' style='display:none;'/>";
         //商品价格
         let oTD7 = oTR.insertCell(7);
-        oTD7.innerHTML = "<div>0.01</div><input type='number' id='CommodityPrice' class='layui-input' style='display:none;'/>";
+        oTD7.innerHTML = "<div>" + CommodityPrice + "</div><input type='number' value=" + CommodityPrice+" id='CommodityPrice' class='layui-input' style='display:none;'/>";
         //SKU
         let oTD8 = oTR.insertCell(8);
-        oTD8.innerHTML = "<div>-</div><input type='text' id='SKU' class='layui-input' style='display:none;'/>";
+        oTD8.innerHTML = "<div>-</div><input type='text' id='SKU' value='-' class='layui-input' style='display:none;'/>";
         //单量
         let oTD9 = oTR.insertCell(9);
-        oTD9.innerHTML = "<div>1</div><input type='number' id='VOS_Number' class='layui-input' style='display:none;'/>";
+        oTD9.innerHTML = "<div>1</div><input type='number' id='VOS_Number' value='1' class='layui-input' style='display:none;'/>";
         //操作
         let oTD10 = oTR.insertCell(10);
         oTD10.innerHTML = "<input type='button' class='layui-btn' value='编辑' onclick=\"edit(this,'show')\"/> <input type='button' class='layui-btn layui-btn-primary layui-border-black' value='删除' onclick='drop(this)'/>";
-
         RowIndex++;
     }
 
@@ -172,7 +191,7 @@
             TaskInpt[0].style.display = "block";
             TaskDiv[0].style.display = "none";
             //做单方法
-            $(MakeSelect[0]).find("option:selected").text(MakeDiv[0].childNodes[0].nodeValue);
+            $(MakeSelect[0]).val(SelectOp(MakeDiv[0].childNodes[0].nodeValue));
             MakeSelect[0].style.display = "block";
             MakeDiv[0].style.display = "none";
             //执行开始
@@ -182,16 +201,13 @@
             //商品类目
             TaskCateSelect[0].style.display = "block";
             TaskCateDiv[0].style.display = "none";
-            $(TaskCateSelect[0]).find("option:selected").text(TaskCateDiv[0].childNodes[0].nodeValue);
             //商品名称
             CommodityNameInput[0].value = CommodityNameDiv[0].childNodes[0].nodeValue;
             CommodityNameInput[0].style.display = "block";
             CommodityNameDiv[0].style.display = "none";
             //商品图片
-
             CommodityPicIdButton[0].style.display = "block";
             CommodityPicIdImg[0].style.display = "none";
-
             //商品链接
             CommodityLinkInput[0].value = CommodityLinkDiv[0].childNodes[0].nodeValue;
             CommodityLinkInput[0].style.display = "block";
@@ -208,7 +224,6 @@
             VOS_NumberInput[0].value = VOS_NumberDiv[0].childNodes[0].nodeValue;
             VOS_NumberInput[0].style.display = "block";
             VOS_NumberDiv[0].style.display = "none";
-            //操作
         } else if (otype == "hide") {
             o.value = "编辑";
             o.setAttribute("onclick", "edit(this,'show')");
@@ -218,32 +233,34 @@
             TaskInpt[0].style.display = "none";
             TaskDiv[0].style.display = "block";
             //做单方法
-            MakeDiv[0].childNodes[0].nodeValue = $(MakeSelect[0]).find("option:selected").text();
+            TaskTypeTex = MakeDiv[0].childNodes[0].nodeValue = $(MakeSelect[0]).find("option:selected").text();
+            TaskTypeVal = $(MakeSelect[0]).find("option:selected").val();
             MakeSelect[0].style.display = "none";
             MakeDiv[0].style.display = "block";
             //执行开始
-            ImplementStartTimeDiv[0].childNodes[0].nodeValue = ImplementStartTimeInput[0].value;
+            StartTime=ImplementStartTimeDiv[0].childNodes[0].nodeValue = ImplementStartTimeInput[0].value;
             ImplementStartTimeInput[0].style.display = "none";
             ImplementStartTimeDiv[0].style.display = "block";
             //商品类目
-            TaskCateDiv[0].childNodes[0].nodeValue = $(TaskCateSelect[0]).find("option:selected").text();
+            TaskCateTex = TaskCateDiv[0].childNodes[0].nodeValue = $(TaskCateSelect[0]).find("option:selected").text();
+            TaskCateVal = $(TaskCateSelect[0]).find("option:selected").val();
             TaskCateSelect[0].style.display = "none";
             TaskCateDiv[0].style.display = "block";
+
+
             //商品名称
-            CommodityNameDiv[0].childNodes[0].nodeValue = CommodityNameInput[0].value;
+            CommodityName=CommodityNameDiv[0].childNodes[0].nodeValue = CommodityNameInput[0].value;
             CommodityNameInput[0].style.display = "none";
             CommodityNameDiv[0].style.display = "block";
             //商品图片
-
             CommodityPicIdButton[0].style.display = "none";
             CommodityPicIdImg[0].style.display = "block";
-
             //商品链接
             CommodityLinkDiv[0].childNodes[0].nodeValue = CommodityLinkInput[0].value;
             CommodityLinkInput[0].style.display = "none";
             CommodityLinkDiv[0].style.display = "block";
             //商品价格
-            CommodityPriceDiv[0].childNodes[0].nodeValue = CommodityPriceInput[0].value < 0.01 ? 0.01 : CommodityPriceInput[0].value;
+            CommodityPrice = CommodityPriceDiv[0].childNodes[0].nodeValue = CommodityPriceInput[0].value < 0.01 ? 0.01 : CommodityPriceInput[0].value;
             CommodityPriceInput[0].style.display = "none";
             CommodityPriceDiv[0].style.display = "block";
             //SKU
@@ -298,6 +315,27 @@
         return realNum;
     }
 
+    function SelectOp(nodeValue) {
+        let op = 0;
+        switch (nodeValue) {
+            case "搜索单":
+                op = 0;
+                break;
+            case "隔天单":
+                op = 1;
+                break;
+            case "非搜单":
+                op = 2;
+                break;
+            case "动销单":
+                op = 3;
+                break;
+            default:
+                op = 4;
+                break;
+        }
+        return op;
+    }
 
     $("#SaveTask").click(function () {
 
@@ -329,7 +367,8 @@
             , "PlanEndTime": $("#VOS_TaskVM_Entity_Plan_PlanEndTime").val()
             , "PlanFee": $("#VOS_TaskVM_Entity_Plan_PlanFee").val()
         };
-         $.post('@Url.Action("DoBatchCreation", "VOS_Task")', { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist) }, data => {
+        console.log(tasklist);
+         @*$.post('@Url.Action("DoBatchCreation", "VOS_Task")', { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist) }, data => {
             layer.msg(data.Data.Msg, {
                 icon: data.Data.icon,
                 time: 1500,
@@ -337,7 +376,7 @@
                 location.reload();
                 layer.closeAll();
             });
-         });
-        
+         });*@
+
     });
 </script>
