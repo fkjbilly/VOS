@@ -33,23 +33,25 @@
         left: 0px;
     }
 </style>
-<wt:form vm="@Model" id="formimg" enctype="application/x-www-form-urlencoded">
-    <wt:quote>批量添加任务</wt:quote>
-    <wt:row items-per-row="ItemsPerRowEnum.Three">
-        <wt:textbox field="Entity.Plan.Plan_no" default-value="@ViewBag.Plan_no" disabled="true"></wt:textbox>
-        <wt:combobox field="Entity.Plan.OrganizationID" items="AllOrganization" />
-        <wt:combobox field="Entity.Plan.ShopnameId" items="AllShopnames" />
-        <wt:datetime field="Entity.Plan.PlanSatrtTime" />
-        <wt:datetime field="Entity.Plan.PlanEndTime" />
-        <wt:textbox field="Entity.Plan.PlanFee" />
-    </wt:row>
+<wt:form vm="@Model" id="formimg" style="height:100%;"enctype="application/x-www-form-urlencoded">
+    <div style=" width: 100%;height:15%;">
+        <wt:quote>批量添加任务</wt:quote>
+        <wt:row items-per-row="ItemsPerRowEnum.Three">
+            <wt:textbox field="Entity.Plan.Plan_no" default-value="@ViewBag.Plan_no" disabled="true"></wt:textbox>
+            <wt:combobox field="Entity.Plan.OrganizationID" items="AllOrganization" />
+            <wt:combobox field="Entity.Plan.ShopnameId" items="AllShopnames" />
+            <wt:datetime field="Entity.Plan.PlanSatrtTime" />
+            <wt:datetime field="Entity.Plan.PlanEndTime" />
+            <wt:textbox field="Entity.Plan.PlanFee" />
+        </wt:row>
+        <wt:row align="AlignEnum.Right">
+            <button type="button" style="width:10%;float:left;" class="layui-btn layui-btn-radius" onclick="CreateTB()">创建</button>
+            <input type="button" style="width:10%;" id="SaveTask" class="layui-btn layui-btn-radius layui-btn-normal" value="提交" />
+            <wt:closebutton style="width:10%" class="layui-btn layui-btn-radius layui-btn-primary" />
+        </wt:row>
+    </div>
 
-    <wt:row align="AlignEnum.Right">
-        <button type="button" style="width:10%;float:left;" class="layui-btn layui-btn-fluid" onclick="CreateTB()">创建</button>
-        <input type="button" style="width:10%;" id="SaveTask" class="layui-btn layui-btn-radius layui-btn-normal" value="提交" />
-        <wt:closebutton style="width:10%" class="layui-btn layui-btn-radius layui-btn-primary" />
-    </wt:row>
-    <div style="overflow: scroll; width: 100%;height:80%">
+    <div style="overflow: scroll; width: 100%;height:70%;">
         <table class="layui-table">
             <thead>
                 <tr>
@@ -75,14 +77,18 @@
 <script type="text/javascript">
     let RowIndex = 1
         , htmloption//类目下拉
-        , TaskTypeVal=0
-        , TaskTypeTex ="其他"//做单方法
+        , TaskTypeVal = 0
+        , TaskTypeTex = "其他"//做单方法
         , StartTime//执行开始
-        , TaskCateTex="请选择"//类目
-        , TaskCateVal="-"
-        , CommodityName="-"//商品名称
-        , CommodityPrice=0.01;//商品价格
+        , TaskCateTex = "请选择"//类目
+        , TaskCateVal = "-"
+        , CommodityName = "-"//商品名称
+        , CommodityPrice = 0.01//商品价格
+        , CommodityLink = "-"//商品链接
+        , base64 = "/images/logo.png"
+        , sku="-";
     $(function () {
+        $("#SaveTask").addClass("layui-btn-disabled");
         $.get('@Url.Action("GetCategory", "VOS_Task")', data => {
             if (data.Msg == "success") {
                 $(data.Data).each(function (index, item) {
@@ -102,11 +108,12 @@
             layer.msg("请将上部分填写完毕");
             return false;
         }
+        $("#SaveTask").removeClass("layui-btn-disabled").addClass("layui-btn-radius layui-btn-normal");
         let oTB = document.getElementById("layui_table");
         let oTR = oTB.insertRow(oTB.rows.length);
         //任务编号
         let oTD0 = oTR.insertCell(0);
-        oTD0.innerHTML = "<div>" + new Date().getTime() + "</div><input id='Task_no' readonly  type='text' class='layui-input layui-btn-disabled' style='display:none;'/>";
+        oTD0.innerHTML = "<div>" + GetTime() + "</div><input id='Task_no' readonly  type='text' value='" + GetTime()+"' class='layui-input layui-btn-disabled' style='display:none;'/>";
         //做单方法
         let oTD1 = oTR.insertCell(1);
         oTD1.innerHTML = "<div>" + TaskTypeTex+"</div>\
@@ -130,16 +137,16 @@
         oTD4.innerHTML = "<div>" + CommodityName + "</div><input type='text' value=" + CommodityName+" id='CommodityName' class='layui-input' style='display:none;'/>";
         //商品图片
         let oTD5 = oTR.insertCell(5);
-        oTD5.innerHTML = "<img src='/images/logo.png' id='base64' class='FileData' width='64' height='64'/><input type='file' id='filename' class='fileUpload' name='fileUpload' style='display:none;' />";
+        oTD5.innerHTML = "<img src='" + base64+"' id='base64' class='FileData' width='64' height='64'/><input type='file' id='filename' class='fileUpload' name='fileUpload' style='display:none;' />";
         //商品链接
         let oTD6 = oTR.insertCell(6);
-        oTD6.innerHTML = "<div>-</div><input type='text' id='CommodityLink' value='' class='layui-input' style='display:none;'/>";
+        oTD6.innerHTML = "<div>" + CommodityLink + "</div><input type='text' id='CommodityLink' value='" + CommodityLink+"' class='layui-input' style='display:none;'/>";
         //商品价格
         let oTD7 = oTR.insertCell(7);
         oTD7.innerHTML = "<div>" + CommodityPrice + "</div><input type='number' value=" + CommodityPrice+" id='CommodityPrice' class='layui-input' style='display:none;'/>";
         //SKU
         let oTD8 = oTR.insertCell(8);
-        oTD8.innerHTML = "<div>-</div><input type='text' id='SKU' value='-' class='layui-input' style='display:none;'/>";
+        oTD8.innerHTML = "<div>" + sku + "</div><input type='text' id='SKU' value='"+sku+"' class='layui-input' style='display:none;'/>";
         //单量
         let oTD9 = oTR.insertCell(9);
         oTD9.innerHTML = "<div>1</div><input type='number' id='VOS_Number' value='1' class='layui-input' style='display:none;'/>";
@@ -256,7 +263,7 @@
             CommodityPicIdButton[0].style.display = "none";
             CommodityPicIdImg[0].style.display = "block";
             //商品链接
-            CommodityLinkDiv[0].childNodes[0].nodeValue = CommodityLinkInput[0].value;
+            CommodityLink = CommodityLinkDiv[0].childNodes[0].nodeValue = CommodityLinkInput[0].value;
             CommodityLinkInput[0].style.display = "none";
             CommodityLinkDiv[0].style.display = "block";
             //商品价格
@@ -265,6 +272,7 @@
             CommodityPriceDiv[0].style.display = "block";
             //SKU
             SKUDiv[0].childNodes[0].nodeValue = SKUInput[0].value;
+            sku = SKUInput[0].value;
             SKUInput[0].style.display = "none";
             SKUDiv[0].style.display = "block";
             //单量
@@ -285,6 +293,7 @@
                 let reader = new FileReader();
                 reader.onload = function (e) {
                     img.src = this.result;
+                    base64 = this.result;
                 }
                 reader.readAsDataURL(file);
             };
@@ -337,8 +346,12 @@
         return op;
     }
 
-    $("#SaveTask").click(function () {
+    function GetTime() {
+        return new Date().getTime();
+    }
 
+    $("#SaveTask").click(function () {
+        if ($("#SaveTask").hasClass("layui-btn-disabled")) { return false;}
         /**任务 */
         var tasklist = [];
         $('#layui_table tr').each(function (index, item) {
@@ -367,8 +380,7 @@
             , "PlanEndTime": $("#VOS_TaskVM_Entity_Plan_PlanEndTime").val()
             , "PlanFee": $("#VOS_TaskVM_Entity_Plan_PlanFee").val()
         };
-        console.log(tasklist);
-         @*$.post('@Url.Action("DoBatchCreation", "VOS_Task")', { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist) }, data => {
+         $.post('@Url.Action("DoBatchCreation", "VOS_Task")', { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist) }, data => {
             layer.msg(data.Data.Msg, {
                 icon: data.Data.icon,
                 time: 1500,
@@ -376,7 +388,6 @@
                 location.reload();
                 layer.closeAll();
             });
-         });*@
-
+         });
     });
 </script>
