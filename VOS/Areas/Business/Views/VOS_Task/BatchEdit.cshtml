@@ -18,19 +18,6 @@
     $("img").css("cursor", "pointer");
     $("#VOS_TaskBatchVM_LinkedVM_CommodityPicIdlabel").click(function () {
         var _img = $("#VOS_TaskBatchVM_LinkedVM_CommodityPicIdlabel > img")[0];
-        ImageAuto(_img);
+        ImageAuto(_img.src);
     });
-    function ImageAuto(img) {
-        let src = img.src.replace(/64/g, "640");
-        var imgHtml = "<img src='" + src + "' width='640px' height='640px'/>";
-        layer.open({
-            type: 1
-            , title: '预览'
-            , id: "img"
-            , shade: 0.6
-            , maxmin: true
-            , anim: 1
-            , content: imgHtml
-        });
-    }
 </script>

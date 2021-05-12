@@ -38,17 +38,17 @@
     //支付宝
     $("#VOS_PEmployeeVM_Entity_AlipayPicIdlabel").click(function () {
         let _img = $("#VOS_PEmployeeVM_Entity_AlipayPicIdlabel > img")[0];
-        ImageAuto(_img);
+        ImageAuto(_img.src);
     });
     //微信
     $("#VOS_PEmployeeVM_Entity_WeChatPicIdlabel").click(function () {
         let _img = $("#VOS_PEmployeeVM_Entity_WeChatPicIdlabel > img")[0];
-        ImageAuto(_img);
+        ImageAuto(_img.src);
     });
     //微信实名
     $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdlabel").click(function () {
         let _img = $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdlabel > img")[0];
-        ImageAuto(_img);
+        ImageAuto(_img.src);
     });
 
     $('button[type="submit"]').on("click", function () {
@@ -68,18 +68,4 @@
             return false;
         }
     });
-
-    function ImageAuto(img) {
-        let src = img.src.replace(/64/g, "640");
-        var imgHtml = "<img src='" + src + "' width='640px' height='640px'/>";
-        layer.open({
-            type: 1
-            , title: '预览'
-            , id: "img"
-            , shade: 0.6
-            , maxmin: true
-            , anim: 1
-            , content: imgHtml
-        });
-    }
 </script>

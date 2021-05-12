@@ -1,10 +1,5 @@
 ﻿@model VOS.ViewModel.Business.VOS_TaskVMs.VOS_TaskVM
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
-    <style type="text/css">
-        img {
-            cursor: pointer;
-        }
-    </style>
 <wt:form vm="@Model">
     <wt:row items-per-row="ItemsPerRowEnum.Three">
         <wt:textbox field="Entity.Task_no" />
@@ -44,19 +39,6 @@
 <script type="text/javascript">
     $("#VOS_TaskVM_Entity_CommodityPicIdlabel").click(function () {
         var _img = $("#VOS_TaskVM_Entity_CommodityPicIdlabel > img")[0];
-        ImageAuto(_img);
+        ImageAuto(_img.src);
     });
-    function ImageAuto(img) {
-        let src = img.src.replace(/64/g, "640");
-        var imgHtml = "<img src='" + src + "' width='640px' height='640px'/>";
-        layer.open({
-            type: 1
-            , title: '预览'
-            , id: "img"
-            , shade: 0.6
-            , maxmin: true
-            , anim: 1
-            , content: imgHtml
-        });
-    }
 </script>
