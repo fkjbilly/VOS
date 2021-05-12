@@ -37,26 +37,25 @@
         <wt:closebutton />
     </wt:row>
 </wt:form>
-<script src="~/Img.js"></script>
 <script type="text/javascript">
     $("img").attr("title", "点击预览");
     $("img").css("cursor", "pointer");
     $("#VOS_TaskVM_Entity_CommodityPicIdlabel").click(function () {
         var _img = $("#VOS_TaskVM_Entity_CommodityPicIdlabel > img")[0];
-        if (_img.src.indexOf("http://")>-1) {
-            var _src = _img.src.replace("64", "480");
-            layer.open({
-                type: 2
-                , title: '预览'
-                , area: ["500px", "500px"]
-                , id: 'Lay_Img'
-                , shade: 0.6
-                , maxmin: true
-                , anim: 1
-                , content: _src.replace("64", "480")
-            });
-        } else {
-            ImageAuto(_img);
-        }
+        ImageAuto(_img);
     });
+
+    function ImageAuto(img) {
+        let src = img.src.replace(/64/g, "640");
+        var imgHtml = "<img src='" + src + "' width='640px' height='640px'/>";
+        layer.open({
+            type: 1
+            , title: '预览'
+            , id: "img"
+            , shade: 0.6
+            , maxmin: true
+            , anim: 1
+            , content: imgHtml
+        });
+    }
 </script>

@@ -16,8 +16,7 @@ using System.Security.Cryptography;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Drawing;
-using System.Web;
-using System.Buffers.Text;
+using VOS.ViewModel.Business.VOS_PlanVMs;
 
 namespace VOS.Controllers
 {
@@ -579,8 +578,10 @@ namespace VOS.Controllers
         [ActionDescription("批量创建")]
         public ActionResult BatchCreation()
         {
-            var vm = CreateVM<VOS_TaskVM>();
-            ViewBag.Plan_no = "P" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            var vm = CreateVM<VOS_PlanVM>();
+            vm.Entity.Plan_no = "P" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            vm.Entity.PlanSatrtTime = DateTime.Now;
+            vm.Entity.PlanEndTime = DateTime.Now.AddDays(+1);
             return PartialView(vm);
         }
 

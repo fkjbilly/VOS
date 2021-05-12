@@ -12,7 +12,7 @@
         <wt:closebutton />
     </wt:row>
 </wt:form>
-<script src="~/Img.js"></script>
+
 <script type="text/javascript">
     $("img").attr("title", "点击预览");
     $("img").css("cursor", "pointer");
@@ -20,4 +20,17 @@
         var _img = $("#VOS_TaskBatchVM_LinkedVM_CommodityPicIdlabel > img")[0];
         ImageAuto(_img);
     });
+    function ImageAuto(img) {
+        let src = img.src.replace(/64/g, "640");
+        var imgHtml = "<img src='" + src + "' width='640px' height='640px'/>";
+        layer.open({
+            type: 1
+            , title: '预览'
+            , id: "img"
+            , shade: 0.6
+            , maxmin: true
+            , anim: 1
+            , content: imgHtml
+        });
+    }
 </script>

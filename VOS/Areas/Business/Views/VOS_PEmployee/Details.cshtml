@@ -1,26 +1,63 @@
 ﻿@model VOS.ViewModel.Business.VOS_PEmployeeVMs.VOS_PEmployeeVM
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
-    <wt:form vm="@Model">
-        <wt:row items-per-row="ItemsPerRowEnum.Two">
-            <wt:display field="Entity.Recom.FullName" />
-            <wt:display field="Entity.Area.Name" />
-            <wt:display field="Entity.Address" />
-            <wt:display field="Entity.FullName" />
-            <wt:display field="Entity.Sex" />
-            <wt:display field="Entity.Mobile" />
-            <wt:display field="Entity.WeChat" />
-            <wt:display field="Entity.TaobaAccount" />
-            <wt:display field="Entity.JDAccount" />
-            <wt:display field="Entity.QQAccount" />
-            <wt:display field="Entity.AlipayPicId" />
-            <wt:display field="Entity.WeChatPicId" />
-            <wt:display field="Entity.WeChatRealNamePicId" />
-            <wt:display field="Entity.Remark" />
-            <wt:display field="Entity.PEstate" />
-        </wt:row>
-        <wt:grid vm="@Model.taskVM" height="300" hidden-checkbox="true" hidden-grid-index="true" use-local-data="true" />
-        <wt:row align="AlignEnum.Right">
-            <wt:closebutton />
-        </wt:row>
-    </wt:form>
+<wt:form vm="@Model">
+    <wt:row items-per-row="ItemsPerRowEnum.Two">
+        <wt:display field="Entity.Recom.FullName" />
+        <wt:display field="Entity.Area.Name" />
+        <wt:display field="Entity.Address" />
+        <wt:display field="Entity.FullName" />
+        <wt:display field="Entity.Sex" />
+        <wt:display field="Entity.Mobile" />
+        <wt:display field="Entity.WeChat" />
+        <wt:display field="Entity.TaobaAccount" />
+        <wt:display field="Entity.JDAccount" />
+        <wt:display field="Entity.QQAccount" />
+        <wt:upload field="Entity.AlipayPicId" upload-type="ImageFile"/>
+        <wt:upload field="Entity.WeChatPicId" upload-type="ImageFile"/>
+        <wt:upload field="Entity.WeChatRealNamePicId" upload-type="ImageFile"/>
+        <wt:display field="Entity.Remark" />
+        <wt:display field="Entity.PEstate" />
+    </wt:row>
+    <wt:grid vm="@Model.taskVM" height="300" hidden-checkbox="true" hidden-grid-index="true" use-local-data="true" />
+    <wt:row align="AlignEnum.Right">
+        <wt:closebutton />
+    </wt:row>
+</wt:form>
+<script type="text/javascript">
+    $("#VOS_PEmployeeVM_Entity_AlipayPicIdbutton").hide();
+    $("#VOS_PEmployeeVM_Entity_WeChatPicIdbutton").hide();
+    $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdbutton").hide();
+    //支付宝
+    $("#VOS_PEmployeeVM_Entity_AlipayPicIdlabel").click(function () {
+        let _img = $("#VOS_PEmployeeVM_Entity_AlipayPicIdlabel > img")[0];
+        ImageAuto(_img);
+    });
+    //微信
+    $("#VOS_PEmployeeVM_Entity_WeChatPicIdlabel").click(function () {
+        var _img = $("#VOS_PEmployeeVM_Entity_WeChatPicIdlabel > img")[0];
+        console.log(_img);
+        ImageAuto(_img);
+    });
+    //微信实名
+    $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdlabel").click(function () {
+        let _img = $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdlabel > img")[0];
+        ImageAuto(_img);
+    });
+
+    function ImageAuto(img) {
+        let src = img.src.replace(/64/g, "640");
+        var imgHtml = "<img src='" + src + "' width='640px' height='640px'/>";
+        parent.layer.open({
+            type: 1
+            , title: '预览'
+            , area: ["640px", "640px"]
+            , id: "img"
+            , shade: 0.6
+            , maxmin: true
+            , anim: 1
+            , content: imgHtml
+        });
+
+    }
+</script>

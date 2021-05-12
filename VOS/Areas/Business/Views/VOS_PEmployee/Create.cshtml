@@ -34,39 +34,52 @@
         <wt:closebutton />
     </wt:row>
 </wt:form>
-<script src="~/Img.js"></script>
 <script type="text/javascript">
     //支付宝
     $("#VOS_PEmployeeVM_Entity_AlipayPicIdlabel").click(function () {
-        var _img = $("#VOS_PEmployeeVM_Entity_AlipayPicIdlabel > img")[0];
+        let _img = $("#VOS_PEmployeeVM_Entity_AlipayPicIdlabel > img")[0];
         ImageAuto(_img);
     });
     //微信
     $("#VOS_PEmployeeVM_Entity_WeChatPicIdlabel").click(function () {
-        var _img = $("#VOS_PEmployeeVM_Entity_WeChatPicIdlabel > img")[0];
+        let _img = $("#VOS_PEmployeeVM_Entity_WeChatPicIdlabel > img")[0];
         ImageAuto(_img);
     });
     //微信实名
     $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdlabel").click(function () {
-        var _img = $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdlabel > img")[0];
+        let _img = $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdlabel > img")[0];
         ImageAuto(_img);
     });
 
     $('button[type="submit"]').on("click", function () {
-        var ZFB = $("#VOS_PEmployeeVM_Entity_AlipayPicId").val(); //支付宝
+        let ZFB = $("#VOS_PEmployeeVM_Entity_AlipayPicId").val(); //支付宝
         if (ZFB == "" || ZFB == null) {
             layer.msg('请上传支付宝图片');
             return false;
         }
-        var WX = $("#VOS_PEmployeeVM_Entity_WeChatPicId").val(); //微信
+        let WX = $("#VOS_PEmployeeVM_Entity_WeChatPicId").val(); //微信
         if (WX == "" || WX == null) {
             layer.msg('请上传微信图片');
             return false;
         }
-        var WXSM = $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicId").val();//微信实名
+        let WXSM = $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicId").val();//微信实名
         if (WXSM == "" || WXSM == null) {
             layer.msg('请上传微信实名图片');
             return false;
         }
     });
+
+    function ImageAuto(img) {
+        let src = img.src.replace(/64/g, "640");
+        var imgHtml = "<img src='" + src + "' width='640px' height='640px'/>";
+        layer.open({
+            type: 1
+            , title: '预览'
+            , id: "img"
+            , shade: 0.6
+            , maxmin: true
+            , anim: 1
+            , content: imgHtml
+        });
+    }
 </script>
