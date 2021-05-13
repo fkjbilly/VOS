@@ -20,8 +20,8 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         public List<ComboSelectListItem> AllQu { get; set; }
 
         public List<ComboSelectListItem> AllOrganization { get; set; }
-        
-       // [Required(ErrorMessage ="省必填项")]
+
+        // [Required(ErrorMessage ="省必填项")]
         public Guid? ShengId { get; set; }
        // [Required(ErrorMessage="市必填项")]
         public Guid? ShiId { get; set; }
@@ -36,8 +36,8 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         {
             taskVM.CopyContext(this);
             taskVM.SearcherMode = ListVMSearchModeEnum.MasterDetail;
-            //taskVM.Searcher.EmployeeId = Entity.ID;
-            AllRecoms = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
+            taskVM.Searcher.EmployeeId = Entity.ID;
+
             AllSheng = DC.Set<City>().Where(x => x.ParentId == null).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
             if (Entity.AreaId != null)
             {

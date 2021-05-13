@@ -1,34 +1,19 @@
 ﻿
 @model VOS.ViewModel.Business.VOS_PlanVMs.VOS_PlanVM
+<link href="~/bootstrap-select/bootstrap.min.css" rel="stylesheet" />
+<link href="~/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" />
 <style type="text/css">
-    th,td {
-        width: 220px;
+    th, td {
+        width: 180px;
     }
-
     tr {
         height: 30px;
     }
-    .select {
-        display: block;
-        width: 100%;
-        height: 34px;
-        padding: 6px 12px;
-        font-size: 14px;
-        line-height: 1.42857143;
-        color: #555;
-        background-color: #fff;
-        background-image: none;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-        -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    }
+  
+
 </style>
-<wt:form vm="@Model" id="formimg" style="height:100%;" enctype="application/x-www-form-urlencoded">
-    <div style=" width: 100%;height:15%;">
+<wt:form vm="@Model" id="formimg" style="width: 100%; height: 100%;">
+    <div style="height:15%;">
         <wt:quote>批量添加任务</wt:quote>
         <wt:row items-per-row="ItemsPerRowEnum.Three">
             <wt:textbox field="Entity.Plan_no" disabled="true"></wt:textbox>
@@ -66,6 +51,9 @@
     </div>
 </wt:form>
 
+<script src="~/bootstrap-select/bootstrap.min.js"></script>
+<script src="~/bootstrap-select/bootstrap-select.min.js"></script>
+<script src="~/bootstrap-select/defaults-zh_CN.min.js"></script>
 <script type="text/javascript">
     let RowIndex = 1
         , htmloption//类目下拉
@@ -100,6 +88,7 @@
             layer.msg("请将上部分填写完毕");
             return false;
         }
+
         $("#SaveTask").removeClass("layui-btn-disabled").addClass("layui-btn-radius layui-btn-normal");
         let oTB = document.getElementById("layui_table");
         let oTR = oTB.insertRow(oTB.rows.length);
@@ -109,7 +98,7 @@
         //做单方法
         let oTD1 = oTR.insertCell(1);
         oTD1.innerHTML = "<div>" + TaskTypeTex+"</div>\
-                          <select id='TaskType'class='select'>\
+                          <select id='TaskType'class='form-control' >\
                             <option value='0'>搜索单</option>\
                             <option value='1'>隔天单</option>\
                             <option value='2'>非搜单</option>\
@@ -122,14 +111,19 @@
         oTD2.innerHTML = "<div>" + GetDate() + "</div><input id='ImplementStartTime' value=" + GetDate()+" type='date'  style='display:none' class='layui-input'>";
         //商品类目
         let oTD3 = oTR.insertCell(3);
-        oTD3.innerHTML = "<div>" + TaskCateTex +"</div><select id='TaskCateId' class='select' style='display:none;'><option value='-'>请选择</option>" + htmloption + "</select>";
-        $(oTD3).find("select").val(TaskCateVal);
+        oTD3.innerHTML = "<span>" + TaskCateTex + "</span><select id='TaskCateId' class='form-control selectpicker' data-live-search='true' style='display:none;'><option value='-'>请选择</option>" + htmloption + "</select>";
+        $(oTD3).find("select").selectpicker('refresh');//初始化
+        $(oTD3).find("select").val(TaskCateVal);//赋值
+        $(oTD3).find(".bootstrap-select").css("display", "none");//隐藏
         //商品名称
         let oTD4 = oTR.insertCell(4);
         oTD4.innerHTML = "<div>" + CommodityName + "</div><input type='text' value=" + CommodityName+" id='CommodityName' class='layui-input' style='display:none;'/>";
         //商品图片
         let oTD5 = oTR.insertCell(5);
-        oTD5.innerHTML = "<img src='" + base64 +"' id='base64' class='FileData' width='32' height='32'/><input type='file' id='filename' class='fileUpload' name='fileUpload' style='display:none;' />";
+
+        oTD5.innerHTML = "<img src='" + base64 + "' id='base64' class='FileData' width='32' height='32'/>\
+                           <input type='file' id='filename' accept='.JPG,.JPEG,.PNG,.TIF' class='fileUpload' \
+                                                                    name='fileUpload' style='display:none;' />";
         //商品链接
         let oTD6 = oTR.insertCell(6);
         oTD6.innerHTML = "<div>" + CommodityLink + "</div><input type='text' id='CommodityLink' value='" + CommodityLink+"' class='layui-input' style='display:none;'/>";
@@ -146,6 +140,7 @@
         let oTD10 = oTR.insertCell(10);
         oTD10.innerHTML = "<input type='button' class='layui-btn' value='编辑' onclick=\"edit(this,'show')\"/> <input type='button' class='layui-btn layui-btn-primary layui-border-black' value='删除' onclick='drop(this)'/>";
         RowIndex++;
+       
     }
 
     function edit(o, otype) {
@@ -160,8 +155,8 @@
         let ImplementStartTimeDiv = oTR.cells[2].getElementsByTagName("div");
         let ImplementStartTimeInput = oTR.cells[2].getElementsByTagName("input");
         //商品类目
+        let TaskCateSpan = oTR.cells[3].getElementsByTagName("span");
         let TaskCateDiv = oTR.cells[3].getElementsByTagName("div");
-        let TaskCateSelect = oTR.cells[3].getElementsByTagName("select");
         //商品名称
         let CommodityNameDiv = oTR.cells[4].getElementsByTagName("div");
         let CommodityNameInput = oTR.cells[4].getElementsByTagName("input");
@@ -197,8 +192,8 @@
             ImplementStartTimeInput[0].style.display = "block";
             ImplementStartTimeDiv[0].style.display = "none";
             //商品类目
-            TaskCateSelect[0].style.display = "block";
-            TaskCateDiv[0].style.display = "none";
+            TaskCateDiv[0].style.display = "block";
+            TaskCateSpan[0].style.display = "none";
             //商品名称
             CommodityNameInput[0].value = CommodityNameDiv[0].childNodes[0].nodeValue;
             CommodityNameInput[0].style.display = "block";
@@ -235,18 +230,16 @@
             MakeSelect[0].style.display = "none";
             MakeDiv[0].style.display = "block";
             //执行开始
-            StartTime=ImplementStartTimeDiv[0].childNodes[0].nodeValue = ImplementStartTimeInput[0].value;
+            StartTime = ImplementStartTimeDiv[0].childNodes[0].nodeValue = ImplementStartTimeInput[0].value;
             ImplementStartTimeInput[0].style.display = "none";
             ImplementStartTimeDiv[0].style.display = "block";
             //商品类目
-            TaskCateTex = TaskCateDiv[0].childNodes[0].nodeValue = $(TaskCateSelect[0]).find("option:selected").text();
-            TaskCateVal = $(TaskCateSelect[0]).find("option:selected").val();
-            TaskCateSelect[0].style.display = "none";
-            TaskCateDiv[0].style.display = "block";
-
-
+            TaskCateTex = TaskCateSpan[0].childNodes[0].nodeValue = $(TaskCateDiv[0]).find("option:selected").text();
+            TaskCateVal = $(TaskCateDiv[0]).find("option:selected").val();
+            TaskCateDiv[0].style.display = "none";
+            TaskCateSpan[0].style.display = "block";
             //商品名称
-            CommodityName=CommodityNameDiv[0].childNodes[0].nodeValue = CommodityNameInput[0].value;
+            CommodityName = CommodityNameDiv[0].childNodes[0].nodeValue = CommodityNameInput[0].value;
             CommodityNameInput[0].style.display = "none";
             CommodityNameDiv[0].style.display = "block";
             //商品图片
@@ -349,8 +342,11 @@
             $(this).find('td').each(function (index2, item2) {
                 let input = $(this).find("input").not('.fileUpload');
                 let select = $(this).find("select");
+                let selectpicker = $(this).find(".selectpicker");
                 let img = $(this).find("img");
-                if (input.val() != undefined) {
+                if (selectpicker.length > 0) {
+                    row[selectpicker[0].id] = $(selectpicker[0]).val();
+                }else if (input.val() != undefined) {
                     row[input[0].id] = input.val();
                 } else if (select.val() != undefined) {
                     row[select[0].id] = select.val();

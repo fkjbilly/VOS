@@ -21,18 +21,17 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public String CommodityName { get; set; }
         [Display(Name = "搜索关键字")]
         public String SearchKeyword { get; set; }
-        //[Display(Name = "是否解锁")]
-        //public Boolean? IsLock { get; set; }
-        //分配人
-        //public List<ComboSelectListItem> AllDistributors { get; set; }
-        //[Display(Name = "分配人")]
-        //public Guid? DistributorId { get; set; }
+        [Display(Name = "是否解锁")]
+        public Boolean? IsLock { get; set; }
         /// <summary>
-        /// 刷手
+        /// 分配人
         /// </summary>
-        //public List<ComboSelectListItem> AllEmployees { get; set; }
-        //[Display(Name = "刷手")]
-        //public Guid? EmployeeId { get; set; }
+        public List<ComboSelectListItem> AllDistributors { get; set; }
+        [Display(Name = "分配人")]
+        public Guid? DistributorId { get; set; }
+
+        [Display(Name = "刷手")]
+        public Guid? EmployeeId { get; set; }
 
         [Display(Name = "分配人或刷手")]
         public string Distribution_BrushHands { get; set; }
