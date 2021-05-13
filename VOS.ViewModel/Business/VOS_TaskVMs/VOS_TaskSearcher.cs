@@ -26,14 +26,15 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         /// <summary>
         /// 分配人
         /// </summary>
-        public List<ComboSelectListItem> AllDistributors { get; set; }
-        [Display(Name = "分配人")]
-        public Guid? DistributorId { get; set; }
+        //public List<ComboSelectListItem> AllDistributors { get; set; }
+        //[Display(Name = "分配人")]
+        //public Guid? DistributorId { get; set; }
 
         [Display(Name = "刷手")]
         public Guid? EmployeeId { get; set; }
 
-        [Display(Name = "分配人或刷手")]
+        //文本
+        [Display(Name = "刷手")]
         public string Distribution_BrushHands { get; set; }
 
 
