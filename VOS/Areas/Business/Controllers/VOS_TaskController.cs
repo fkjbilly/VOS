@@ -536,7 +536,7 @@ namespace VOS.Controllers
         }
 
         #region DistributionOrganization 分配机构
-        [ActionDescription("分配组织机构")]
+        [ActionDescription("分配组织机构页面")]
         public ActionResult DistributionOrganization(string[] IDs)
         {
             var vm = CreateVM<VOS_TaskBatchVM>(Ids: IDs);
@@ -544,7 +544,7 @@ namespace VOS.Controllers
         }
 
         [HttpPost]
-        [ActionDescription("分配组织机构")]
+        [ActionDescription("分配组织机构操作")]
         public ActionResult DoDistributionOrganization(VOS_TaskBatchVM vm)
         {
             using (var transaction = DC.BeginTransaction())
