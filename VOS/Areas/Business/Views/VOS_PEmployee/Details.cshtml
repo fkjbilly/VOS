@@ -13,9 +13,9 @@
             <wt:display field="Entity.TaobaAccount" />
             <wt:display field="Entity.JDAccount" />
             <wt:display field="Entity.QQAccount" />
-            <wt:display field="Entity.AlipayPicId" />
-            <wt:display field="Entity.WeChatPicId" />
-            <wt:display field="Entity.WeChatRealNamePicId"  />
+            <wt:upload field="Entity.AlipayPicId" upload-type="ImageFile"/>
+            <wt:upload field="Entity.WeChatPicId" upload-type="ImageFile"/>
+            <wt:upload field="Entity.WeChatRealNamePicId" upload-type="ImageFile"/>
             <wt:display field="Entity.Remark" />
             <wt:display field="Entity.PEstate" />
         </wt:row>
@@ -25,7 +25,6 @@
         </wt:row>
     </wt:form>
     <script type="text/javascript">
-        /*
         $("#VOS_PEmployeeVM_Entity_AlipayPicIdbutton").hide();
         $("#VOS_PEmployeeVM_Entity_WeChatPicIdbutton").hide();
         $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdbutton").hide();
@@ -44,6 +43,5 @@
             let _img = $("#VOS_PEmployeeVM_Entity_WeChatRealNamePicIdlabel > img")[0];
             ImageAuto(_img.src);
         });
-        */
 
     </script>
