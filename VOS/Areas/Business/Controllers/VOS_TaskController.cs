@@ -617,6 +617,7 @@ namespace VOS.Controllers
                                 _Task_Number.Task_no = item.Task_no + "-" + (i + 1);
                                 _Task_Number.TaskCateId = item.TaskCateId;
                                 _Task_Number.CommodityPicId = SaveImg(item.base64);
+                                _Task_Number.SearchKeyword = item.SearchKeyword;
                                 _Task_Number.ComDis = "/";
                                 _Task_Number.Commission = "1";
                                 _Task_Number.OtherExpenses = "1";
@@ -640,6 +641,7 @@ namespace VOS.Controllers
                             _Task1.Task_no = item.Task_no;
                             _Task1.TaskCateId = item.TaskCateId;
                             _Task1.CommodityPicId = SaveImg(item.base64);
+                            _Task1.SearchKeyword = item.SearchKeyword;
                             _Task1.ComDis = "/";
                             _Task1.Commission = "1";
                             _Task1.OtherExpenses = "1";
