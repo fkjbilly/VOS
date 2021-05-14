@@ -10,6 +10,14 @@
         height: 30px;
     }
 
+    .layui-form-label {
+        float: left;
+        display: block;
+        padding: 9px 15px;
+        width: 100px;
+        line-height: 20px;
+        text-align: right;
+    }
 
     .label {
         position: relative;
@@ -129,6 +137,7 @@
         $(oTD1).find("select").val(TaskTypeVal);
         //执行开始
         let oTD2 = oTR.insertCell(2);
+        oTD2.style.width = "140px";
         oTD2.innerHTML = "<div>" + GetDate() + "</div><input id='ImplementStartTime' value=" + GetDate()+" type='date'  style='display:none' class='layui-input'>";
         //商品类目
         let oTD3 = oTR.insertCell(3);
@@ -141,11 +150,6 @@
         oTD4.innerHTML = "<div>" + CommodityName + "</div><input type='text' value=" + CommodityName+" id='CommodityName' class='layui-input' style='display:none;'/>";
         //商品图片
         let oTD5 = oTR.insertCell(5);
-
-        //oTD5.innerHTML = "<img src='" + base64 + "' id='base64' class='FileData' width='32' height='32'/>\
-        //                   <input type='file' id='filename' accept='.JPG,.JPEG,.PNG,.TIF' class='fileUpload' \
-        //                                                            name='fileUpload' style='display:none;' />";
-
         oTD5.innerHTML = '<img src="' + base64 + '" id="base64" class="FileData" width="32" height="32"/>\
                           <label for="fileinp" style="display:none; cursor: pointer;">\
                             <input type="button" id="fileUploadBtn" calss="fileUpload" value="点我上传" >\
@@ -166,6 +170,7 @@
         oTD9.innerHTML = "<div>1</div><input type='number' id='VOS_Number' value='1' class='layui-input' style='display:none;'/>";
         //操作
         let oTD10 = oTR.insertCell(10);
+        oTD10.style.width = "230px";
         oTD10.innerHTML = "<input type='button' class='layui-btn' value='编辑' onclick=\"edit(this,'show')\"/> <input type='button' class='layui-btn layui-btn-primary layui-border-black' value='删除' onclick='drop(this)'/>";
         RowIndex++;
        
@@ -366,7 +371,7 @@
     }
 
     $("#SaveTask").click(function () {
-        if ($("#SaveTask").hasClass("layui-btn-disabled")) { return false;}
+        if ($("#SaveTask").hasClass("layui-btn-disabled") || $("#layui_table tr").length <= 0) { return false; }
         /**任务 */
         var tasklist = [];
         $('#layui_table tr').each(function (index, item) {
@@ -398,7 +403,6 @@
             , "PlanEndTime": $("#VOS_PlanVM_Entity_PlanEndTime").val()
             , "PlanFee": $("#VOS_PlanVM_Entity_PlanFee").val()
         };
-
         $.post('@Url.Action("DoBatchCreation", "VOS_Task")', { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist) }, data => {
            layer.msg(data.Data.Msg, {
                icon: data.Data.icon,
