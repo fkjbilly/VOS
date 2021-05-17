@@ -149,8 +149,8 @@
         //商品类目
         let oTD3 = oTR.insertCell(3);
         oTD3.innerHTML = "<span>" + TaskCateTex + "</span><select id='TaskCateId' class='form-control selectpicker' data-live-search='true' style='display:none;'><option value='-'>请选择</option>" + htmloption + "</select>";
-        $(oTD3).find("select").selectpicker('refresh');//初始化
         $(oTD3).find("select").val(TaskCateVal);//赋值
+        $(oTD3).find("select").selectpicker('refresh');//初始化
         $(oTD3).find(".bootstrap-select").css("display", "none");//隐藏
         //商品名称
         let oTD4 = oTR.insertCell(4);
@@ -440,7 +440,7 @@
                     location.reload();
                     layer.closeAll();
                 });
-            });
+            }, 1000);
         });
 
     });
