@@ -669,8 +669,15 @@ namespace VOS.Controllers
         [ActionDescription("获取类目")]
         public JsonResult GetCategory()
         {
-            var _Category = DC.Set<Category>().Where(x => x.ParentId == null).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name).Select(x => new { x.Value, x.Text }).ToList();
-            return Json(_Category);
+            try
+            {
+                var _Category = DC.Set<Category>().Where(x => x.ParentId == null).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name).Select(x => new { x.Value, x.Text }).ToList();
+                return Json(_Category, 200, "true");
+            }
+            catch (Exception)
+            {
+                return Json("", 200, "false");
+            }
         }
 
 
