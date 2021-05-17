@@ -662,21 +662,15 @@ namespace VOS.Controllers
                     return Json(new { Msg = "批量创建有误", icon = 5 });
                 }
             }
+
         }
 
         [HttpGet]
         [ActionDescription("获取类目")]
         public JsonResult GetCategory()
         {
-            try
-            {
-                var _Category = DC.Set<Category>().Where(x => x.ParentId == null).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name).Select(x => new { x.Value, x.Text }).ToList();
-                return Json(_Category, 200, "true");
-            }
-            catch (Exception)
-            {
-                return Json("", 200, "false");
-            }
+            var _Category = DC.Set<Category>().Where(x => x.ParentId == null).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name).Select(x => new { x.Value, x.Text }).ToList();
+            return Json(_Category);
         }
 
 
