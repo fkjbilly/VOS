@@ -2,7 +2,7 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:searchpanel vm="@Model" reset-btn="true" old-post="true">
-    <wt:tab>
+    @*<wt:tab>
         <wt:tabheaders>
             <wt:tabheader title="店铺查询" />
             <wt:tabheader title="详细查询" />
@@ -13,7 +13,7 @@
                     <wt:checkbox field="Searcher.ShopNames" items="Searcher.AllShopName" />
                 </wt:row>
             </wt:tabcontent>
-            <wt:tabcontent>
+            <wt:tabcontent>*@
                 <wt:row items-per-row="ItemsPerRowEnum.Three">
                     <wt:combobox field="Searcher.TaskType" empty-text="@Localizer["All"]" />
                     <wt:textbox field="Searcher.SearchKeyword" empty-text="输入商品搜索关键字" />
@@ -32,9 +32,9 @@
                     }
 
                 </wt:row>
-            </wt:tabcontent>
+            @*</wt:tabcontent>
         </wt:tabcontents>
-    </wt:tab>
+    </wt:tab>*@
 </wt:searchpanel>
 <wt:grid vm="@Model" url="/Business/VOS_Task/Search" />
 <script type="text/javascript">
