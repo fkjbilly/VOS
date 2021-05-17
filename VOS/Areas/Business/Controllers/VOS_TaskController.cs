@@ -575,7 +575,7 @@ namespace VOS.Controllers
 
         #region BatchCreation 批量创建相关
 
-        [ActionDescription("批量创建")]
+        [ActionDescription("批量创建页面")]
         public ActionResult BatchCreation()
         {
             var vm = CreateVM<VOS_PlanVM>();
@@ -586,7 +586,7 @@ namespace VOS.Controllers
         }
 
         [HttpPost]
-        [ActionDescription("批量创建")]
+        [ActionDescription("批量创建操作")]
         public ActionResult DoBatchCreation(string plan, string tasklist)
         {
             using (var transaction = DC.BeginTransaction())
@@ -598,59 +598,21 @@ namespace VOS.Controllers
                     _plan.CreateBy = LoginUserInfo.ITCode;
                     _plan.IsValid = true;
                     DC.Set<VOS_Plan>().Add(_plan).State = Microsoft.EntityFrameworkCore.EntityState.Added;
-                    DC.SaveChanges();
+                    //DC.SaveChanges();
                     var _Task = JsonConvert.DeserializeObject<List<VOS_Task>>(tasklist);
-                    var _PlanId = DC.Set<VOS_Plan>().Where(x => x.Plan_no == _plan.Plan_no).FirstOrDefault().ID;
+                    var _PlanId = _plan.ID;//DC.Set<VOS_Plan>().Where(x => x.Plan_no == _plan.Plan_no).FirstOrDefault().ID;
                     foreach (var item in _Task)
                     {
                         if (item.VOS_Number > 1)
                         {
                             for (int i = 0; i < item.VOS_Number; i++)
                             {
-                                VOS_Task _Task_Number = new VOS_Task();
-                                _Task_Number.CommodityLink = item.CommodityLink;
-                                _Task_Number.CommodityName = item.CommodityName;
-                                _Task_Number.CommodityPrice = item.CommodityPrice;
-                                _Task_Number.ImplementStartTime = item.ImplementStartTime;
-                                _Task_Number.SKU = item.SKU;
-                                _Task_Number.TaskType = item.TaskType;//(TaskType)Enum.Parse(typeof(TaskType), item.TaskType);
-                                _Task_Number.Task_no = item.Task_no + "-" + (i + 1);
-                                _Task_Number.TaskCateId = item.TaskCateId;
-                                _Task_Number.CommodityPicId = SaveImg(item.base64);
-                                _Task_Number.SearchKeyword = item.SearchKeyword;
-                                _Task_Number.ComDis = "/";
-                                _Task_Number.Commission = "1";
-                                _Task_Number.OtherExpenses = "1";
-                                _Task_Number.PlanId = _PlanId;
-                                _Task_Number.CreateBy = LoginUserInfo.ITCode;
-                                _Task_Number.CreateTime = DateTime.Now;
-                                _Task_Number.IsValid = true;
-                                DC.Set<VOS_Task>().Add(_Task_Number).State = Microsoft.EntityFrameworkCore.EntityState.Added;
-                                DC.SaveChanges();
+                                Insert_Task(item, _PlanId,true,i);
                             }
                         }
                         else
                         {
-                            VOS_Task _Task1 = new VOS_Task();
-                            _Task1.CommodityLink = item.CommodityLink;
-                            _Task1.CommodityName = item.CommodityName;
-                            _Task1.CommodityPrice = item.CommodityPrice;
-                            _Task1.ImplementStartTime = item.ImplementStartTime;
-                            _Task1.SKU = item.SKU;
-                            _Task1.TaskType = item.TaskType;//(TaskType)Enum.Parse(typeof(TaskType), item.TaskType);
-                            _Task1.Task_no = item.Task_no;
-                            _Task1.TaskCateId = item.TaskCateId;
-                            _Task1.CommodityPicId = SaveImg(item.base64);
-                            _Task1.SearchKeyword = item.SearchKeyword;
-                            _Task1.ComDis = "/";
-                            _Task1.Commission = "1";
-                            _Task1.OtherExpenses = "1";
-                            _Task1.PlanId = _PlanId;
-                            _Task1.CreateBy = LoginUserInfo.ITCode;
-                            _Task1.CreateTime = DateTime.Now;
-                            _Task1.IsValid = true;
-                            DC.Set<VOS_Task>().Add(_Task1).State = Microsoft.EntityFrameworkCore.EntityState.Added;
-                            DC.SaveChanges();
+                            Insert_Task(item, _PlanId);
                         }
                     }
                     transaction.Commit();
@@ -680,6 +642,39 @@ namespace VOS.Controllers
             }
         }
 
+        /// <summary>
+        /// 添加任务
+        /// </summary>
+        /// <param name="task">任务对象</param>
+        /// <param name="_PlanId">计划编号</param>
+        /// <param name="IsMultiple">是否多个添加</param>
+        /// <param name="record">【IsMultiple：true】重新赋值任务编号</param>
+        private void Insert_Task(VOS_Task task, Guid _PlanId, bool IsMultiple = false, int record = 0)
+        {
+            VOS_Task _Taskr = new VOS_Task();
+            _Taskr.CommodityLink = task.CommodityLink;
+            _Taskr.CommodityName = task.CommodityName;
+            _Taskr.CommodityPrice = task.CommodityPrice;
+            _Taskr.ImplementStartTime = task.ImplementStartTime;
+            _Taskr.SKU = task.SKU;
+            _Taskr.TaskType = task.TaskType;
+            _Taskr.Task_no = IsMultiple ? task.Task_no + "-" + (record + 1): task.Task_no;
+            _Taskr.TaskCateId = task.TaskCateId;
+            _Taskr.CommodityPicId = SaveImg(task.base64);
+            _Taskr.SearchKeyword = task.SearchKeyword;
+            _Taskr.ComDis = "/";
+            _Taskr.Commission = "1";
+            _Taskr.OtherExpenses = "1";
+            _Taskr.PlanId = _PlanId;
+            _Taskr.CreateBy = LoginUserInfo.ITCode;
+            _Taskr.CreateTime = DateTime.Now;
+            _Taskr.IsValid = true;
+            _Taskr.IsLock = true;
+            _Taskr.UnlockerId = LoginUserInfo.Id;
+            _Taskr.UnlockTime = DateTime.Now;
+            DC.Set<VOS_Task>().Add(_Taskr).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+            DC.SaveChanges();
+        }
 
         /// <summary>
         /// 保存图片并获取图片ID
@@ -712,12 +707,13 @@ namespace VOS.Controllers
                 return new Guid();
             }
         }
+
         /// <summary>
         /// 获取图片后缀
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        private  Image GetImageSuffix(byte[] buffer)
+        private Image GetImageSuffix(byte[] buffer)
         {
             MemoryStream ms = new MemoryStream(buffer);
             ms.Position = 0;
