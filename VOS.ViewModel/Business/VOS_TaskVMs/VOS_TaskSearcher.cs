@@ -36,7 +36,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         //文本
         [Display(Name = "刷手")]
         public string Distribution_BrushHands { get; set; }
-
+        [Display(Name = "执行人")]
+        public string ExecutorName { get; set; }
 
         [Display(Name = "刷单单号")]
         public String VOrderCode { get; set; }

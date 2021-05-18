@@ -172,8 +172,6 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             .CheckEqual(Searcher.TaskType, x => x.TaskType)
             .CheckContain(Searcher.CommodityName, x => x.CommodityName)
             .CheckContain(Searcher.SearchKeyword, x => x.SearchKeyword)
-            //.CheckEqual(Searcher.IsLock, x => x.IsLock)
-            //.CheckEqual(Searcher.DistributorId, x => x.DistributorId)
             .CheckEqual(Searcher.EmployeeId, x => x.EmployeeId)
             .CheckContain(Searcher.VOrderCode, x => x.VOrderCode)
             .CheckEqual(Searcher.OrderState, x => x.OrderState)
@@ -182,6 +180,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
             .CheckBetween(Searcher.Time?.GetStartTime(), Searcher.Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
             .CheckContain(Searcher.Distribution_BrushHands, x => x.Employee.FullName)
+            .CheckContain(Searcher.ExecutorName, x => x.Executor.Name)
             .Where(x => x.IsValid == true);
             if (SearcherMode != ListVMSearchModeEnum.MasterDetail)
             {
@@ -218,7 +217,6 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 CommodityPicId = x.CommodityPicId,
                 DistributionTime = x.DistributionTime,
                 CompleteTime = x.CompleteTime,
-
                 _method = x.TaskType,
                 _keyword = x.SearchKeyword,
                 _OddNumbers = x.VOrderCode,
