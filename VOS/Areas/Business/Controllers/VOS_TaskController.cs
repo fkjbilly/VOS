@@ -104,23 +104,37 @@ namespace VOS.Controllers
         [ValidateFormItemOnly]
         public ActionResult Edit(VOS_TaskVM vm)
         {
-            if (!ModelState.IsValid)
-            {
-                return PartialView(vm);
-            }
-            else
-            {
-                vm.DoEdit();
-                if (!ModelState.IsValid)
-                {
-                    vm.DoReInit();
-                    return PartialView(vm);
-                }
-                else
-                {
-                    return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID);
-                }
-            }
+            var _task = DC.Set<VOS_Task>().Where(x => x.ID == vm.Entity.ID).FirstOrDefault();
+            _task.TaskType = vm.Entity.TaskType;
+            _task.PlanId = vm.Entity.PlanId;
+            _task.ComDis = vm.Entity.ComDis;
+            _task.CustomerService = vm.Entity.CustomerService;
+            _task.Contact = vm.Entity.Contact;
+            _task.ShopCharge = vm.Entity.ShopCharge;
+            _task.ShopChargeContact = vm.Entity.ShopChargeContact;
+            _task.ImplementStartTime = vm.Entity.ImplementStartTime;
+            _task.ImplementEndTime = vm.Entity.ImplementEndTime;
+            _task.TaskCateId = vm.Entity.TaskCateId;
+            _task.CommodityName = vm.Entity.CommodityName;
+            _task.CommodityPicId = vm.Entity.CommodityPicId;
+            _task.CommodityLink = vm.Entity.CommodityLink;
+            _task.Eweight = vm.Entity.Eweight;
+            _task.TaskFen = vm.Entity.TaskFen;
+            _task.CommodityPrice = vm.Entity.CommodityPrice;
+            _task.Commission = vm.Entity.Commission;
+            _task.OtherExpenses = vm.Entity.OtherExpenses;
+            _task.ORequirement = vm.Entity.ORequirement;
+            _task.TRequirement = vm.Entity.TRequirement;
+            _task.CRemarks = vm.Entity.CRemarks;
+            _task.AreaRequirement = vm.Entity.AreaRequirement;
+            _task.IsTP = vm.Entity.IsTP;
+            _task.SearchKeyword = vm.Entity.SearchKeyword;
+            _task.DealKeyword = vm.Entity.DealKeyword;
+            _task.SKU = vm.Entity.SKU;
+            DC.Set<VOS_Task>().Update(_task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            DC.SaveChanges();
+            return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID);
+
         }
         #endregion
 
@@ -171,13 +185,26 @@ namespace VOS.Controllers
         [ActionDescription("BatchEdit")]
         public ActionResult DoBatchEdit(VOS_TaskBatchVM vm, IFormCollection nouse)
         {
-            if (!ModelState.IsValid || !vm.DoBatchEdit())
+            using (var transaction = DC.BeginTransaction())
             {
-                return PartialView("BatchEdit", vm);
-            }
-            else
-            {
-                return FFResult().CloseDialog().RefreshGrid().Alert(WalkingTec.Mvvm.Core.Program._localizer?["OprationSuccess"]);
+                try
+                {
+                    var _CommodityPicId = GetAppointValue(vm.FC, "LinkedVM.CommodityPicId").ToString();
+                    var Ids = GetAppointValue(vm.FC, "Ids").ToString().Split(',');
+                    foreach (var item in Ids)
+                    {
+                        var _task = DC.Set<VOS_Task>().Where(x => x.ID.ToString() == item).FirstOrDefault();
+                        _task.CommodityPicId = new Guid(_CommodityPicId);
+                        DC.SaveChanges();
+                    }
+                    transaction.Commit();
+                    return FFResult().CloseDialog().RefreshGrid().Alert("已批量修改图片");
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return FFResult().CloseDialog().RefreshGrid().Alert("批量修改图片失败");
+                }
             }
         }
         #endregion
@@ -607,7 +634,7 @@ namespace VOS.Controllers
                         {
                             for (int i = 0; i < item.VOS_Number; i++)
                             {
-                                Insert_Task(item, _PlanId,true,i);
+                                Insert_Task(item, _PlanId, true, i);
                             }
                         }
                         else
@@ -651,6 +678,7 @@ namespace VOS.Controllers
         /// <param name="record">【IsMultiple：true】重新赋值任务编号</param>
         private void Insert_Task(VOS_Task task, Guid _PlanId, bool IsMultiple = false, int record = 0)
         {
+            string _Task_no = "T" + DateTime.Now.ToString("MMdd") + task.Task_no;
             VOS_Task _Taskr = new VOS_Task();
             _Taskr.CommodityLink = task.CommodityLink;
             _Taskr.CommodityName = task.CommodityName;
@@ -658,7 +686,7 @@ namespace VOS.Controllers
             _Taskr.ImplementStartTime = task.ImplementStartTime;
             _Taskr.SKU = task.SKU;
             _Taskr.TaskType = task.TaskType;
-            _Taskr.Task_no = IsMultiple ? task.Task_no + "-" + (record + 1): task.Task_no;
+            _Taskr.Task_no = IsMultiple ? _Task_no + (record + 1) : _Task_no;
             _Taskr.TaskCateId = task.TaskCateId;
             _Taskr.CommodityPicId = SaveImg(task.base64);
             _Taskr.SearchKeyword = task.SearchKeyword;

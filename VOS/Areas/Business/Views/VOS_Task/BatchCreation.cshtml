@@ -130,7 +130,7 @@
         let oTR = oTB.insertRow(oTB.rows.length);
         //任务编号
         let oTD0 = oTR.insertCell(0);
-        oTD0.innerHTML = "<div>" + GetTime() + "</div><input id='Task_no' readonly  type='text' value='" + GetTime()+"' class='layui-input layui-btn-disabled' style='display:none;'/>";
+        oTD0.innerHTML = "<div>" + GetTask_no() + "</div><input id='Task_no' readonly  type='text' value='" + GetTask_no()+"' class='layui-input layui-btn-disabled' style='display:none;'/>";
         //做单方法
         let oTD1 = oTR.insertCell(1);
         oTD1.innerHTML = "<div>" + TaskTypeTex+"</div>\
@@ -392,8 +392,8 @@
         return op;
     }
 
-    function GetTime() {
-        return new Date().getTime();
+    function GetTask_no() {
+        return  new Date().getTime();
     }
 
     $("#SaveTask").click(function () {
