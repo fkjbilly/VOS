@@ -453,7 +453,7 @@ namespace VOS.Controllers
                 vOS_Task.VOrderCode = VOrderCode;
                 if (b == true)
                 {
-                    if (vOS_Task.TaskType == TaskType.隔天单 && DateTime.Now < vOS_Task.DistributionTime.Value.AddHours(8))
+                    if (vOS_Task.TaskType == TaskType.隔天 && DateTime.Now < vOS_Task.DistributionTime.Value.AddHours(8))
                     {
                         var a = Convert.ToDateTime(DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")) - DateTime.Now;
                         return Json(new { Msg = "隔天单！请" + a.Hours + "小时" + (a.Minutes + 2) + "分钟后提交完成", State = 4 });

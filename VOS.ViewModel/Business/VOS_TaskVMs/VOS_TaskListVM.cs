@@ -80,13 +80,13 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     this.MakeGridHeader(x => x.TaskType).SetForeGroundFunc((x)=>{
                             switch (x.TaskType)
                             {
-                                case TaskType.搜索单:
+                                case TaskType.搜索:
                                      return "#e54d42";
-                                case TaskType.隔天单:
+                                case TaskType.隔天:
                                      return "#45b97c";
-                                case TaskType.非搜单:
+                                case TaskType.非搜:
                                       return "#8dc63f";
-                                case TaskType.动销单:
+                                case TaskType.动销:
                                      return "#9c26b0";
                                 case TaskType.其他:
                                      return "#c2c2c2";

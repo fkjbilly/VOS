@@ -9,10 +9,10 @@ namespace VOS.Model
 {
     public enum TaskType
     {
-        搜索单,
-        隔天单,
-        非搜单,
-        动销单,
+        搜索,
+        隔天,
+        非搜,
+        动销,
         其他
     }
     public enum Eweight
