@@ -10,7 +10,7 @@ using VOS.Areas.BaseControllers;
 namespace VOS.Controllers
 {
     [Area("Business")]
-    [ActionDescription("刷手管理")]
+    [ActionDescription("会员管理")]
     public partial class VOS_PEmployeeController : VOS_BaseControllers
     {
         #region Search

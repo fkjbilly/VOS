@@ -27,7 +27,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     this.MakeAction("VOS_Task","BrushHand","更改","更改信息",GridActionParameterTypesEnum.SingleId,"Business",800,600)
                     .SetShowInRow(true).SetHideOnToolBar(true).SetBindVisiableColName("OrderStateShow"),
 
-                    this.MakeAction("VOS_Task","BrushHand","派单","刷手分配",GridActionParameterTypesEnum.SingleId,"Business",800,600)
+                    this.MakeAction("VOS_Task","BrushHand","派单","会员分配",GridActionParameterTypesEnum.SingleId,"Business",800,600)
                     .SetShowInRow(true).SetHideOnToolBar(true).SetBindVisiableColName("OrderStateHide"),
 
                     this.MakeAction("VOS_Task","BatchCreation","批量创建","批量创建任务",GridActionParameterTypesEnum.NoId,"Business",1000,600).SetMax().SetShowInRow(false).SetHideOnToolBar(false).SetIconCls("layui-icon layui-icon-find-fill"),
@@ -252,7 +252,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public String Plan_no_view { get; set; }
         [Display(Name = "类目名称")]
         public String Name_view { get; set; }
-        [Display(Name = "刷手旺旺号")]
+        [Display(Name = "会员旺旺号")]
         public String FullName_view { get; set; }
         [Display(Name = "店铺")]
         public String _ShopName { get; set; }

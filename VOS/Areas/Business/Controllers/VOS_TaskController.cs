@@ -257,8 +257,8 @@ namespace VOS.Controllers
         }
         #endregion
 
-        #region BrushHand 单个分配刷手
-        [ActionDescription("分配刷手")]
+        #region BrushHand 单个分配会员
+        [ActionDescription("分配会员")]
         public ActionResult BrushHand(string id)
         {
             ViewBag.id = id;
@@ -273,9 +273,9 @@ namespace VOS.Controllers
         /// 
         /// </summary>
         /// <param name="ID">任务编号</param>
-        /// <param name="BrushHandID">刷手编号</param>
+        /// <param name="BrushHandID">会员编号</param>
         /// <returns></returns>
-        [ActionDescription("分配刷手")]
+        [ActionDescription("分配会员")]
         [HttpPost]
         public ActionResult BrushHand(Guid ID, Guid BrushHandID)
         {
@@ -374,14 +374,14 @@ namespace VOS.Controllers
                 }
                 //分配人
                 vOS_Task.DistributorId = LoginUserInfo.Id;
-                //刷手编号
+                //会员编号
                 vOS_Task.EmployeeId = BrushHandID;
                 //任务状态
                 vOS_Task.OrderState = OrderState.进行中;
                 vOS_Task.DistributionTime = DateTime.Now;
                 DC.Set<VOS_Task>().Update(vOS_Task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 DC.SaveChanges();
-                return Json("1", 200, "已选择刷手");
+                return Json("1", 200, "已选择会员");
                 #endregion
             }
             catch (Exception)
@@ -430,7 +430,7 @@ namespace VOS.Controllers
         }
         #endregion
 
-        #region BrushAlone 填写刷单单号或已完成
+        #region BrushAlone 填写订单号或已完成
         /// <summary>
         /// 
         /// </summary>
@@ -438,7 +438,7 @@ namespace VOS.Controllers
         /// <param name="VOrderCode"></param>
         /// <param name="b">true 填写单号并更改状态为已完成</param>
         /// <returns></returns>
-        [ActionDescription("填写刷单单号")]
+        [ActionDescription("填写订单号")]
         [HttpPost]
         public ActionResult BrushAlone(Guid ID, string VOrderCode, bool b = false)
         {

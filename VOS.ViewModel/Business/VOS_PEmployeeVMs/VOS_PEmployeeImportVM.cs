@@ -32,7 +32,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         public ExcelPropety JDAccount_Excel = ExcelPropety.CreateProperty<VOS_PEmployee>(x => x.JDAccount);
         [Display(Name = "备注")]
         public ExcelPropety Remark_Excel = ExcelPropety.CreateProperty<VOS_PEmployee>(x => x.Remark);
-        [Display(Name = "刷手状态")]
+        [Display(Name = "会员状态")]
         public ExcelPropety PEstate_Excel = ExcelPropety.CreateProperty<VOS_PEmployee>(x => x.PEstate);
 
 	    protected override void InitVM()

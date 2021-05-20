@@ -14,7 +14,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
     {
         [Display(Name = "任务编号")]
         public ExcelPropety Task_no_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.Task_no);
-        [Display(Name = "做单方法")]
+        [Display(Name = "方法")]
         public ExcelPropety TaskType_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.TaskType);
         [Display(Name = "计划编号")]
         public ExcelPropety Plan_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.PlanId);
@@ -36,7 +36,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public ExcelPropety Commission_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.Commission);
         [Display(Name = "其他费用")]
         public ExcelPropety OtherExpenses_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.OtherExpenses);
-        [Display(Name = "做单要求")]
+        [Display(Name = "方法要求")]
         public ExcelPropety TRequirement_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.TRequirement);
         [Display(Name = "区域要求")]
         public ExcelPropety AreaRequirement_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.AreaRequirement);
@@ -44,7 +44,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public ExcelPropety SearchKeyword_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.SearchKeyword);
         [Display(Name = "SKU")]
         public ExcelPropety SKU_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.SKU);
-        [Display(Name = "刷手佣金")]
+        [Display(Name = "会员佣金")]
         public ExcelPropety EmployeeCommission_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.EmployeeCommission);
         [Display(Name = "单量")]
         public ExcelPropety VOS_Number_Excel = ExcelPropety.CreateProperty<VOS_Task>(x => x.VOS_Number);

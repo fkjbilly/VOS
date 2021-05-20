@@ -30,7 +30,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         //[Display(Name = "分配人")]
         //public Guid? DistributorId { get; set; }
 
-        [Display(Name = "刷手")]
+        [Display(Name = "会员")]
         public Guid? EmployeeId { get; set; }
 
         //文本

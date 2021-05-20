@@ -38,7 +38,7 @@ namespace VOS.Model
         [StringLength(20, ErrorMessage = "任务编号长度超过限制")]
         public string Task_no { get; set; }
 
-        [Display(Name = "做单方法")]
+        [Display(Name = "方法")]
         public TaskType TaskType { get; set; }
 
         [Display(Name = "计划编号")]
@@ -113,7 +113,7 @@ namespace VOS.Model
         [Display(Name = "其他要求")]
         public string ORequirement { get; set; }
 
-        [Display(Name = "做单要求")]
+        [Display(Name = "方法要求")]
         public string TRequirement { get; set; }
 
         [Display(Name = "客服备注")]
@@ -159,15 +159,15 @@ namespace VOS.Model
         public VOS_User Distributor { get; set; }
         [Display(Name = "分配时间")]
         public DateTime? DistributionTime { get; set; }
-        [Display(Name = "刷手")]
+        [Display(Name = "会员")]
         public Guid? EmployeeId { get; set; }
-        [Display(Name = "刷手")]
+        [Display(Name = "会员")]
         public VOS_PEmployee Employee { get; set; }
 
-        [Display(Name = "刷手佣金")]
-        [RegularExpression(@"(?!^0*(\.0{1,2})?$)^\d{1,13}(\.\d{1,2})?$", ErrorMessage = "请输入正确的刷手佣金")]
+        [Display(Name = "会员佣金")]
+        [RegularExpression(@"(?!^0*(\.0{1,2})?$)^\d{1,13}(\.\d{1,2})?$", ErrorMessage = "请输入正确的会员佣金")]
         public string EmployeeCommission { get; set; }
-        [Display(Name = "刷单单号")]
+        [Display(Name = "订单号")]
         public string VOrderCode { get; set; }
         [Display(Name = "手机")]
         public string Phone { get; set; }

@@ -68,7 +68,7 @@
             <thead>
                 <tr>
                     <th>任务编号</th>
-                    <th>做单方法</th>
+                    <th>方法</th>
                     <th>执行开始</th>
                     <th>商品类目</th>
                     <th>商品名称</th>
@@ -93,7 +93,7 @@
     let RowIndex = 1
         , htmloption//类目下拉
         , TaskTypeVal = 0
-        , TaskTypeTex = "其他"//做单方法
+        , TaskTypeTex = "其他"//方法
         , StartTime//执行开始
         , TaskCateTex = "请选择"//类目
         , TaskCateVal = "-"
@@ -131,10 +131,10 @@
         //任务编号
         let oTD0 = oTR.insertCell(0);
         oTD0.innerHTML = "<div>" + GetTask_no() + "</div><input id='Task_no' readonly  type='text' value='" + GetTask_no()+"' class='layui-input layui-btn-disabled' style='display:none;'/>";
-        //做单方法
+        //方法
         let oTD1 = oTR.insertCell(1);
         oTD1.innerHTML = "<div>" + TaskTypeTex+"</div>\
-                          <select id='TaskType'class='form-control' >\
+                          <select id='TaskType'style='width: 90px;' class='form-control' >\
                             <option value='0'>搜索单</option>\
                             <option value='1'>隔天单</option>\
                             <option value='2'>非搜单</option>\
@@ -193,7 +193,7 @@
         //任务
         let TaskDiv = oTR.cells[0].getElementsByTagName("div");
         let TaskInpt = oTR.cells[0].getElementsByTagName("input");
-        //做单方法
+        //方法
         let MakeDiv = oTR.cells[1].getElementsByTagName("div");
         let MakeSelect = oTR.cells[1].getElementsByTagName("select");
         //执行开始
@@ -231,7 +231,7 @@
             TaskInpt[0].value = TaskDiv[0].childNodes[0].nodeValue;
             TaskInpt[0].style.display = "block";
             TaskDiv[0].style.display = "none";
-            //做单方法
+            //方法
             $(MakeSelect[0]).val(SelectOp(MakeDiv[0].childNodes[0].nodeValue));
             MakeSelect[0].style.display = "block";
             MakeDiv[0].style.display = "none";
@@ -277,7 +277,7 @@
             TaskDiv[0].childNodes[0].nodeValue = TaskInpt[0].value;
             TaskInpt[0].style.display = "none";
             TaskDiv[0].style.display = "block";
-            //做单方法
+            //方法
             TaskTypeTex = MakeDiv[0].childNodes[0].nodeValue = $(MakeSelect[0]).find("option:selected").text();
             TaskTypeVal = $(MakeSelect[0]).find("option:selected").val();
             MakeSelect[0].style.display = "none";

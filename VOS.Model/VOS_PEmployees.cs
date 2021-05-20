@@ -72,7 +72,7 @@ namespace VOS.Model
         public string QQAccount { get; set; }
         [Display(Name = "备注")]
         public string Remark { get; set; }
-        [Display(Name ="刷手状态")]
+        [Display(Name ="会员状态")]
         public state PEstate { get; set; }
         
         [NotMapped]
