@@ -12,7 +12,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 {
     public partial class VOS_TaskSearcher : BaseSearcher
     {
-        [Display(Name = "做单方法")]
+        [Display(Name = "方法")]
         public TaskType? TaskType { get; set; }
         public List<ComboSelectListItem> AllPlans { get; set; }
         [Display(Name = "计划编号")]
@@ -34,12 +34,12 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         public Guid? EmployeeId { get; set; }
 
         //文本
-        [Display(Name = "刷手")]
-        public string Distribution_BrushHands { get; set; }
+        [Display(Name = "会员")]
+        public string Member { get; set; }
         [Display(Name = "执行人")]
         public string ExecutorName { get; set; }
 
-        [Display(Name = "刷单单号")]
+        [Display(Name = "订单号")]
         public String VOrderCode { get; set; }
         [Display(Name = "任务状态")]
         public OrderState? OrderState { get; set; }
@@ -85,8 +85,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             .CheckContain(newShopName, x => x.Plan.Shopname.ShopName)
             .CheckEqual(OrganizationID, x => x.Plan.OrganizationID)
             .CheckBetween(Time?.GetStartTime(), Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
-            .CheckContain(Distribution_BrushHands,x=>x.Employee.FullName)
-            .CheckContain(Distribution_BrushHands,x=>x.Distributor.Name)
+            .CheckContain(Member, x => x.Employee.FullName)
+            .CheckContain(ExecutorName, x => x.Executor.Name)
             .Where(x => x.IsValid == true);
             const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
             var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();

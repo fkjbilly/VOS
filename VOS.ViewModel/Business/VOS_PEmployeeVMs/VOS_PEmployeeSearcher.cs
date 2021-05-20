@@ -22,7 +22,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
         public String TaobaAccount { get; set; }
         [Display(Name = "京东账号")]
         public String JDAccount { get; set; }
-        [Display(Name = "刷手状态")]
+        [Display(Name = "会员状态")]
         public state? PEstate { get; set; }
         [Display(Name ="创建人")]
         public string CreateBy { get; set; }

@@ -179,7 +179,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             .CheckContain(Searcher.newShopName, x => x.Plan.Shopname.ShopName)
             .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
             .CheckBetween(Searcher.Time?.GetStartTime(), Searcher.Time?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
-            .CheckContain(Searcher.Distribution_BrushHands, x => x.Employee.FullName)
+            .CheckContain(Searcher.Member, x => x.Employee.FullName)
             .CheckContain(Searcher.ExecutorName, x => x.Executor.Name)
             .Where(x => x.IsValid == true);
             if (SearcherMode != ListVMSearchModeEnum.MasterDetail)
