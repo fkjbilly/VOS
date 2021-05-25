@@ -196,8 +196,7 @@ namespace VOS.Model
         [NotMapped]
         [RegularExpression(@"^[1-9]\d*$", ErrorMessage = "请输入正确单量")]
         public int? VOS_Number { get; set; }
-        [Display(Name = "Base64")]
         [NotMapped]
-        public string base64 { get; set; }
+        public string ImgCommodityPicId { get; set; }
     }
 }

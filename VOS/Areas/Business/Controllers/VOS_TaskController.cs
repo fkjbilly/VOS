@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Drawing;
 using VOS.ViewModel.Business.VOS_PlanVMs;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace VOS.Controllers
 {
@@ -24,6 +26,14 @@ namespace VOS.Controllers
     [ActionDescription("任务管理")]
     public partial class VOS_TaskController : VOS_BaseControllers
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
+
+        public VOS_TaskController(IHostingEnvironment hostingEnvironment)
+        {
+            _hostingEnvironment = hostingEnvironment;
+        }
+
+
         #region Search
         [ActionDescription("Search")]
         public ActionResult Index()
@@ -614,7 +624,7 @@ namespace VOS.Controllers
 
         [HttpPost]
         [ActionDescription("批量创建操作")]
-        public ActionResult DoBatchCreation(string plan, string tasklist)
+        public async Task<ActionResult> DoBatchCreation(string plan, string tasklist)
         {
             using (var transaction = DC.BeginTransaction())
             {
@@ -624,22 +634,22 @@ namespace VOS.Controllers
                     _plan.CreateTime = DateTime.Now;
                     _plan.CreateBy = LoginUserInfo.ITCode;
                     _plan.IsValid = true;
-                    DC.Set<VOS_Plan>().Add(_plan).State = Microsoft.EntityFrameworkCore.EntityState.Added;
-                    //DC.SaveChanges();
+                    await DC.Set<VOS_Plan>().AddAsync(_plan);
+                    await DC.SaveChangesAsync();
                     var _Task = JsonConvert.DeserializeObject<List<VOS_Task>>(tasklist);
-                    var _PlanId = _plan.ID;//DC.Set<VOS_Plan>().Where(x => x.Plan_no == _plan.Plan_no).FirstOrDefault().ID;
+                    var _PlanId = _plan.ID;
                     foreach (var item in _Task)
                     {
                         if (item.VOS_Number > 1)
                         {
                             for (int i = 0; i < item.VOS_Number; i++)
                             {
-                                Insert_Task(item, _PlanId, true, i);
+                                await Insert_Task(item, _PlanId, true, i);
                             }
                         }
                         else
                         {
-                            Insert_Task(item, _PlanId);
+                            await Insert_Task(item, _PlanId);
                         }
                     }
                     transaction.Commit();
@@ -676,7 +686,7 @@ namespace VOS.Controllers
         /// <param name="_PlanId">计划编号</param>
         /// <param name="IsMultiple">是否多个添加</param>
         /// <param name="record">【IsMultiple：true】重新赋值任务编号</param>
-        private void Insert_Task(VOS_Task task, Guid _PlanId, bool IsMultiple = false, int record = 0)
+        private async Task Insert_Task(VOS_Task task, Guid _PlanId, bool IsMultiple = false, int record = 0)
         {
             string _Task_no = "T" + DateTime.Now.ToString("MMdd") + task.Task_no;
             VOS_Task _Taskr = new VOS_Task();
@@ -688,7 +698,7 @@ namespace VOS.Controllers
             _Taskr.TaskType = task.TaskType;
             _Taskr.Task_no = IsMultiple ? _Task_no + (record + 1) : _Task_no;
             _Taskr.TaskCateId = task.TaskCateId;
-            _Taskr.CommodityPicId = SaveImg(task.base64);
+            _Taskr.CommodityPicId = new Guid(task.ImgCommodityPicId);
             _Taskr.SearchKeyword = task.SearchKeyword;
             _Taskr.ComDis = "/";
             _Taskr.Commission = "1";
@@ -700,54 +710,55 @@ namespace VOS.Controllers
             _Taskr.IsLock = true;
             _Taskr.UnlockerId = LoginUserInfo.Id;
             _Taskr.UnlockTime = DateTime.Now;
-            DC.Set<VOS_Task>().Add(_Taskr).State = Microsoft.EntityFrameworkCore.EntityState.Added;
-            DC.SaveChanges();
+            await DC.Set<VOS_Task>().AddAsync(_Taskr);
+            await DC.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// 保存图片并获取图片ID
-        /// </summary>
-        /// <param name="Bytes"></param>
-        /// <returns></returns>
-        private Guid SaveImg(string StringBase64)
+        [HttpPost]
+        [ActionDescription("保存图片")]
+        public JsonResult ImgSave()
         {
-            try
+            using (var transaction = DC.BeginTransaction())
             {
-                byte[] base64 = Convert.FromBase64String(StringBase64.Substring(StringBase64.IndexOf(",") + 1));
-                FileAttachment file = new FileAttachment();
-                file.CreateTime = DateTime.Now;
-                file.CreateBy = LoginUserInfo.ITCode;
-                //图片名称
-                file.FileName = DateTime.Now.ToString("yyyymmddhhmmss");
-                //图片类型
-                file.FileExt = GetImageSuffix(base64).RawFormat.ToString();
-                //长度
-                file.Length = base64.Length;
-                file.IsTemprory = true;
-                file.SaveFileMode = SaveFileModeEnum.Database;
-                file.FileData = base64;
-                DC.Set<FileAttachment>().Add(file).State = Microsoft.EntityFrameworkCore.EntityState.Added;
-                DC.SaveChanges();
-                return file.ID;
-            }
-            catch (Exception ex)
-            {
-                return new Guid();
-            }
-        }
+                try
+                {
+                    string imgPath = _hostingEnvironment.ContentRootPath + "\\VOSImg\\" + DateTime.Now.ToString("yyyy-MM-dd") + "\\";
+                    IFormFile fileImage = Request.Form.Files["file"];
+                    if (!Directory.Exists(imgPath))
+                    {
+                        Directory.CreateDirectory(imgPath);
+                    }
+                    imgPath = imgPath + fileImage.FileName;
+                    using (FileStream filestream = System.IO.File.Create(imgPath))
+                    {
+                        fileImage.CopyTo(filestream);
+                        filestream.Flush();
+                    }
+                    FileAttachment file = new FileAttachment();
+                    file.CreateTime = DateTime.Now;
+                    file.CreateBy = LoginUserInfo.ITCode;
+                    //图片名称
+                    file.FileName = fileImage.FileName;
+                    //图片类型
+                    file.FileExt = fileImage.ContentType;
+                    //长度
+                    file.Length = fileImage.Length;
+                    file.IsTemprory = true;
+                    file.SaveFileMode = SaveFileModeEnum.Local;
+                    file.Path = imgPath;
+                    DC.Set<FileAttachment>().Add(file);
+                    DC.SaveChanges();
 
-        /// <summary>
-        /// 获取图片后缀
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <returns></returns>
-        private Image GetImageSuffix(byte[] buffer)
-        {
-            MemoryStream ms = new MemoryStream(buffer);
-            ms.Position = 0;
-            Image img = Image.FromStream(ms);
-            ms.Close();
-            return img;
+                    transaction.Commit();
+                    return Json(new { Msg = "success", picid = file.ID });
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return Json(new { Msg = "error", picid = "" });
+                }
+            }
+
         }
 
         #endregion
