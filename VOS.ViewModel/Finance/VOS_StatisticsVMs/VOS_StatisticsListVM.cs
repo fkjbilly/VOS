@@ -163,9 +163,9 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     SumProxy += item.TaskType == TaskType.隔天 ? CommissionModel.proxyCommission + CommissionModel.proxySeparate : CommissionModel.proxyCommission;
                     //会员(刷手)
                     SumMember += CommissionModel.memberCommission;
-                    //价格
-                    SumPeice += item.Peice;
                 }
+                //价格
+                SumPeice += item.Peice;
             }
             CalculationModel.SumHeadquarters = SumHeadquarters.ToString("0.00");
             CalculationModel.SumProxy = SumProxy.ToString("0.00");
