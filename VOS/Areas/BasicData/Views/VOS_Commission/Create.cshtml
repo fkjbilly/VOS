@@ -1,0 +1,17 @@
+﻿@model VOS.ViewModel.BasicData.VOS_CommissionVMs.VOS_CommissionVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+    <wt:row items-per-row="ItemsPerRowEnum.Two">
+        <wt:combobox field="Entity.PriceRange" items="AllPriceRange"/>
+        <wt:textbox field="Entity.HeadquartersPrice" />
+        <wt:textbox field="Entity.proxyCommission" />
+        <wt:textbox field="Entity.memberCommission" />
+        <wt:textbox field="Entity.HeadquartersSeparate" default-value="2"/>
+        <wt:textbox field="Entity.proxySeparate" default-value="1"/>
+    </wt:row>
+    <wt:row align="AlignEnum.Right">
+        <wt:submitbutton />
+        <wt:closebutton />
+    </wt:row>
+</wt:form>

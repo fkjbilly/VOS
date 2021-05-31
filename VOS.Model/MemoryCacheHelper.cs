@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using WalkingTec.Mvvm.Core;
 
 namespace VOS.Model
 {
@@ -20,18 +21,23 @@ namespace VOS.Model
         /// <summary>
         /// 规则缓存Key
         /// </summary>
-        public static string _RuleCaches
-        {
-            get
-            {
-                return "_RULESCACHE";
-            }
-        }
+        public static string GetRuleCaches => "GETRULECACHE";
 
         /// <summary>
         /// 借助 《VOS_Task表 ID》
         /// </summary>
         public static string Set_TaskID { get; set; }
+
+        /// <summary>
+        /// 价格范围key
+        /// </summary>
+        public static string GetPriceRange => "GETCACHEPRICERANGE";
+
+        /// <summary>
+        /// 统计计算缓存Key
+        /// </summary>
+        public static string GetStatisticsListVM => "GETVOS_STATISTICSLISTVM";
+
         #endregion
 
         /// <summary>

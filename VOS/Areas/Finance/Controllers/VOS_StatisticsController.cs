@@ -4,27 +4,37 @@ using System;
 using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
-using VOS.ViewModel.BasicData.VOS_RuleVMs;
-using VOS.Model;
-using System.Linq;
+using VOS.ViewModel.Finance.VOS_StatisticsVMs;
+using VOS.Areas.BaseControllers;
+using System.Threading.Tasks;
 
 namespace VOS.Controllers
 {
-    [Area("BasicData")]
-    [ActionDescription("规则管理")]
-    public partial class VOS_RuleController : BaseController
+    [Area("Finance")]
+    [ActionDescription("数据统计")]
+    public partial class VOS_StatisticsController : VOS_BaseControllers
     {
         #region Search
         [ActionDescription("Search")]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var vm = CreateVM<VOS_RuleListVM>();
+            var vm = CreateVM<VOS_StatisticsListVM>();
+            ViewBag.IsSuperAdministrator = IsSuperAdministrator;
+            await vm.GetCommissionSum();
+            return PartialView(vm);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Index(VOS_StatisticsListVM vm)
+        {
+            ViewBag.IsSuperAdministrator = IsSuperAdministrator;
+            await vm.GetCommissionSum();
             return PartialView(vm);
         }
 
         [ActionDescription("Search")]
         [HttpPost]
-        public string Search(VOS_RuleListVM vm)
+        public string Search(VOS_StatisticsListVM vm)
         {
             if (ModelState.IsValid)
             {
@@ -42,13 +52,13 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create()
         {
-            var vm = CreateVM<VOS_RuleVM>();
+            var vm = CreateVM<VOS_StatisticsVM>();
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("Create")]
-        public ActionResult Create(VOS_RuleVM vm)
+        public ActionResult Create(VOS_StatisticsVM vm)
         {
             if (!ModelState.IsValid)
             {
@@ -74,14 +84,14 @@ namespace VOS.Controllers
         [ActionDescription("Edit")]
         public ActionResult Edit(string id)
         {
-            var vm = CreateVM<VOS_RuleVM>(id);
+            var vm = CreateVM<VOS_StatisticsVM>(id);
             return PartialView(vm);
         }
 
         [ActionDescription("Edit")]
         [HttpPost]
         [ValidateFormItemOnly]
-        public ActionResult Edit(VOS_RuleVM vm)
+        public ActionResult Edit(VOS_StatisticsVM vm)
         {
             if (!ModelState.IsValid)
             {
@@ -107,7 +117,7 @@ namespace VOS.Controllers
         [ActionDescription("Delete")]
         public ActionResult Delete(string id)
         {
-            var vm = CreateVM<VOS_RuleVM>(id);
+            var vm = CreateVM<VOS_StatisticsVM>(id);
             return PartialView(vm);
         }
 
@@ -115,7 +125,7 @@ namespace VOS.Controllers
         [HttpPost]
         public ActionResult Delete(string id, IFormCollection nouse)
         {
-            var vm = CreateVM<VOS_RuleVM>(id);
+            var vm = CreateVM<VOS_StatisticsVM>(id);
             vm.DoDelete();
             if (!ModelState.IsValid)
             {
@@ -132,7 +142,7 @@ namespace VOS.Controllers
         [ActionDescription("Details")]
         public ActionResult Details(string id)
         {
-            var vm = CreateVM<VOS_RuleVM>(id);
+            var vm = CreateVM<VOS_StatisticsVM>(id);
             return PartialView(vm);
         }
         #endregion
@@ -142,13 +152,13 @@ namespace VOS.Controllers
         [ActionDescription("BatchEdit")]
         public ActionResult BatchEdit(string[] IDs)
         {
-            var vm = CreateVM<VOS_RuleBatchVM>(Ids: IDs);
+            var vm = CreateVM<VOS_StatisticsBatchVM>(Ids: IDs);
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("BatchEdit")]
-        public ActionResult DoBatchEdit(VOS_RuleBatchVM vm, IFormCollection nouse)
+        public ActionResult DoBatchEdit(VOS_StatisticsBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchEdit())
             {
@@ -166,13 +176,13 @@ namespace VOS.Controllers
         [ActionDescription("BatchDelete")]
         public ActionResult BatchDelete(string[] IDs)
         {
-            var vm = CreateVM<VOS_RuleBatchVM>(Ids: IDs);
+            var vm = CreateVM<VOS_StatisticsBatchVM>(Ids: IDs);
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("BatchDelete")]
-        public ActionResult DoBatchDelete(VOS_RuleBatchVM vm, IFormCollection nouse)
+        public ActionResult DoBatchDelete(VOS_StatisticsBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchDelete())
             {
@@ -189,13 +199,13 @@ namespace VOS.Controllers
         [ActionDescription("Import")]
         public ActionResult Import()
         {
-            var vm = CreateVM<VOS_RuleImportVM>();
+            var vm = CreateVM<VOS_StatisticsImportVM>();
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("Import")]
-        public ActionResult Import(VOS_RuleImportVM vm, IFormCollection nouse)
+        public ActionResult Import(VOS_StatisticsImportVM vm, IFormCollection nouse)
         {
             if (vm.ErrorListVM.EntityList.Count > 0 || !vm.BatchSaveData())
             {
@@ -208,21 +218,9 @@ namespace VOS.Controllers
         }
         #endregion
 
-        #region 刷新缓存
-        [ActionDescription("刷新缓存")]
-        [HttpGet]
-        [Public]
-        public ActionResult RefreshCache()
-        {
-            var result = DC.Set<VOS_Rule>().ToList();
-            MemoryCacheHelper.Set(MemoryCacheHelper.GetRuleCaches, result, new TimeSpan(7, 0, 0, 0));
-            return Json(true);
-        }
-        #endregion
-
         [ActionDescription("Export")]
         [HttpPost]
-        public IActionResult ExportExcel(VOS_RuleListVM vm)
+        public IActionResult ExportExcel(VOS_StatisticsListVM vm)
         {
             return vm.GetExportData();
         }

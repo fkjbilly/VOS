@@ -559,7 +559,7 @@ namespace VOS.Controllers
         #endregion
         private object RuleCaches()
         {
-            string key = MemoryCacheHelper._RuleCaches;
+            string key = MemoryCacheHelper.GetRuleCaches;
             if (MemoryCacheHelper.Exists(key))
             {
                 return MemoryCacheHelper.Get(key);
@@ -567,7 +567,7 @@ namespace VOS.Controllers
             else
             {
                 var result = DC.Set<VOS_Rule>().ToList();
-                MemoryCacheHelper.Set(key, result, new TimeSpan(4, 0, 0));
+                MemoryCacheHelper.Set(key, result, new TimeSpan(7, 0, 0, 0));
                 return result;
             }
         }

@@ -230,7 +230,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             else
             {
                 return data.OrderBy(x => ((int)x.OrderState == 1 ? 1 :
-                                      ((int)x.OrderState == 0 ? 2 :
+                                      (x.OrderState == 0 ? 2 :
                                       ((int)x.OrderState == 2 ? 3 :
                                       (int)x.OrderState == 3 ? 4 : 5))));
             }

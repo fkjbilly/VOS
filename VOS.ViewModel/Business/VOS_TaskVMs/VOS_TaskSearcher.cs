@@ -60,10 +60,9 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         [Display(Name = "店铺")]
         public string newShopName { get; set; }
 
-        private DateTime ti => Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
         protected override void InitVM()
         {
-            Time = new DateRange(ti, DateTime.Now);
+            Time = new DateRange(Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")), DateTime.Now);
             //AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             //AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             //AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);

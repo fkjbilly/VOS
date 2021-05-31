@@ -56,6 +56,10 @@ namespace VOS.Model
         [Display(Name = "手机")]
         [RegularExpression(@"^1[3|4|5|7|8][0-9]{9}$", ErrorMessage = "请输入正确的手机号")]
         public string link_mobile { get; set; }
+        [Display(Name ="客户折扣")]
+        [Required(ErrorMessage = "{0}不允许为空")]
+        [RegularExpression(@"(?!^0*(\.0{1,2})?$)^\d{1,13}(\.\d{1,2})?$", ErrorMessage = "请输入正确的{0}")]
+        public double discount { get; set; }
         [Display(Name = "备注")]
         public string Remark { get; set; }
         [Display(Name ="组织机构")]

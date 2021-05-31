@@ -1,0 +1,16 @@
+﻿@model VOS.ViewModel.BasicData.VOS_CommissionVMs.VOS_CommissionListVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:searchpanel vm="@Model" reset-btn="true">
+    <wt:row items-per-row="ItemsPerRowEnum.Three">
+        <wt:combobox field="Searcher.PriceRange" items="Searcher.AllPriceRange" />
+    </wt:row>
+</wt:searchpanel>
+<wt:grid vm="@Model" url="/BasicData/VOS_Commission/Search" />
+<script type="text/javascript">
+    function Refresh() {
+        $.get('@Url.Action("RefreshCache")', function (r) {
+            layer.msg("已刷新");
+        });
+    }
+</script>

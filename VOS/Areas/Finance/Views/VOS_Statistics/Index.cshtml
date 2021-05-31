@@ -1,0 +1,25 @@
+﻿@model VOS.ViewModel.Finance.VOS_StatisticsVMs.VOS_StatisticsListVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:searchpanel vm="@Model" reset-btn="true" old-post="true">
+    <wt:row items-per-row="ItemsPerRowEnum.Three">
+        <wt:combobox field="Searcher.TaskType" empty-text="@Localizer["All"]" />
+        <wt:datetime field="Searcher.datetime" type="DateTime" range="true" />
+        <wt:textbox field="Searcher.Plan_no"></wt:textbox>
+        <wt:textbox field="Searcher.ShopName"></wt:textbox>
+        <wt:textbox field="Searcher.Executor" />
+        <wt:textbox field="Searcher.MemberName" />
+        @if (ViewBag.IsSuperAdministrator)
+        {
+            <wt:combobox field="Searcher.OrganizationID" items="Searcher.AllOrganization" />
+        }
+    </wt:row>
+</wt:searchpanel>
+<wt:quote>
+    <wt:row items-per-row="ItemsPerRowEnum.Three">
+        <wt:display field="CalculationModel.SumHeadquarters" />
+        <wt:display field="CalculationModel.SumProxy" />
+        <wt:display field="CalculationModel.SumMember" />
+    </wt:row>
+</wt:quote>
+<wt:grid vm="@Model" url="/Finance/VOS_Statistics/Search" />

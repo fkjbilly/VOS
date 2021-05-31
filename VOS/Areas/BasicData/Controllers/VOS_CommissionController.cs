@@ -4,27 +4,26 @@ using System;
 using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
-using VOS.ViewModel.BasicData.VOS_RuleVMs;
+using VOS.ViewModel.BasicData.VOS_CommissionVMs;
 using VOS.Model;
-using System.Linq;
 
 namespace VOS.Controllers
 {
     [Area("BasicData")]
-    [ActionDescription("规则管理")]
-    public partial class VOS_RuleController : BaseController
+    [ActionDescription("佣金管理")]
+    public partial class VOS_CommissionController : BaseController
     {
         #region Search
         [ActionDescription("Search")]
         public ActionResult Index()
         {
-            var vm = CreateVM<VOS_RuleListVM>();
+            var vm = CreateVM<VOS_CommissionListVM>();
             return PartialView(vm);
         }
 
         [ActionDescription("Search")]
         [HttpPost]
-        public string Search(VOS_RuleListVM vm)
+        public string Search(VOS_CommissionListVM vm)
         {
             if (ModelState.IsValid)
             {
@@ -42,13 +41,13 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create()
         {
-            var vm = CreateVM<VOS_RuleVM>();
+            var vm = CreateVM<VOS_CommissionVM>();
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("Create")]
-        public ActionResult Create(VOS_RuleVM vm)
+        public ActionResult Create(VOS_CommissionVM vm)
         {
             if (!ModelState.IsValid)
             {
@@ -74,14 +73,14 @@ namespace VOS.Controllers
         [ActionDescription("Edit")]
         public ActionResult Edit(string id)
         {
-            var vm = CreateVM<VOS_RuleVM>(id);
+            var vm = CreateVM<VOS_CommissionVM>(id);
             return PartialView(vm);
         }
 
         [ActionDescription("Edit")]
         [HttpPost]
         [ValidateFormItemOnly]
-        public ActionResult Edit(VOS_RuleVM vm)
+        public ActionResult Edit(VOS_CommissionVM vm)
         {
             if (!ModelState.IsValid)
             {
@@ -107,7 +106,7 @@ namespace VOS.Controllers
         [ActionDescription("Delete")]
         public ActionResult Delete(string id)
         {
-            var vm = CreateVM<VOS_RuleVM>(id);
+            var vm = CreateVM<VOS_CommissionVM>(id);
             return PartialView(vm);
         }
 
@@ -115,7 +114,7 @@ namespace VOS.Controllers
         [HttpPost]
         public ActionResult Delete(string id, IFormCollection nouse)
         {
-            var vm = CreateVM<VOS_RuleVM>(id);
+            var vm = CreateVM<VOS_CommissionVM>(id);
             vm.DoDelete();
             if (!ModelState.IsValid)
             {
@@ -132,7 +131,7 @@ namespace VOS.Controllers
         [ActionDescription("Details")]
         public ActionResult Details(string id)
         {
-            var vm = CreateVM<VOS_RuleVM>(id);
+            var vm = CreateVM<VOS_CommissionVM>(id);
             return PartialView(vm);
         }
         #endregion
@@ -142,17 +141,17 @@ namespace VOS.Controllers
         [ActionDescription("BatchEdit")]
         public ActionResult BatchEdit(string[] IDs)
         {
-            var vm = CreateVM<VOS_RuleBatchVM>(Ids: IDs);
+            var vm = CreateVM<VOS_CommissionBatchVM>(Ids: IDs);
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("BatchEdit")]
-        public ActionResult DoBatchEdit(VOS_RuleBatchVM vm, IFormCollection nouse)
+        public ActionResult DoBatchEdit(VOS_CommissionBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchEdit())
             {
-                return PartialView("BatchEdit", vm);
+                return PartialView("BatchEdit",vm);
             }
             else
             {
@@ -166,17 +165,17 @@ namespace VOS.Controllers
         [ActionDescription("BatchDelete")]
         public ActionResult BatchDelete(string[] IDs)
         {
-            var vm = CreateVM<VOS_RuleBatchVM>(Ids: IDs);
+            var vm = CreateVM<VOS_CommissionBatchVM>(Ids: IDs);
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("BatchDelete")]
-        public ActionResult DoBatchDelete(VOS_RuleBatchVM vm, IFormCollection nouse)
+        public ActionResult DoBatchDelete(VOS_CommissionBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchDelete())
             {
-                return PartialView("BatchDelete", vm);
+                return PartialView("BatchDelete",vm);
             }
             else
             {
@@ -186,16 +185,16 @@ namespace VOS.Controllers
         #endregion
 
         #region Import
-        [ActionDescription("Import")]
+		[ActionDescription("Import")]
         public ActionResult Import()
         {
-            var vm = CreateVM<VOS_RuleImportVM>();
+            var vm = CreateVM<VOS_CommissionImportVM>();
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("Import")]
-        public ActionResult Import(VOS_RuleImportVM vm, IFormCollection nouse)
+        public ActionResult Import(VOS_CommissionImportVM vm, IFormCollection nouse)
         {
             if (vm.ErrorListVM.EntityList.Count > 0 || !vm.BatchSaveData())
             {
@@ -208,21 +207,9 @@ namespace VOS.Controllers
         }
         #endregion
 
-        #region 刷新缓存
-        [ActionDescription("刷新缓存")]
-        [HttpGet]
-        [Public]
-        public ActionResult RefreshCache()
-        {
-            var result = DC.Set<VOS_Rule>().ToList();
-            MemoryCacheHelper.Set(MemoryCacheHelper.GetRuleCaches, result, new TimeSpan(7, 0, 0, 0));
-            return Json(true);
-        }
-        #endregion
-
         [ActionDescription("Export")]
         [HttpPost]
-        public IActionResult ExportExcel(VOS_RuleListVM vm)
+        public IActionResult ExportExcel(VOS_CommissionListVM vm)
         {
             return vm.GetExportData();
         }

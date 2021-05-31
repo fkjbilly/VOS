@@ -57,6 +57,7 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
                 this.MakeGridHeader(x => x.cust_flag),
                 this.MakeGridHeader(x => x.link_name),
                 this.MakeGridHeader(x => x.link_mobile),
+                this.MakeGridHeader(x => x.discount),
                 this.MakeGridHeaderAction(width: 200)
             };
             if (IsSuperAdministrator) {
@@ -85,6 +86,7 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
                     cust_flag = x.cust_flag,
                     link_name = x.link_name,
                     link_mobile = x.link_mobile,
+                    discount=x.discount,
                     OrganizationName_view = x.Organization.OrganizationName,
                 })
                 .OrderBy(x => x.ID);

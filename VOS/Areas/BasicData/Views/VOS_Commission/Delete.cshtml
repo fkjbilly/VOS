@@ -1,0 +1,19 @@
+﻿@model VOS.ViewModel.BasicData.VOS_CommissionVMs.VOS_CommissionVM
+@inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
+
+<wt:form vm="@Model">
+	<wt:quote>@Model.Localizer["DeleteConfirm"]</wt:quote>
+<wt:row items-per-row="ItemsPerRowEnum.Two">
+<wt:display field="Entity.HeadquartersPrice" />
+<wt:display field="Entity.proxyCommission" />
+<wt:display field="Entity.memberCommission" />
+<wt:display field="Entity.HeadquartersSeparate" />
+<wt:display field="Entity.proxySeparate" />
+<wt:display field="Entity.PriceRange" />
+</wt:row>
+    <wt:hidden field="Entity.ID" />
+    <wt:row align="AlignEnum.Right">
+        <wt:submitbutton theme=" ButtonThemeEnum.Warm" text="删除"/>
+        <wt:closebutton />
+    </wt:row>
+</wt:form>
