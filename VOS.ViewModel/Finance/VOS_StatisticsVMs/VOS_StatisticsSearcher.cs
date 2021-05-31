@@ -36,7 +36,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         public Guid? OrganizationID { get; set; }
 
         protected override void InitVM() {
-            datetime = new DateRange(Convert.ToDateTime("2021-02-15"/*DateTime.Now.ToString("yyyy-MM-dd")*/), DateTime.Now);
+            datetime = new DateRange(Convert.ToDateTime(DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd")), DateTime.Now);
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 
