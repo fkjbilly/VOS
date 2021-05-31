@@ -16,10 +16,11 @@
     </wt:row>
 </wt:searchpanel>
 <wt:quote>
-    <wt:row items-per-row="ItemsPerRowEnum.Three">
-        <wt:display field="CalculationModel.SumHeadquarters" />
-        <wt:display field="CalculationModel.SumProxy" />
-        <wt:display field="CalculationModel.SumMember" />
+    <wt:row items-per-row="ItemsPerRowEnum.Four">
+        <wt:display field='CalculationModel.SumPeice' />
+        <wt:display field='CalculationModel.SumHeadquarters' />
+        <wt:display field='CalculationModel.SumProxy' />
+        <wt:display field='CalculationModel.SumMember' />
     </wt:row>
 </wt:quote>
 <wt:grid vm="@Model" url="/Finance/VOS_Statistics/Search" />

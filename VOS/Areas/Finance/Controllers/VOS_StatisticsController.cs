@@ -29,6 +29,7 @@ namespace VOS.Controllers
         {
             ViewBag.IsSuperAdministrator = IsSuperAdministrator;
             await vm.GetCommissionSum();
+            vm.Searcher.MyInitVM();
             return PartialView(vm);
         }
 

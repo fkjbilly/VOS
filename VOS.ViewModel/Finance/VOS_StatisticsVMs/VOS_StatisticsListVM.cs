@@ -39,7 +39,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     this.MakeGridHeader(x => x.ShopName),
                     this.MakeGridHeader(x => x.Plan),
                     this.MakeGridHeader(x => x.ExecutorTime),
-                    this.MakeGridHeader(x => x.Peice).SetWidth(80),
+                    this.MakeGridHeader(x => x.Peice).SetWidth(80).SetShowTotal(true),
                     this.MakeGridHeader(x => x.MemberName).SetWidth(120),
                     this.MakeGridHeader(x => x.Headquarters).SetFormat(CalculationtHeadquarters).SetWidth(120).SetShowTotal(true),
                     this.MakeGridHeader(x => x.proxy).SetFormat(CalculationtProxy).SetWidth(120).SetShowTotal(true),
@@ -60,7 +60,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
             var CommissionModel = GetDiscount(entity.Peice);
             if (CommissionModel == null)
             {
-                return "没有相应公式";
+                return "0";
             }
             double Sum = entity.TaskType == TaskType.隔天 ? (CommissionModel.HeadquartersPrice + CommissionModel.HeadquartersSeparate) : CommissionModel.HeadquartersPrice * entity.discount;
             return Sum.ToString();
@@ -77,7 +77,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
             var CommissionModel = GetDiscount(entity.Peice);
             if (CommissionModel == null)
             {
-                return "没有相应公式";
+                return "0";
             }
             double Sum = entity.TaskType == TaskType.隔天 ? CommissionModel.proxyCommission + CommissionModel.proxySeparate : CommissionModel.proxyCommission;
             return Sum.ToString();
@@ -94,18 +94,21 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
             var CommissionModel = GetDiscount(entity.Peice);
             if (CommissionModel == null)
             {
-                return "没有相应公式";
+                return "0";
             }
             return CommissionModel.memberCommission.ToString();
         }
 
-        public VOS_Commission GetDiscount(string CommodityPrice)
+        public VOS_Commission GetDiscount(double CommodityPrice)
         {
             try
             {
-                double PriceRange = Convert.ToDouble(CommodityPrice);
-                string _pricerange = DC.Set<VOS_Range>().Where(x => PriceRange >= x.MinNumber && PriceRange <= x.MaxNumber).OrderByDescending(x => x.CreateTime).FirstOrDefault().PriceRangeGroup;
-                return DC.Set<VOS_Commission>().Where(x => x.VOS_Range.PriceRangeGroup == _pricerange).OrderByDescending(x => x.CreateBy).FirstOrDefault();
+                var RangeModel = DC.Set<VOS_Range>().Where(x => CommodityPrice >= x.MinNumber && CommodityPrice <= x.MaxNumber).OrderByDescending(x => x.CreateTime).FirstOrDefault();
+                if (RangeModel != null)
+                {
+                    return DC.Set<VOS_Commission>().Where(x => x.VOS_Range.PriceRangeGroup == RangeModel.PriceRangeGroup).OrderByDescending(x => x.CreateBy).FirstOrDefault();
+                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -136,7 +139,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     Plan = x.Plan.Plan_no,
                     ExecutorTime = x.DistributionTime,
                     Executor = x.Executor.Name,
-                    Peice = x.CommodityPrice,
+                    Peice =Convert.ToDouble(x.CommodityPrice),
                     MemberName = x.Employee.FullName,
                 })
                 .OrderBy(x => x.ID);
@@ -148,19 +151,26 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         {
             var query = await GetSearchQuery().ToListAsync();
             this.CalculationModel = new CalculationModel();
+            double SumHeadquarters =0, SumProxy = 0,  SumMember = 0, SumPeice = 0;
             foreach (var item in query)
             {
                 var CommissionModel = GetDiscount(item.Peice);
                 if (CommissionModel != null)
                 {
                     //总部
-                    CalculationModel.SumHeadquarters += item.TaskType == TaskType.隔天 ? (CommissionModel.HeadquartersPrice + CommissionModel.HeadquartersSeparate) : CommissionModel.HeadquartersPrice * item.discount;
+                    SumHeadquarters += item.TaskType == TaskType.隔天 ? (CommissionModel.HeadquartersPrice + CommissionModel.HeadquartersSeparate) : CommissionModel.HeadquartersPrice * item.discount;
                     //代理
-                    CalculationModel.SumProxy += item.TaskType == TaskType.隔天 ? CommissionModel.proxyCommission + CommissionModel.proxySeparate : CommissionModel.proxyCommission;
+                    SumProxy += item.TaskType == TaskType.隔天 ? CommissionModel.proxyCommission + CommissionModel.proxySeparate : CommissionModel.proxyCommission;
                     //会员(刷手)
-                    CalculationModel.SumMember += CommissionModel.memberCommission;
+                    SumMember += CommissionModel.memberCommission;
+                    //价格
+                    SumPeice += item.Peice;
                 }
             }
+            CalculationModel.SumHeadquarters = SumHeadquarters.ToString("0.00");
+            CalculationModel.SumProxy = SumProxy.ToString("0.00");
+            CalculationModel.SumMember = SumMember.ToString("0.00");
+            CalculationModel.SumPeice = SumPeice.ToString("0.00");
         }
     }
 
@@ -175,7 +185,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         public string Executor { get; set; }
 
         [Display(Name = "价格")]
-        public string Peice { get; set; }
+        public double Peice { get; set; }
 
         [Display(Name = "计划编号")]
         public string Plan { get; set; }
@@ -193,12 +203,15 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
     public class CalculationModel
     {
         [Display(Name = "总部佣金共")]
-        public double SumHeadquarters { get; set; }
+        public string SumHeadquarters { get; set; }
 
         [Display(Name = "代理佣金共")]
-        public double SumProxy { get; set; }
+        public string SumProxy { get; set; }
 
         [Display(Name = "会员佣金共")]
-        public double SumMember { get; set; }
+        public string SumMember { get; set; }
+
+        [Display(Name ="价格")]
+        public string SumPeice { get; set; }
     }
 }
