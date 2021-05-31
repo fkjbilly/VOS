@@ -4,25 +4,27 @@ using System;
 using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Mvc;
 using WalkingTec.Mvvm.Core.Extensions;
-using VOS.ViewModel.BasicData.VOS_CommissionVMs;
+using VOS.ViewModel.BasicData.VOS_RangeVMs;
+using VOS.Model;
+using System.Linq;
 
 namespace VOS.Controllers
 {
     [Area("BasicData")]
-    [ActionDescription("佣金管理")]
-    public partial class VOS_CommissionController : BaseController
+    [ActionDescription("设置范围")]
+    public partial class VOS_RangeController : BaseController
     {
         #region Search
         [ActionDescription("Search")]
         public ActionResult Index()
         {
-            var vm = CreateVM<VOS_CommissionListVM>();
+            var vm = CreateVM<VOS_RangeListVM>();
             return PartialView(vm);
         }
 
         [ActionDescription("Search")]
         [HttpPost]
-        public string Search(VOS_CommissionListVM vm)
+        public string Search(VOS_RangeListVM vm)
         {
             if (ModelState.IsValid)
             {
@@ -40,20 +42,27 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create()
         {
-            var vm = CreateVM<VOS_CommissionVM>();
+            var vm = CreateVM<VOS_RangeVM>();
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("Create")]
-        public ActionResult Create(VOS_CommissionVM vm)
+        public ActionResult Create(VOS_RangeVM vm)
         {
+            int count = DC.Set<VOS_Range>().Where(x => vm.Entity.MinNumber <= x.MaxNumber || vm.Entity.MinNumber <= x.MaxNumber).Count();
+
+            if (count > 0 || vm.Entity.MinNumber > vm.Entity.MaxNumber)
+            {
+                return FFResult().Alert("范围设置错误");
+            }
             if (!ModelState.IsValid)
             {
                 return PartialView(vm);
             }
             else
             {
+                vm.Entity.PriceRangeGroup = vm.Entity.MinNumber + "-" + vm.Entity.MaxNumber;
                 vm.DoAdd();
                 if (!ModelState.IsValid)
                 {
@@ -72,21 +81,29 @@ namespace VOS.Controllers
         [ActionDescription("Edit")]
         public ActionResult Edit(string id)
         {
-            var vm = CreateVM<VOS_CommissionVM>(id);
+            var vm = CreateVM<VOS_RangeVM>(id);
             return PartialView(vm);
         }
 
         [ActionDescription("Edit")]
         [HttpPost]
         [ValidateFormItemOnly]
-        public ActionResult Edit(VOS_CommissionVM vm)
+        public ActionResult Edit(VOS_RangeVM vm)
         {
+            int count = DC.Set<VOS_Range>().Where(x => vm.Entity.MinNumber <= x.MaxNumber || vm.Entity.MinNumber <= x.MaxNumber).Count();
+
+            if (count > 0 || vm.Entity.MinNumber > vm.Entity.MaxNumber)
+            {
+                return FFResult().Alert("范围设置错误");
+            }
+
             if (!ModelState.IsValid)
             {
                 return PartialView(vm);
             }
             else
             {
+                vm.Entity.PriceRangeGroup = vm.Entity.MinNumber + "-" + vm.Entity.MaxNumber;
                 vm.DoEdit();
                 if (!ModelState.IsValid)
                 {
@@ -105,7 +122,7 @@ namespace VOS.Controllers
         [ActionDescription("Delete")]
         public ActionResult Delete(string id)
         {
-            var vm = CreateVM<VOS_CommissionVM>(id);
+            var vm = CreateVM<VOS_RangeVM>(id);
             return PartialView(vm);
         }
 
@@ -113,7 +130,7 @@ namespace VOS.Controllers
         [HttpPost]
         public ActionResult Delete(string id, IFormCollection nouse)
         {
-            var vm = CreateVM<VOS_CommissionVM>(id);
+            var vm = CreateVM<VOS_RangeVM>(id);
             vm.DoDelete();
             if (!ModelState.IsValid)
             {
@@ -130,7 +147,7 @@ namespace VOS.Controllers
         [ActionDescription("Details")]
         public ActionResult Details(string id)
         {
-            var vm = CreateVM<VOS_CommissionVM>(id);
+            var vm = CreateVM<VOS_RangeVM>(id);
             return PartialView(vm);
         }
         #endregion
@@ -140,17 +157,17 @@ namespace VOS.Controllers
         [ActionDescription("BatchEdit")]
         public ActionResult BatchEdit(string[] IDs)
         {
-            var vm = CreateVM<VOS_CommissionBatchVM>(Ids: IDs);
+            var vm = CreateVM<VOS_RangeBatchVM>(Ids: IDs);
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("BatchEdit")]
-        public ActionResult DoBatchEdit(VOS_CommissionBatchVM vm, IFormCollection nouse)
+        public ActionResult DoBatchEdit(VOS_RangeBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchEdit())
             {
-                return PartialView("BatchEdit",vm);
+                return PartialView("BatchEdit", vm);
             }
             else
             {
@@ -164,17 +181,17 @@ namespace VOS.Controllers
         [ActionDescription("BatchDelete")]
         public ActionResult BatchDelete(string[] IDs)
         {
-            var vm = CreateVM<VOS_CommissionBatchVM>(Ids: IDs);
+            var vm = CreateVM<VOS_RangeBatchVM>(Ids: IDs);
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("BatchDelete")]
-        public ActionResult DoBatchDelete(VOS_CommissionBatchVM vm, IFormCollection nouse)
+        public ActionResult DoBatchDelete(VOS_RangeBatchVM vm, IFormCollection nouse)
         {
             if (!ModelState.IsValid || !vm.DoBatchDelete())
             {
-                return PartialView("BatchDelete",vm);
+                return PartialView("BatchDelete", vm);
             }
             else
             {
@@ -184,16 +201,16 @@ namespace VOS.Controllers
         #endregion
 
         #region Import
-		[ActionDescription("Import")]
+        [ActionDescription("Import")]
         public ActionResult Import()
         {
-            var vm = CreateVM<VOS_CommissionImportVM>();
+            var vm = CreateVM<VOS_RangeImportVM>();
             return PartialView(vm);
         }
 
         [HttpPost]
         [ActionDescription("Import")]
-        public ActionResult Import(VOS_CommissionImportVM vm, IFormCollection nouse)
+        public ActionResult Import(VOS_RangeImportVM vm, IFormCollection nouse)
         {
             if (vm.ErrorListVM.EntityList.Count > 0 || !vm.BatchSaveData())
             {
@@ -208,7 +225,7 @@ namespace VOS.Controllers
 
         [ActionDescription("Export")]
         [HttpPost]
-        public IActionResult ExportExcel(VOS_CommissionListVM vm)
+        public IActionResult ExportExcel(VOS_RangeListVM vm)
         {
             return vm.GetExportData();
         }

@@ -1,15 +1,12 @@
-﻿@model VOS.ViewModel.BasicData.VOS_CommissionVMs.VOS_CommissionVM
+﻿@model VOS.ViewModel.BasicData.VOS_RangeVMs.VOS_RangeVM
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:form vm="@Model">
 	<wt:quote>@Model.Localizer["DeleteConfirm"]</wt:quote>
 <wt:row items-per-row="ItemsPerRowEnum.Two">
-<wt:display field="Entity.HeadquartersPrice" />
-<wt:display field="Entity.proxyCommission" />
-<wt:display field="Entity.memberCommission" />
-<wt:display field="Entity.HeadquartersSeparate" />
-<wt:display field="Entity.proxySeparate" />
-<wt:display field="Entity.VOS_Range.PriceRangeGroup" />
+<wt:display field="Entity.MinNumber" />
+<wt:display field="Entity.MaxNumber" />
+<wt:display field="Entity.PriceRangeGroup" />
 </wt:row>
     <wt:hidden field="Entity.ID" />
     <wt:row align="AlignEnum.Right">

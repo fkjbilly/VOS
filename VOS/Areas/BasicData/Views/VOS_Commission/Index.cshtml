@@ -2,15 +2,8 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:searchpanel vm="@Model" reset-btn="true">
-    <wt:row items-per-row="ItemsPerRowEnum.Three">
-        <wt:combobox field="Searcher.PriceRange" items="Searcher.AllPriceRange" />
-    </wt:row>
+<wt:row items-per-row="ItemsPerRowEnum.Three">
+<wt:combobox field="Searcher.VOS_RangeID" items="Searcher.AllVOS_Ranges" empty-text="@Localizer["All"]" />
+</wt:row>
 </wt:searchpanel>
-<wt:grid vm="@Model" url="/BasicData/VOS_Commission/Search" />
-<script type="text/javascript">
-    function Refresh() {
-        $.get('@Url.Action("RefreshCache")', function (r) {
-            layer.msg("已刷新");
-        });
-    }
-</script>
+<wt:grid vm="@Model" url="/BasicData/VOS_Commission/Search"/>

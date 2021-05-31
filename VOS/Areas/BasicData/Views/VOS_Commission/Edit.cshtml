@@ -2,14 +2,14 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:form vm="@Model">
-    <wt:row items-per-row="ItemsPerRowEnum.Two">
-        <wt:combobox field="Entity.PriceRange" items="AllPriceRange" />
-        <wt:textbox field="Entity.HeadquartersPrice" />
-        <wt:textbox field="Entity.proxyCommission" />
-        <wt:textbox field="Entity.memberCommission" />
-        <wt:textbox field="Entity.HeadquartersSeparate" />
-        <wt:textbox field="Entity.proxySeparate" />
-    </wt:row>
+<wt:row items-per-row="ItemsPerRowEnum.Two">
+<wt:textbox field="Entity.HeadquartersPrice" />
+<wt:textbox field="Entity.proxyCommission" />
+<wt:textbox field="Entity.memberCommission" />
+<wt:textbox field="Entity.HeadquartersSeparate" />
+<wt:textbox field="Entity.proxySeparate" />
+<wt:combobox field="Entity.VOS_RangeID" items="AllVOS_Ranges"/>
+</wt:row>
     <wt:hidden field="Entity.ID" />
     <wt:row align="AlignEnum.Right">
         <wt:submitbutton />

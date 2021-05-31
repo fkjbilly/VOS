@@ -42,12 +42,12 @@ namespace VOS.Test
             VOS_CommissionVM vm = rv.Model as VOS_CommissionVM;
             VOS_Commission v = new VOS_Commission();
 			
-            v.HeadquartersPrice = 24;
-            v.proxyCommission = 25;
-            v.memberCommission = 62;
-            v.HeadquartersSeparate = 82;
-            v.proxySeparate = 62;
-            v.PriceRange = "c0jDZLBhc";
+            v.HeadquartersPrice = 77;
+            v.proxyCommission = 93;
+            v.memberCommission = 86;
+            v.HeadquartersSeparate = 70;
+            v.proxySeparate = 79;
+            v.VOS_RangeID = AddVOS_Range();
             vm.Entity = v;
             _controller.Create(vm);
 
@@ -55,12 +55,11 @@ namespace VOS.Test
             {
                 var data = context.Set<VOS_Commission>().FirstOrDefault();
 				
-                Assert.AreEqual(data.HeadquartersPrice, 24);
-                Assert.AreEqual(data.proxyCommission, 25);
-                Assert.AreEqual(data.memberCommission, 62);
-                Assert.AreEqual(data.HeadquartersSeparate, 82);
-                Assert.AreEqual(data.proxySeparate, 62);
-                Assert.AreEqual(data.PriceRange, "c0jDZLBhc");
+                Assert.AreEqual(data.HeadquartersPrice, 77);
+                Assert.AreEqual(data.proxyCommission, 93);
+                Assert.AreEqual(data.memberCommission, 86);
+                Assert.AreEqual(data.HeadquartersSeparate, 70);
+                Assert.AreEqual(data.proxySeparate, 79);
                 Assert.AreEqual(data.CreateBy, "user");
                 Assert.IsTrue(DateTime.Now.Subtract(data.CreateTime.Value).Seconds < 10);
             }
@@ -74,12 +73,12 @@ namespace VOS.Test
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
        			
-                v.HeadquartersPrice = 24;
-                v.proxyCommission = 25;
-                v.memberCommission = 62;
-                v.HeadquartersSeparate = 82;
-                v.proxySeparate = 62;
-                v.PriceRange = "c0jDZLBhc";
+                v.HeadquartersPrice = 77;
+                v.proxyCommission = 93;
+                v.memberCommission = 86;
+                v.HeadquartersSeparate = 70;
+                v.proxySeparate = 79;
+                v.VOS_RangeID = AddVOS_Range();
                 context.Set<VOS_Commission>().Add(v);
                 context.SaveChanges();
             }
@@ -91,12 +90,11 @@ namespace VOS.Test
             v = new VOS_Commission();
             v.ID = vm.Entity.ID;
        		
-            v.HeadquartersPrice = 4;
-            v.proxyCommission = 31;
-            v.memberCommission = 35;
-            v.HeadquartersSeparate = 84;
-            v.proxySeparate = 95;
-            v.PriceRange = "X2iN1W";
+            v.HeadquartersPrice = 49;
+            v.proxyCommission = 37;
+            v.memberCommission = 43;
+            v.HeadquartersSeparate = 56;
+            v.proxySeparate = 36;
             vm.Entity = v;
             vm.FC = new Dictionary<string, object>();
 			
@@ -105,19 +103,18 @@ namespace VOS.Test
             vm.FC.Add("Entity.memberCommission", "");
             vm.FC.Add("Entity.HeadquartersSeparate", "");
             vm.FC.Add("Entity.proxySeparate", "");
-            vm.FC.Add("Entity.PriceRange", "");
+            vm.FC.Add("Entity.VOS_RangeID", "");
             _controller.Edit(vm);
 
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
                 var data = context.Set<VOS_Commission>().FirstOrDefault();
  				
-                Assert.AreEqual(data.HeadquartersPrice, 4);
-                Assert.AreEqual(data.proxyCommission, 31);
-                Assert.AreEqual(data.memberCommission, 35);
-                Assert.AreEqual(data.HeadquartersSeparate, 84);
-                Assert.AreEqual(data.proxySeparate, 95);
-                Assert.AreEqual(data.PriceRange, "X2iN1W");
+                Assert.AreEqual(data.HeadquartersPrice, 49);
+                Assert.AreEqual(data.proxyCommission, 37);
+                Assert.AreEqual(data.memberCommission, 43);
+                Assert.AreEqual(data.HeadquartersSeparate, 56);
+                Assert.AreEqual(data.proxySeparate, 36);
                 Assert.AreEqual(data.UpdateBy, "user");
                 Assert.IsTrue(DateTime.Now.Subtract(data.UpdateTime.Value).Seconds < 10);
             }
@@ -132,12 +129,12 @@ namespace VOS.Test
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
         		
-                v.HeadquartersPrice = 24;
-                v.proxyCommission = 25;
-                v.memberCommission = 62;
-                v.HeadquartersSeparate = 82;
-                v.proxySeparate = 62;
-                v.PriceRange = "c0jDZLBhc";
+                v.HeadquartersPrice = 77;
+                v.proxyCommission = 93;
+                v.memberCommission = 86;
+                v.HeadquartersSeparate = 70;
+                v.proxySeparate = 79;
+                v.VOS_RangeID = AddVOS_Range();
                 context.Set<VOS_Commission>().Add(v);
                 context.SaveChanges();
             }
@@ -153,7 +150,7 @@ namespace VOS.Test
 
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
-                Assert.AreEqual(context.Set<VOS_Commission>().Count(), 1);
+                Assert.AreEqual(context.Set<VOS_Commission>().Count(), 0);
             }
 
         }
@@ -166,12 +163,12 @@ namespace VOS.Test
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
 				
-                v.HeadquartersPrice = 24;
-                v.proxyCommission = 25;
-                v.memberCommission = 62;
-                v.HeadquartersSeparate = 82;
-                v.proxySeparate = 62;
-                v.PriceRange = "c0jDZLBhc";
+                v.HeadquartersPrice = 77;
+                v.proxyCommission = 93;
+                v.memberCommission = 86;
+                v.HeadquartersSeparate = 70;
+                v.proxySeparate = 79;
+                v.VOS_RangeID = AddVOS_Range();
                 context.Set<VOS_Commission>().Add(v);
                 context.SaveChanges();
             }
@@ -188,18 +185,18 @@ namespace VOS.Test
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
 				
-                v1.HeadquartersPrice = 24;
-                v1.proxyCommission = 25;
-                v1.memberCommission = 62;
-                v1.HeadquartersSeparate = 82;
-                v1.proxySeparate = 62;
-                v1.PriceRange = "c0jDZLBhc";
-                v2.HeadquartersPrice = 4;
-                v2.proxyCommission = 31;
-                v2.memberCommission = 35;
-                v2.HeadquartersSeparate = 84;
-                v2.proxySeparate = 95;
-                v2.PriceRange = "X2iN1W";
+                v1.HeadquartersPrice = 77;
+                v1.proxyCommission = 93;
+                v1.memberCommission = 86;
+                v1.HeadquartersSeparate = 70;
+                v1.proxySeparate = 79;
+                v1.VOS_RangeID = AddVOS_Range();
+                v2.HeadquartersPrice = 49;
+                v2.proxyCommission = 37;
+                v2.memberCommission = 43;
+                v2.HeadquartersSeparate = 56;
+                v2.proxySeparate = 36;
+                v2.VOS_RangeID = v1.VOS_RangeID; 
                 context.Set<VOS_Commission>().Add(v1);
                 context.Set<VOS_Commission>().Add(v2);
                 context.SaveChanges();
@@ -214,7 +211,7 @@ namespace VOS.Test
 
             using (var context = new DataContext(_seed, DBTypeEnum.Memory))
             {
-                Assert.AreEqual(context.Set<VOS_Commission>().Count(), 2);
+                Assert.AreEqual(context.Set<VOS_Commission>().Count(), 0);
             }
         }
 
@@ -225,6 +222,20 @@ namespace VOS.Test
             Assert.IsInstanceOfType(rv.Model, typeof(IBasePagedListVM<TopBasePoco, BaseSearcher>));
             IActionResult rv2 = _controller.ExportExcel(rv.Model as VOS_CommissionListVM);
             Assert.IsTrue((rv2 as FileContentResult).FileContents.Length > 0);
+        }
+
+        private Guid AddVOS_Range()
+        {
+            VOS_Range v = new VOS_Range();
+            using (var context = new DataContext(_seed, DBTypeEnum.Memory))
+            {
+
+                v.MinNumber = 60;
+                v.MaxNumber = 1;
+                context.Set<VOS_Range>().Add(v);
+                context.SaveChanges();
+            }
+            return v.ID;
         }
 
 

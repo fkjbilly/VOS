@@ -32,12 +32,12 @@ namespace VOS.ViewModel.BasicData.VOS_CommissionVMs
         protected override IEnumerable<IGridColumn<VOS_Commission_View>> InitGridHeader()
         {
             return new List<GridColumn<VOS_Commission_View>>{
-                this.MakeGridHeader(x => x.PriceRange),
                 this.MakeGridHeader(x => x.HeadquartersPrice),
                 this.MakeGridHeader(x => x.proxyCommission),
                 this.MakeGridHeader(x => x.memberCommission),
                 this.MakeGridHeader(x => x.HeadquartersSeparate),
                 this.MakeGridHeader(x => x.proxySeparate),
+                this.MakeGridHeader(x => x.PriceRangeGroup_view),
                 this.MakeGridHeaderAction(width: 200)
             };
         }
@@ -45,7 +45,7 @@ namespace VOS.ViewModel.BasicData.VOS_CommissionVMs
         public override IOrderedQueryable<VOS_Commission_View> GetSearchQuery()
         {
             var query = DC.Set<VOS_Commission>()
-                .CheckContain(Searcher.PriceRange, x=>x.PriceRange)
+                .CheckEqual(Searcher.VOS_RangeID, x=>x.VOS_RangeID)
                 .Select(x => new VOS_Commission_View
                 {
 				    ID = x.ID,
@@ -54,7 +54,7 @@ namespace VOS.ViewModel.BasicData.VOS_CommissionVMs
                     memberCommission = x.memberCommission,
                     HeadquartersSeparate = x.HeadquartersSeparate,
                     proxySeparate = x.proxySeparate,
-                    PriceRange = x.PriceRange,
+                    PriceRangeGroup_view = x.VOS_Range.PriceRangeGroup,
                 })
                 .OrderBy(x => x.ID);
             return query;
@@ -63,6 +63,8 @@ namespace VOS.ViewModel.BasicData.VOS_CommissionVMs
     }
 
     public class VOS_Commission_View : VOS_Commission{
+        [Display(Name = "价格范围")]
+        public String PriceRangeGroup_view { get; set; }
 
     }
 }

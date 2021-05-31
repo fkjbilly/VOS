@@ -24,6 +24,7 @@ namespace VOS.DataAccess
         public DbSet<VOS_Organization> VOS_Organization { get; set; }
         public DbSet<VOS_Commission> VOS_Commission { get; set; }
         public DbSet<VOS_Statistics> VOS_Statistics { get; set; }
+        public DbSet<VOS_Range> VOS_Range { get; set; }
 
 
         public DataContext(CS cs)

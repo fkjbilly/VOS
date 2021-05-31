@@ -101,55 +101,11 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
 
         public VOS_Commission GetDiscount(string CommodityPrice)
         {
-            string _pricerange = "1-100";
             try
             {
                 double PriceRange = Convert.ToDouble(CommodityPrice);
-                if (PriceRange >= 0 && PriceRange < 100)
-                {
-                    _pricerange = "1-100";
-                }
-                else if (PriceRange >= 100 && PriceRange <= 299)
-                {
-                    _pricerange = "100-299";
-                }
-                else if (PriceRange >= 300 && PriceRange <= 499)
-                {
-                    _pricerange = "300-499";
-                }
-                else if (PriceRange >= 500 && PriceRange <= 699)
-                {
-                    _pricerange = "500-699";
-                }
-                else if (PriceRange >= 700 && PriceRange <= 999)
-                {
-                    _pricerange = "700-999";
-                }
-                else if (PriceRange >= 1000 && PriceRange <= 1499)
-                {
-                    _pricerange = "1000-1499";
-                }
-                else if (PriceRange >= 1500 && PriceRange <= 1999)
-                {
-                    _pricerange = "1500-1999";
-                }
-                else if (PriceRange >= 2000 && PriceRange <= 2499)
-                {
-                    _pricerange = "2000-2499";
-                }
-                else if (PriceRange >= 2500 && PriceRange <= 2999)
-                {
-                    _pricerange = "2500-2999";
-                }
-                else if (PriceRange >= 3000 && PriceRange <= 3499)
-                {
-                    _pricerange = "3000-3499";
-                }
-                else if (PriceRange >= 3500 && PriceRange <= 3999)
-                {
-                    _pricerange = "3500-3999";
-                }
-                return DC.Set<VOS_Commission>().Where(x => x.PriceRange == _pricerange && x.IsValid).OrderByDescending(x => x.CreateBy).FirstOrDefault();
+                string _pricerange = DC.Set<VOS_Range>().Where(x => PriceRange >= x.MinNumber && PriceRange <= x.MaxNumber).OrderByDescending(x => x.CreateTime).FirstOrDefault().PriceRangeGroup;
+                return DC.Set<VOS_Commission>().Where(x => x.VOS_Range.PriceRangeGroup == _pricerange).OrderByDescending(x => x.CreateBy).FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -195,14 +151,15 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
             foreach (var item in query)
             {
                 var CommissionModel = GetDiscount(item.Peice);
-                if (CommissionModel != null) {
+                if (CommissionModel != null)
+                {
                     //总部
                     CalculationModel.SumHeadquarters += item.TaskType == TaskType.隔天 ? (CommissionModel.HeadquartersPrice + CommissionModel.HeadquartersSeparate) : CommissionModel.HeadquartersPrice * item.discount;
                     //代理
                     CalculationModel.SumProxy += item.TaskType == TaskType.隔天 ? CommissionModel.proxyCommission + CommissionModel.proxySeparate : CommissionModel.proxyCommission;
                     //会员(刷手)
                     CalculationModel.SumMember += CommissionModel.memberCommission;
-                 }
+                }
             }
         }
     }
@@ -239,7 +196,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         public double SumHeadquarters { get; set; }
 
         [Display(Name = "代理佣金共")]
-        public double SumProxy { get; set; } 
+        public double SumProxy { get; set; }
 
         [Display(Name = "会员佣金共")]
         public double SumMember { get; set; }

@@ -8,20 +8,17 @@ using WalkingTec.Mvvm.Core.Extensions;
 using VOS.Model;
 
 
-namespace VOS.ViewModel.BasicData.VOS_CommissionVMs
+namespace VOS.ViewModel.BasicData.VOS_RangeVMs
 {
-    public partial class VOS_CommissionVM : BaseCRUDVM<VOS_Commission>
+    public partial class VOS_RangeVM : BaseCRUDVM<VOS_Range>
     {
-        public List<ComboSelectListItem> AllVOS_Ranges { get; set; }
 
-        public VOS_CommissionVM()
+        public VOS_RangeVM()
         {
-            SetInclude(x => x.VOS_Range);
         }
 
         protected override void InitVM()
         {
-            AllVOS_Ranges = DC.Set<VOS_Range>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.PriceRangeGroup);
         }
 
         public override void DoAdd()

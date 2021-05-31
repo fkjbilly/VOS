@@ -7,7 +7,7 @@ using WalkingTec.Mvvm.Core;
 namespace VOS.Model
 {
     [Display(Name ="佣金")]
-    public class VOS_Commission: PersistPoco
+    public class VOS_Commission: BasePoco
     {
         /// <summary>
         /// 总部原价
@@ -49,12 +49,10 @@ namespace VOS.Model
         [RegularExpression(@"(?!^0*(\.0{1,2})?$)^\d{1,13}(\.\d{1,2})?$", ErrorMessage = "请输入正确的{0}")]
         public double proxySeparate { get; set; }
 
-        /// <summary>
-        /// 价格范围
-        /// </summary>
-        [Display(Name ="价格范围")]
-        [Required(ErrorMessage = "{0}不允许为空")]
-        [StringLength(100,ErrorMessage="{0}超过限制100内")]
-        public string PriceRange { get; set; }
+        [Display(Name = "价格范围")]
+        public Guid VOS_RangeID { get; set; }
+
+        [Display(Name = "价格范围")]
+        public VOS_Range VOS_Range { get; set; }
     }
 }

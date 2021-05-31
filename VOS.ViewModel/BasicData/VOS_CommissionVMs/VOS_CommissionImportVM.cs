@@ -23,10 +23,12 @@ namespace VOS.ViewModel.BasicData.VOS_CommissionVMs
         [Display(Name = "代理隔天")]
         public ExcelPropety proxySeparate_Excel = ExcelPropety.CreateProperty<VOS_Commission>(x => x.proxySeparate);
         [Display(Name = "价格范围")]
-        public ExcelPropety PriceRange_Excel = ExcelPropety.CreateProperty<VOS_Commission>(x => x.PriceRange);
+        public ExcelPropety VOS_Range_Excel = ExcelPropety.CreateProperty<VOS_Commission>(x => x.VOS_RangeID);
 
 	    protected override void InitVM()
         {
+            VOS_Range_Excel.DataType = ColumnDataType.ComboBox;
+            VOS_Range_Excel.ListItems = DC.Set<VOS_Range>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.PriceRangeGroup);
         }
 
     }
