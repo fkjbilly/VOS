@@ -141,7 +141,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     Executor = x.Executor.Name,
                     Peice =Convert.ToDouble(x.CommodityPrice),
                     MemberName = x.Employee.FullName,
-                }).Take(600)
+                })
                 .OrderBy(x => x.ID);
             return query;
         }
