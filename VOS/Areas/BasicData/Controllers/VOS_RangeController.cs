@@ -50,12 +50,11 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create(VOS_RangeVM vm)
         {
-            int count = DC.Set<VOS_Range>().Where(x => vm.Entity.MinNumber <= x.MaxNumber || vm.Entity.MinNumber <= x.MaxNumber).Count();
-
-            if (count > 0 || vm.Entity.MinNumber > vm.Entity.MaxNumber)
+            if (vm.Entity.MinNumber > vm.Entity.MaxNumber)
             {
-                return FFResult().Alert("范围设置错误");
+                return FFResult().Alert("最小值不能大过最大值", "提醒");
             }
+
             if (!ModelState.IsValid)
             {
                 return PartialView(vm);
@@ -90,11 +89,9 @@ namespace VOS.Controllers
         [ValidateFormItemOnly]
         public ActionResult Edit(VOS_RangeVM vm)
         {
-            int count = DC.Set<VOS_Range>().Where(x => vm.Entity.MinNumber <= x.MaxNumber || vm.Entity.MinNumber <= x.MaxNumber).Count();
-
-            if (count > 0 || vm.Entity.MinNumber > vm.Entity.MaxNumber)
+            if (vm.Entity.MinNumber > vm.Entity.MaxNumber)
             {
-                return FFResult().Alert("范围设置错误");
+                return FFResult().Alert("最小值不能大过最大值", "提醒");
             }
 
             if (!ModelState.IsValid)

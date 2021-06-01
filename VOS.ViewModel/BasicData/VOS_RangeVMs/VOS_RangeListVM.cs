@@ -50,7 +50,7 @@ namespace VOS.ViewModel.BasicData.VOS_RangeVMs
                     MaxNumber = x.MaxNumber,
                     PriceRangeGroup = x.PriceRangeGroup,
                 })
-                .OrderBy(x => x.ID);
+                .OrderBy(x => x.MinNumber);
             return query;
         }
 
