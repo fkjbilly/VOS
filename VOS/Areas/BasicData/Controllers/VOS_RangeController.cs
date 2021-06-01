@@ -54,7 +54,11 @@ namespace VOS.Controllers
             {
                 return FFResult().Alert("最小值不能大过最大值", "提醒");
             }
-
+            int Count = DC.Set<VOS_Range>().Where(x => (vm.Entity.MinNumber >= x.MinNumber && vm.Entity.MinNumber <= x.MaxNumber) || (vm.Entity.MaxNumber >= x.MaxNumber && vm.Entity.MaxNumber <= x.MaxNumber)).Count();
+            if (Count > 0)
+            {
+                return FFResult().Alert("范围已存在或数值不正确", "提醒");
+            }
             if (!ModelState.IsValid)
             {
                 return PartialView(vm);
@@ -92,6 +96,15 @@ namespace VOS.Controllers
             if (vm.Entity.MinNumber > vm.Entity.MaxNumber)
             {
                 return FFResult().Alert("最小值不能大过最大值", "提醒");
+            }
+
+            var query = DC.Set<VOS_Range>().Where(x => x.ID != vm.Entity.ID);
+
+            query = query.Where(x => vm.Entity.MinNumber >= x.MinNumber && vm.Entity.MinNumber <= x.MaxNumber || (vm.Entity.MaxNumber >= x.MinNumber && vm.Entity.MaxNumber <= x.MaxNumber));
+
+            if (query.Count() > 0)
+            {
+                return FFResult().Alert("范围已存在或数值不正确", "提醒");
             }
 
             if (!ModelState.IsValid)

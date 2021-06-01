@@ -128,7 +128,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                 .CheckContain(Searcher.Plan_no, x => x.Plan.Plan_no)
                 .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
                 .CheckEqual(Searcher.TaskType, x => x.TaskType)
-                .Where(x => x.Employee.FullName != null && x.IsValid && x.OrderState == OrderState.已完成)
+                .Where(x => x.Employee.FullName != null && x.IsValid)
                 .DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID)
                 .Select(x => new VOS_Statistics_View
                 {
