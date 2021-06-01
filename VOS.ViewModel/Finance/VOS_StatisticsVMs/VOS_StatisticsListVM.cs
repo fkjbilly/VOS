@@ -62,7 +62,14 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
             {
                 return "0";
             }
-            double Sum = entity.TaskType == TaskType.隔天 ? (CommissionModel.HeadquartersPrice + CommissionModel.HeadquartersSeparate) : CommissionModel.HeadquartersPrice * entity.discount;
+            double Sum;
+            if (entity.TaskType == TaskType.隔天)
+            {
+                Sum = (CommissionModel.HeadquartersPrice * entity.discount) + CommissionModel.HeadquartersSeparate;
+            }
+            else {
+                Sum = CommissionModel.HeadquartersPrice * entity.discount;
+            }
             return Sum.ToString();
         }
 
@@ -139,7 +146,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     Plan = x.Plan.Plan_no,
                     ExecutorTime = x.DistributionTime,
                     Executor = x.Executor.Name,
-                    Peice =Convert.ToDouble(x.CommodityPrice),
+                    Peice = Convert.ToDouble(x.CommodityPrice),
                     MemberName = x.Employee.FullName,
                 })
                 .OrderBy(x => x.ID);
@@ -151,14 +158,21 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         {
             var query = await GetSearchQuery().ToListAsync();
             this.CalculationModel = new CalculationModel();
-            double SumHeadquarters =0, SumProxy = 0,  SumMember = 0, SumPeice = 0;
+            double SumHeadquarters = 0, SumProxy = 0, SumMember = 0, SumPeice = 0;
             foreach (var item in query)
             {
                 var CommissionModel = GetDiscount(item.Peice);
                 if (CommissionModel != null)
                 {
                     //总部
-                    SumHeadquarters += item.TaskType == TaskType.隔天 ? (CommissionModel.HeadquartersPrice + CommissionModel.HeadquartersSeparate) : CommissionModel.HeadquartersPrice * item.discount;
+                    if (item.TaskType == TaskType.隔天)
+                    {
+                        SumHeadquarters += (CommissionModel.HeadquartersPrice * item.discount) + CommissionModel.HeadquartersSeparate;
+                    }
+                    else
+                    {
+                        SumHeadquarters += CommissionModel.HeadquartersPrice * item.discount;
+                    }
                     //代理
                     SumProxy += item.TaskType == TaskType.隔天 ? CommissionModel.proxyCommission + CommissionModel.proxySeparate : CommissionModel.proxyCommission;
                     //会员(刷手)
@@ -211,7 +225,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         [Display(Name = "会员佣金共")]
         public string SumMember { get; set; }
 
-        [Display(Name ="价格")]
+        [Display(Name = "价格")]
         public string SumPeice { get; set; }
     }
 }
