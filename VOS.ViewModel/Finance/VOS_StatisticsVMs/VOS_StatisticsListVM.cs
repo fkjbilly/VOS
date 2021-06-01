@@ -121,14 +121,14 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         public override IOrderedQueryable<VOS_Statistics_View> GetSearchQuery()
         {
             var query = DC.Set<VOS_Task>()
-               .CheckBetween(Searcher.datetime?.GetStartTime(), Searcher.datetime?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
+                .CheckBetween(Searcher.datetime?.GetStartTime(), Searcher.datetime?.GetEndTime(), x => x.ImplementStartTime, includeMax: false)
                 .CheckContain(Searcher.ShopName, x => x.Plan.Shopname.ShopName)
                 .CheckContain(Searcher.Executor, x => x.Executor.Name)
                 .CheckContain(Searcher.MemberName, x => x.Employee.FullName)
                 .CheckContain(Searcher.Plan_no, x => x.Plan.Plan_no)
                 .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
                 .CheckEqual(Searcher.TaskType, x => x.TaskType)
-                .Where(x => x.Employee.FullName != null && x.IsValid)
+                .Where(x => x.IsValid)
                 .DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID)
                 .Select(x => new VOS_Statistics_View
                 {
@@ -141,7 +141,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     Executor = x.Executor.Name,
                     Peice =Convert.ToDouble(x.CommodityPrice),
                     MemberName = x.Employee.FullName,
-                })
+                }).Take(600)
                 .OrderBy(x => x.ID);
             return query;
         }
