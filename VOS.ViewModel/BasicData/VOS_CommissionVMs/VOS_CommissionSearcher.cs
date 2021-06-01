@@ -18,7 +18,16 @@ namespace VOS.ViewModel.BasicData.VOS_CommissionVMs
 
         protected override void InitVM()
         {
-            AllVOS_Ranges = DC.Set<VOS_Range>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.PriceRangeGroup);
+            var RangeList = DC.Set<VOS_Range>().OrderBy(x => x.MinNumber).ToList();
+            List<ComboSelectListItem> _ListItem = new List<ComboSelectListItem>();
+            foreach (var item in RangeList)
+            {
+                _ListItem.Add(new ComboSelectListItem() { 
+                    Text=item.PriceRangeGroup,
+                    Value=item.ID,
+                });
+            }
+            AllVOS_Ranges = _ListItem;// DC.Set<VOS_Range>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.PriceRangeGroup);
         }
 
     }
