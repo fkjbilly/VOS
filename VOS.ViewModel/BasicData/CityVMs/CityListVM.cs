@@ -41,15 +41,15 @@ namespace VOS.ViewModel.BasicData.CityVMs
         public override IOrderedQueryable<City_View> GetSearchQuery()
         {
             var query = DC.Set<City>()
-                .CheckContain(Searcher.Name, x=>x.Name)
-                .CheckEqual(Searcher.ParentId, x=>x.ParentId)
-                .Select(x => new City_View
-                {
-				    ID = x.ID,
-                    Name = x.Name,
-                    Name_view = x.Parent.Name,
-                })
-                .OrderBy(x => x.ID);
+                 .CheckContain(Searcher.Name, x => x.Name)
+                 .CheckEqual(Searcher.ParentId, x => x.ParentId)
+                 .Select(x => new City_View
+                 {
+                     ID = x.ID,
+                     Name = x.Name,
+                     Name_view = x.Parent.Name,
+                 })
+                 .OrderBy(x => x.ID);
             return query;
         }
 

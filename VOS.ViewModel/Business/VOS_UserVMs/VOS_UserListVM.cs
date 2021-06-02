@@ -69,7 +69,6 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                     this.MakeGridHeader(x => x.Name),
                     this.MakeGridHeader(x => x.Sex),
                     this.MakeGridHeader(x => x.CellPhone),
-                    
                     this.MakeGridHeaderAction(width: 100)
                 };
             }
@@ -78,7 +77,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                  data = new List<GridColumn<VOS_User_View>>{
                     this.MakeGridHeader(x => x.ITCode),
                     this.MakeGridHeader(x => x.Name),
-                    this.MakeGridHeader(x => x.Sex),
+                    this.MakeGridHeader(x => x.Sex).SetSort(true),
                     this.MakeGridHeader(x => x.CellPhone),
                     this.MakeGridHeader(x => x.PhotoId).SetFormat(PhotoIdFormat),
                     this.MakeGridHeader(x => x.IsValid),
@@ -89,7 +88,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
             }
             if (IsSuperAdministrator)
             {
-                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
+                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetAlign(GridColumnAlignEnum.Center).SetWidth(110).SetSort(true));
             }
             return data;
         }

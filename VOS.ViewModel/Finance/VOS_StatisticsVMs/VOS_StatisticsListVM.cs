@@ -37,7 +37,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
             return new List<GridColumn<VOS_Statistics_View>>{
                     this.MakeGridHeader(x => x.TaskType).SetWidth(80),
                     this.MakeGridHeader(x => x.ShopName),
-                    this.MakeGridHeader(x => x.Plan),
+                    this.MakeGridHeader(x => x.Plan).SetSort(true),
                     this.MakeGridHeader(x => x.ExecutorTime),
                     this.MakeGridHeader(x => x.Peice).SetWidth(80).SetShowTotal(true),
                     this.MakeGridHeader(x => x.MemberName).SetWidth(120),
@@ -148,8 +148,9 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     Executor = x.Executor.Name,
                     Peice = Convert.ToDouble(x.CommodityPrice),
                     MemberName = x.Employee.FullName,
+                    CreateTime = x.CreateTime,
                 })
-                .OrderBy(x => x.ID);
+                .OrderByDescending(x => x.Plan);
             return query;
         }
 
@@ -225,7 +226,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         [Display(Name = "会员佣金共")]
         public string SumMember { get; set; }
 
-        [Display(Name = "价格")]
+        [Display(Name = "价格共")]
         public string SumPeice { get; set; }
     }
 }

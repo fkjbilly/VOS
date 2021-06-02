@@ -45,8 +45,9 @@ namespace VOS.ViewModel.BasicData.VOS_OrganizationVMs
                 {
 				    ID = x.ID,
                     OrganizationName = x.OrganizationName,
+                    CreateTime=x.CreateTime
                 })
-                .OrderBy(x => x.ID);
+                .OrderByDescending(x => x.CreateTime.Value);
             return query;
         }
 

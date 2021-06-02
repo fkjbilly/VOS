@@ -45,7 +45,7 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
         }
 
         public override void DoAdd()
-        {           
+        {
             base.DoAdd();
         }
 
@@ -56,7 +56,11 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
 
         public override void DoDelete()
         {
-            base.DoDelete();
+
+            VOS_Customer _CustomerModel = DC.Set<VOS_Customer>().Where(x => x.ID == Entity.ID).FirstOrDefault();
+            _CustomerModel.cust_flag = VOS_Customer.flag.已删除;
+            DC.SaveChanges();
+            //base.DoDelete();
         }
 
         public override DuplicatedInfo<VOS_Customer> SetDuplicatedCheck()

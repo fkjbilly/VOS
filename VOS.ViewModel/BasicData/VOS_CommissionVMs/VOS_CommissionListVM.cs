@@ -32,9 +32,9 @@ namespace VOS.ViewModel.BasicData.VOS_CommissionVMs
         protected override IEnumerable<IGridColumn<VOS_Commission_View>> InitGridHeader()
         {
             return new List<GridColumn<VOS_Commission_View>>{
-                this.MakeGridHeader(x => x.HeadquartersPrice),
-                this.MakeGridHeader(x => x.proxyCommission),
-                this.MakeGridHeader(x => x.memberCommission),
+                this.MakeGridHeader(x => x.HeadquartersPrice).SetSort(true),
+                this.MakeGridHeader(x => x.proxyCommission).SetSort(true),
+                this.MakeGridHeader(x => x.memberCommission).SetSort(true),
                 this.MakeGridHeader(x => x.HeadquartersSeparate),
                 this.MakeGridHeader(x => x.proxySeparate),
                 this.MakeGridHeader(x => x.PriceRangeGroup_view),
@@ -56,7 +56,7 @@ namespace VOS.ViewModel.BasicData.VOS_CommissionVMs
                     proxySeparate = x.proxySeparate,
                     PriceRangeGroup_view = x.VOS_Range.PriceRangeGroup,
                 })
-                .OrderBy(x => x.ID);
+                .OrderBy(x => x.HeadquartersPrice);
             return query;
         }
 

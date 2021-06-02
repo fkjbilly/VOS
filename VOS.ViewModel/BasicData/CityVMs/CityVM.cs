@@ -21,11 +21,11 @@ namespace VOS.ViewModel.BasicData.CityVMs
 
         protected override void InitVM()
         {
-            AllParents = DC.Set<City>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
+            AllParents = DC.Set<City>().Where(x => x.ParentId == null).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Name);
         }
 
         public override void DoAdd()
-        {           
+        {
             base.DoAdd();
         }
 

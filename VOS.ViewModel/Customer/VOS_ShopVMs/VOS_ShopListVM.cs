@@ -53,14 +53,15 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
         {
             var data = new List<GridColumn<VOS_Shop_View>>{
                 this.MakeGridHeader(x => x.cust_name_view),
+                this.MakeGridHeader(x => x.CreateTime).SetSort(true),
                 this.MakeGridHeader(x => x.ShopName),
                 this.MakeGridHeader(x => x.ShopPlat),
-                this.MakeGridHeader(x => x.OpenTime),
+                this.MakeGridHeader(x => x.OpenTime).SetSort(true),
                 this.MakeGridHeaderAction(width: 200)
             };
             if (IsSuperAdministrator)
             {
-                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
+                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }
             return data;
         }
@@ -81,8 +82,9 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
                     ShopPlat = x.ShopPlat,
                     OpenTime = x.OpenTime,
                     OrganizationName_view = x.Customer.Organization.OrganizationName,
+                    CreateTime=x.CreateTime,
                 })
-                .OrderBy(x => x.ID);
+                .OrderByDescending(x => x.CreateTime);
             return query;
         }
 

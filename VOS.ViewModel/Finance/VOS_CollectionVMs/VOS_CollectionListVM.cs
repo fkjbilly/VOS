@@ -51,14 +51,14 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
         protected override IEnumerable<IGridColumn<VOS_Collection_View>> InitGridHeader()
         {
             var data = new List<GridColumn<VOS_Collection_View>>{
-                this.MakeGridHeader(x => x.Plan_no_view),
+                this.MakeGridHeader(x => x.Plan_no_view).SetSort(true),
                 this.MakeGridHeader(x => x.Collection),
                 this.MakeGridHeader(x => x.Remarks),
-                this.MakeGridHeaderAction(width: 200)
+                this.MakeGridHeaderAction(width: 200),
             };
             if (IsSuperAdministrator)
             {
-                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
+                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }
             return data;
         }
@@ -77,7 +77,7 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
                     Remarks = x.Remarks,
                     OrganizationName_view = x.Plan_no.Organization.OrganizationName,
                 })
-                .OrderBy(x => x.ID);
+                .OrderByDescending(x => x.Plan_no_view);
             return query;
         }
 

@@ -123,13 +123,13 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                         return "#FFFFFF";
                     }),
                     this.MakeGridHeader(x => x.CreateBy),
-                    this.MakeGridHeader(x => x.CreateTime),
+                    this.MakeGridHeader(x => x.CreateTime).SetSort(true),
                     this.MakeGridHeaderAction(width: 200)
                 };
             }
             if (IsSuperAdministrator)
             {
-                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
+                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }
             return data;
         }

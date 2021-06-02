@@ -52,7 +52,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
         protected override IEnumerable<IGridColumn<VOS_Plan_View>> InitGridHeader()
         {
             var data = new List<GridColumn<VOS_Plan_View>>{
-                this.MakeGridHeader(x => x.Plan_no),
+                this.MakeGridHeader(x => x.Plan_no).SetSort(true),
                 this.MakeGridHeader(x => x.ShopName_view),
                 this.MakeGridHeader(x => x.PlanSatrtTime),
                 this.MakeGridHeader(x => x.PlanEndTime),
@@ -62,7 +62,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
             };
             if (IsSuperAdministrator)
             {
-                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view));
+                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }
             return data;
         }
@@ -87,7 +87,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
                     ShopName_view = x.Shopname.ShopName,
                     OrganizationName_view = x.Organization.OrganizationName,
                 })
-                .OrderBy(x => x.ID);
+                .OrderByDescending(x => x.Plan_no);
             return query;
         }
 

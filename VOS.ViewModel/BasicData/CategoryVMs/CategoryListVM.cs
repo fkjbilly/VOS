@@ -52,8 +52,9 @@ namespace VOS.ViewModel.BasicData.CategoryVMs
                     Name_view = x.Parent.Name,
                     Cycle= x.Cycle,
                     CycleNum = x.CycleNum,
+                    CreateTime = x.CreateTime,
                 })
-                .OrderBy(x => x.ID);
+                .OrderByDescending(x => x.CreateTime.Value);
             return query;
         }
 
