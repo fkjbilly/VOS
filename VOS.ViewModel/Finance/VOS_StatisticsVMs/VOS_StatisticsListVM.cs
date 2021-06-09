@@ -73,7 +73,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
             else {
                 Sum = CommissionModel.HeadquartersPrice * entity.discount;
             }
-            return Sum.ToString();
+            return Sum.ToString("0.00");
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                 return "0";
             }
             double Sum = entity.TaskType == TaskType.隔天 ? CommissionModel.proxyCommission + CommissionModel.proxySeparate : CommissionModel.proxyCommission;
-            return Sum.ToString();
+            return Sum.ToString("0.00");
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
             {
                 return "0";
             }
-            return CommissionModel.memberCommission.ToString();
+            return CommissionModel.memberCommission.ToString("0.00");
         }
 
         public VOS_Commission GetDiscount(double CommodityPrice)
