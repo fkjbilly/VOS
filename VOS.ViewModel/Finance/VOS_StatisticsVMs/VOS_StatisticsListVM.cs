@@ -60,7 +60,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
 
             };
             if (ExpandBaseVM.IsSuperAdministrator(this,LoginUserInfo.Id)) {
-                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName).SetSort(true));
+                data.Insert(data.Count(), this.MakeGridHeader(x => x.OrganizationName).SetSort(true));
             }
             return data;
         }
