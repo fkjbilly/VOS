@@ -164,14 +164,27 @@ namespace VOS.Controllers
         [ActionDescription("BatchEdit")]
         public ActionResult DoBatchEdit(VOS_UserBatchVM vm, IFormCollection nouse)
         {
-            if (!ModelState.IsValid || !vm.DoBatchEdit())
+            using (var transaction = DC.BeginTransaction())
             {
-                return PartialView("BatchEdit", vm);
+                try
+                {
+                    var UserList = DC.Set<VOS_User>().Where(x => vm.Ids.Contains(x.ID.ToString())).ToList();
+                    foreach (var item in UserList)
+                    {
+                        item.Password = Utils.GetMD5String(GetAppointValue(vm.FC, "LinkedVM.Password").ToString());
+                        DC.Set<VOS_User>().Update(item);
+                    }
+                    DC.SaveChanges();
+                    transaction.Commit();
+                    return FFResult().CloseDialog().Alert("已修改");
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return FFResult().CloseDialog().RefreshGridRow(vm.Ids[0]).Alert("修改密码失败");
+                }
             }
-            else
-            {
-                return FFResult().CloseDialog().RefreshGrid().Alert(WalkingTec.Mvvm.Core.Program._localizer?["OprationSuccess"]);
-            }
+
         }
         #endregion
 
@@ -235,16 +248,16 @@ namespace VOS.Controllers
         {
             try
             {
-                var _User = DC.Set<VOS_User>().Where(x => x.ID == vm.Entity.ID).SingleOrDefault();
-                _User.Password = Utils.GetMD5String(vm.Entity.Password);
-                DC.Set<VOS_User>().Update(_User).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                var UserObj = DC.Set<VOS_User>().Where(x => x.ID == vm.Entity.ID).SingleOrDefault();
+                UserObj.Password = Utils.GetMD5String(vm.Entity.Password);
+                DC.Set<VOS_User>().Update(UserObj).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 DC.SaveChanges();
                 return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID);
             }
             catch (Exception)
             {
                 return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID).Alert("修改密码失败");
-            }        
+            }
         }
 
         #endregion

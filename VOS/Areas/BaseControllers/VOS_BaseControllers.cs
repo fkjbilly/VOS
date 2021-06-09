@@ -18,9 +18,9 @@ namespace VOS.Areas.BaseControllers
         {
             get
             {
-                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-                if (b.RoleName.Equals("超级管理员"))
+                var RoleId = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => x.RoleId).FirstOrDefault();
+                var RoleObj = DC.Set<FrameworkRole>().Where(x => x.ID == RoleId).FirstOrDefault();
+                if (RoleObj != null && RoleObj.RoleName.Equals("超级管理员"))
                 {
                     return true;
                 }

@@ -15,25 +15,6 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
 {
     public partial class VOS_PEmployeeListVM : BasePagedListVM<VOS_PEmployee_View, VOS_PEmployeeSearcher>
     {
-        /// <summary>
-        /// 是否是管理员登录
-        /// </summary>
-        private bool IsSuperAdministrator
-        {
-            get
-            {
-                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-                if (b.RoleName.Equals("超级管理员"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
 
         /// <summary>
         /// 是否显示
@@ -121,13 +102,13 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                         return "";
                     }).SetForeGroundFunc((x)=>{
                         return "#FFFFFF";
-                    }),
+                    }).SetSort(true),
                     this.MakeGridHeader(x => x.CreateBy),
                     this.MakeGridHeader(x => x.CreateTime).SetSort(true),
                     this.MakeGridHeaderAction(width: 200)
                 };
             }
-            if (IsSuperAdministrator)
+            if (ExpandBaseVM.IsSuperAdministrator(this, LoginUserInfo.Id))
             {
                 data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }
@@ -175,17 +156,18 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                    .CheckBetween(Searcher.StartTime, Searcher.EndTime, x => x.CreateTime, includeMax: false)
                    .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID);
             #endregion
+            //分配会员模式下
             if (SearcherMode == ListVMSearchModeEnum.Custom1)
             {
                 query = query.Where(x => x.PEstate == state.正常);
-                var _Task_EmployeeId = DC.Set<VOS_Task>().Where(x => x.ID.ToString().Equals(MemoryCacheHelper.Set_TaskID)).FirstOrDefault().EmployeeId;
-                if (_Task_EmployeeId != null)
+                var TaskObj = DC.Set<VOS_Task>().Where(x => x.ID.ToString().Equals(MemoryCacheHelper.Set_TaskID)).FirstOrDefault();
+                if (TaskObj != null)
                 {//已分配
-                    query = query.Where(x => x.ID.ToString().Equals(_Task_EmployeeId.ToString()));
+                    query = query.Where(x => x.ID.ToString().Equals(TaskObj.EmployeeId.ToString()));
                     button_show = true;
                 }
                 else
-                {
+                {//未分配
                     if (string.IsNullOrEmpty(Searcher.FullName) &&
                         string.IsNullOrEmpty(Searcher.Mobile) &&
                         string.IsNullOrEmpty(Searcher.TaobaAccount) &&
@@ -198,7 +180,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 }
             }
             else
-            {
+            {//
                 if (string.IsNullOrEmpty(Searcher.FullName) &&
                         string.IsNullOrEmpty(Searcher.Mobile) &&
                         string.IsNullOrEmpty(Searcher.TaobaAccount) &&
@@ -206,11 +188,10 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                         string.IsNullOrEmpty(Searcher.CreateBy) &&
                         string.IsNullOrEmpty(Searcher.WeChat))
                 {
-                    const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
-                    var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-                    var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-                    if (list.IndexOf(b.RoleName) < 0)
+                    
+                    if (ExpandBaseVM.NotInContainRoles(this, LoginUserInfo.Id))
                     {
+                        //显示创建
                         query = query.Where(x => x.CreateBy.Equals(LoginUserInfo.ITCode));
                     }
                 }
@@ -232,11 +213,11 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                 CreateBy = x.CreateBy,
                 CreateTime = x.CreateTime,
                 OrganizationName_view = x.Organization.OrganizationName,
-                QQAccount=x.QQAccount,
-            }).OrderByDescending(x => x.CreateTime);
+                QQAccount = x.QQAccount,
+            }).OrderBy(x => x.PEstate).ThenByDescending(x => x.CreateTime.Value);
         }
 
-      
+
 
     }
 

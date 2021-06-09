@@ -13,25 +13,7 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
 {
     public partial class VOS_CustomerListVM : BasePagedListVM<VOS_Customer_View, VOS_CustomerSearcher>
     {
-        /// <summary>
-        /// 是否是超级管理员登录
-        /// </summary>
-        private bool IsSuperAdministrator
-        {
-            get
-            {
-                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-                if (b.RoleName.Equals("超级管理员"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+       
         protected override List<GridAction> InitGridAction()
         {
             return new List<GridAction>
@@ -69,7 +51,7 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
                 this.MakeGridHeader(x => x.discount),
                 this.MakeGridHeaderAction(width: 200)
             };
-            if (IsSuperAdministrator)
+            if (ExpandBaseVM.IsSuperAdministrator(this, LoginUserInfo.Id))
             {
                 data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }

@@ -273,6 +273,7 @@ namespace VOS.Controllers
         {
             ViewBag.id = id;
             var vm = CreateVM<VOS_PEmployeeListVM>();
+            //分配会员模式
             vm.SearcherMode = ListVMSearchModeEnum.Custom1;
             ViewBag.IsShow = IsSuperAdministrator;
             MemoryCacheHelper.Set_TaskID = id;

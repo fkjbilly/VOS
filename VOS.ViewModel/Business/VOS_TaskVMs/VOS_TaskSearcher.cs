@@ -87,15 +87,15 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             .CheckContain(Member, x => x.Employee.FullName)
             .CheckContain(ExecutorName, x => x.Executor.Name)
             .Where(x => x.IsValid == true);
-            const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
-            var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-            var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-            if (list.IndexOf(b.RoleName) < 0)
-            {
-                query = query.Where(x => x.ExecutorId.ToString() == LoginUserInfo.Id.ToString());
-            }
-            else
-            {
+            const string ContainRoles = "超级管理员,管理员,财务管理,财务,会计管理,会计";
+            var FrameworkUserRole = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
+            if (FrameworkUserRole != null) {
+                var FrameworkRole = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == FrameworkUserRole.RoleId.ToString()).FirstOrDefault();
+                if (FrameworkRole != null && ContainRoles.IndexOf(FrameworkRole.RoleName) < 0)
+                {
+                    query = query.Where(x => x.ExecutorId.ToString() == LoginUserInfo.Id.ToString());
+                }
+            }else{
                 query = query.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID);
             }
             var data = query.Where(x => x.IsValid == true).Select(x => x.Plan.Shopname.ID).ToList().Distinct();

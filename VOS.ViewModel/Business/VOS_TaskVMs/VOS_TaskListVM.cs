@@ -40,16 +40,17 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     this.MakeStandardAction("VOS_Task", GridActionStandardTypesEnum.ExportExcel, Localizer["Export"], "Business"),
                 };
             }
-            else {
+            else
+            {
                 return null;
-            }
+            } 
         }
 
         protected override IEnumerable<IGridColumn<VOS_Task_View>> InitGridHeader()
         {
-            var _TaskList = SearcherMode switch
+            return SearcherMode switch
             {
-                ListVMSearchModeEnum.MasterDetail =>
+                _ when SearcherMode == ListVMSearchModeEnum.MasterDetail =>
                     new List<GridColumn<VOS_Task_View>>{
                     this.MakeGridHeader(x => x.Task_no),
                     this.MakeGridHeader(x => x.TaskType).SetWidth(90),
@@ -58,18 +59,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     this.MakeGridHeader(x => x.DistributionTime),
                     this.MakeGridHeader(x=>x._executorName).SetWidth(100),
                     },
-                ListVMSearchModeEnum.CheckExport => new List<GridColumn<VOS_Task_View>>{
-                    this.MakeGridHeader(x => x._method),
-                    this.MakeGridHeader(x => x._ShopName),
-                    this.MakeGridHeader(x => x.CommodityPrice),
-                    this.MakeGridHeader(x => x._keyword),
-                    this.MakeGridHeader(x => x.SKU),
-                    this.MakeGridHeader(x => x._Wangwang),
-                    this.MakeGridHeader(x => x._OddNumbers),
-                    this.MakeGridHeader(x=>x._executorName),
-                    this.MakeGridHeader(x => x.OrderState),
-                    this.MakeGridHeader(x => x.CompleteTime),
-                },
+                _ when SearcherMode == ListVMSearchModeEnum.CheckExport || SearcherMode ==
                 ListVMSearchModeEnum.Export => new List<GridColumn<VOS_Task_View>>{
                     this.MakeGridHeader(x => x._method),
                     this.MakeGridHeader(x => x._ShopName),
@@ -135,26 +125,19 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     this.MakeGridHeaderAction(width: 165),
                 }
             };
-            return _TaskList;
         }
 
         private string VOrderCodeFormat(VOS_Task_View entity, object val)
         {
             if (SearcherMode == ListVMSearchModeEnum.Custom2)
             {
-                switch (entity.OrderState)
+                return entity.OrderState switch
                 {
-                    case OrderState.未分配:
-                    case OrderState.已分配:
-                        return entity.VOrderCode;
-                    case OrderState.进行中:
-                        return "<input type='text' title='双击填写单号' placeholder='双击填写单号' value='" + entity.VOrderCode + "' readonly data-code='" + entity.ID + "' class='layui-input brushAlone' style='width:150px;' />";
-                    case OrderState.已完成:
-                    case OrderState.已返款:
-                        return entity.VOrderCode;
-                    default:
-                        return "";
-                }
+                    _ when entity.OrderState == OrderState.未分配 || entity.OrderState == OrderState.已分配 => entity.VOrderCode,
+                    _ when entity.OrderState == OrderState.进行中 => "<input type='text' title='双击填写单号' placeholder='双击填写单号' value='" + entity.VOrderCode + "' readonly data-code='" + entity.ID + "' class='layui-input brushAlone' style='width:150px;' />",
+                    _ when entity.OrderState == OrderState.已完成 || entity.OrderState == OrderState.已返款 => entity.VOrderCode,
+                    _ => ""
+                };
             }
             else
             {
@@ -181,10 +164,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             .Where(x => x.IsValid == true);
             if (SearcherMode != ListVMSearchModeEnum.MasterDetail)
             {
-                const string list = "超级管理员,管理员,财务管理,财务,会计管理,会计";
-                var a = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-                var b = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == a.RoleId.ToString()).FirstOrDefault();
-                if (list.IndexOf(b.RoleName) < 0)
+                if (ExpandBaseVM.NotInContainRoles(this,LoginUserInfo.Id))
                 {
                     query = query.Where(x => x.ExecutorId.Equals(LoginUserInfo.Id));
                 }

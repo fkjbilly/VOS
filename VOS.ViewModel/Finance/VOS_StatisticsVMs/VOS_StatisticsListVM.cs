@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using VOS.Model;
 using WalkingTec.Mvvm.Core;
 using WalkingTec.Mvvm.Core.Extensions;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using VOS.Model;
-using System.Threading;
 
 namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
 {
@@ -34,7 +33,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
 
         protected override IEnumerable<IGridColumn<VOS_Statistics_View>> InitGridHeader()
         {
-            return new List<GridColumn<VOS_Statistics_View>>{
+            var data = new List<GridColumn<VOS_Statistics_View>>{
                     this.MakeGridHeader(x => x.TaskType).SetWidth(80),
                     this.MakeGridHeader(x => x.ShopName),
                     this.MakeGridHeader(x => x.Plan).SetSort(true),
@@ -45,6 +44,10 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     this.MakeGridHeader(x => x.proxy).SetFormat(CalculationtProxy).SetWidth(120).SetShowTotal(true),
                     this.MakeGridHeader(x => x.member).SetFormat(CalculationtMember).SetWidth(120).SetShowTotal(true),
             };
+            if (ExpandBaseVM.IsSuperAdministrator(this,LoginUserInfo.Id)) {
+                data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName).SetSort(true));
+            }
+            return data;
         }
 
         #region 计算相关
@@ -144,6 +147,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     ShopName = x.Plan.Shopname.ShopName,
                     discount = x.Plan.Shopname.Customer.discount,
                     Plan = x.Plan.Plan_no,
+                    OrganizationName=x.Plan.Organization.OrganizationName,
                     ExecutorTime = x.DistributionTime,
                     Executor = x.Executor.Name,
                     Peice = Convert.ToDouble(x.CommodityPrice),
@@ -213,6 +217,8 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
 
         [Display(Name = "客户则扣")]
         public double discount { get; set; }
+        [Display(Name ="组织机构")]
+        public string OrganizationName { get; set; }
     }
 
     public class CalculationModel
