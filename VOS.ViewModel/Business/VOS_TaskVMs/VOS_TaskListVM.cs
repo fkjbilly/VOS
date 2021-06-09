@@ -121,7 +121,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         return color;
                     }).SetForeGroundFunc((x)=>{
                         return "#000000";
-                    }).SetWidth(102).SetSort(),
+                    }).SetWidth(102).SetSort(true),
                     this.MakeGridHeaderAction(width: 165),
                 }
             };

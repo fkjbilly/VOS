@@ -637,6 +637,18 @@ namespace VOS.Controllers
                     _plan.IsValid = true;
                     await DC.Set<VOS_Plan>().AddAsync(_plan);
                     await DC.SaveChangesAsync();
+
+                    VOS_Collection _CollectionObj = new VOS_Collection() {
+                        CreateTime=DateTime.Now,
+                        CreateBy=LoginUserInfo.ITCode,
+                        IsValid=true,
+                        Plan_noId= _plan.ID,
+                        CollectionState= CollectionState.未到账,
+                        Collection= _plan.PlanFee,
+                    };
+                    await DC.Set<VOS_Collection>().AddAsync(_CollectionObj);
+                    await DC.SaveChangesAsync();
+
                     var _Task = JsonConvert.DeserializeObject<List<VOS_Task>>(tasklist);
                     var _PlanId = _plan.ID;
                     foreach (var item in _Task)

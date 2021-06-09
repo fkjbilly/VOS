@@ -2,8 +2,10 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:searchpanel vm="@Model" reset-btn="true">
-    <wt:row items-per-row="ItemsPerRowEnum.Three">
+    <wt:row items-per-row="ItemsPerRowEnum.Four">
+        <wt:textbox field="Searcher.ShopName" empty-text="输入店铺名称"></wt:textbox>
         <wt:combobox field="Searcher.Plan_noId" items="Searcher.AllPlan_nos" empty-text="@Localizer["All"]" />
+        <wt:combobox field="Searcher.CollectionState" empty-text="@Localizer["All"]" />
         @if (@ViewBag.IsShow == true)
         {
             <wt:combobox field="Searcher.OrganizationID" items="Searcher.AllOrganization" empty-text="@Localizer["All"]" />

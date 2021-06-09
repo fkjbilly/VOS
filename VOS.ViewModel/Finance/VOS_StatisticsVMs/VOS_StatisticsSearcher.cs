@@ -31,6 +31,9 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         [Display(Name = "方法")]
         public TaskType? TaskType { get; set; }
 
+        [Display(Name = "任务状态")]
+        public OrderState? OrderState { get; set; }
+
         public List<ComboSelectListItem> AllOrganization { get; set; }
         [Display(Name = "组织机构")]
         public Guid? OrganizationID { get; set; }

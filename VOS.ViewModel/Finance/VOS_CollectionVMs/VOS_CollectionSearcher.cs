@@ -16,8 +16,15 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
         public List<ComboSelectListItem> AllOrganization { get; set; }
         [Display(Name = "计划编号")]
         public Guid? Plan_noId { get; set; }
+        [Display(Name = "任务状态")]
+        public CollectionState? CollectionState { get; set; }
+
         [Display(Name ="组织机构")]
         public Guid? OrganizationID { get; set; }
+        [Display(Name ="店铺")]
+        public string ShopName { get; set; }
+
+
         protected override void InitVM()
         {
             AllPlan_nos = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);

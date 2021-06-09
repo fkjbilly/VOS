@@ -32,9 +32,11 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
         protected override IEnumerable<IGridColumn<VOS_Collection_View>> InitGridHeader()
         {
             var data = new List<GridColumn<VOS_Collection_View>>{
+                this.MakeGridHeader(x => x.ShopName),
                 this.MakeGridHeader(x => x.Plan_no_view).SetSort(true),
                 this.MakeGridHeader(x => x.Collection),
                 this.MakeGridHeader(x => x.Remarks),
+                this.MakeGridHeader(x => x.CollectionState),
                 this.MakeGridHeaderAction(width: 200),
             };
             if (ExpandBaseVM.IsSuperAdministrator(this, LoginUserInfo.Id))
@@ -47,16 +49,20 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
         public override IOrderedQueryable<VOS_Collection_View> GetSearchQuery()
         {
             var query = DC.Set<VOS_Collection>()
+                .CheckContain(Searcher.ShopName,x=>x.Plan_no.Shopname.ShopName)
                 .CheckEqual(Searcher.Plan_noId, x => x.Plan_noId)
+                .CheckEqual(Searcher.CollectionState, x => x.CollectionState)
                 .CheckEqual(Searcher.OrganizationID, x => x.Plan_no.OrganizationID)
                 .DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan_no.OrganizationID)
                 .Select(x => new VOS_Collection_View
                 {
                     ID = x.ID,
                     Plan_no_view = x.Plan_no.Plan_no,
+                    ShopName = x.Plan_no.Shopname.ShopName,
                     Collection = x.Collection,
                     Remarks = x.Remarks,
                     OrganizationName_view = x.Plan_no.Organization.OrganizationName,
+                    CollectionState=x.CollectionState,
                 })
                 .OrderByDescending(x => x.Plan_no_view);
             return query;
@@ -72,5 +78,8 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
         [Display(Name = "组织机构")]
         public String OrganizationName_view { get; set; }
 
+        [Display(Name ="店铺")]
+        public string ShopName { get; set; }
+     
     }
 }

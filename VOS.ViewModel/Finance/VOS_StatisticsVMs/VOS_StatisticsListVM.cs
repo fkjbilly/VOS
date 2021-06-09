@@ -43,6 +43,21 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     this.MakeGridHeader(x => x.Headquarters).SetFormat(CalculationtHeadquarters).SetWidth(120).SetShowTotal(true),
                     this.MakeGridHeader(x => x.proxy).SetFormat(CalculationtProxy).SetWidth(120).SetShowTotal(true),
                     this.MakeGridHeader(x => x.member).SetFormat(CalculationtMember).SetWidth(120).SetShowTotal(true),
+                   this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
+                     string color =  x.OrderState  switch
+                        {
+                             OrderState.未分配=>"#009688",
+                             OrderState.已分配=>"#5FB878",
+                             OrderState.进行中=>"#FF5722",
+                             OrderState.已完成=>"#1E9FFF",
+                             OrderState.已返款=>"#CCFF99",
+                                             _=>""
+                        };
+                        return color;
+                    }).SetForeGroundFunc((x)=>{
+                        return "#000000";
+                    }).SetWidth(102).SetSort(true),
+
             };
             if (ExpandBaseVM.IsSuperAdministrator(this,LoginUserInfo.Id)) {
                 data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName).SetSort(true));
@@ -137,6 +152,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                 .CheckContain(Searcher.MemberName, x => x.Employee.FullName)
                 .CheckContain(Searcher.Plan_no, x => x.Plan.Plan_no)
                 .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
+                .CheckEqual(Searcher.OrderState, x => x.OrderState)
                 .CheckEqual(Searcher.TaskType, x => x.TaskType)
                 .Where(x => x.IsValid)
                 .DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID)
@@ -145,6 +161,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     ID = x.ID,
                     TaskType = x.TaskType,
                     ShopName = x.Plan.Shopname.ShopName,
+                    OrderState=x.OrderState,
                     discount = x.Plan.Shopname.Customer.discount,
                     Plan = x.Plan.Plan_no,
                     OrganizationName=x.Plan.Organization.OrganizationName,
@@ -219,6 +236,9 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         public double discount { get; set; }
         [Display(Name ="组织机构")]
         public string OrganizationName { get; set; }
+
+        [Display(Name = "任务状态")]
+        public OrderState OrderState { get; set; }
     }
 
     public class CalculationModel

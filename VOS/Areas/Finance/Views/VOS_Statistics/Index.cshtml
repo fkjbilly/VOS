@@ -2,13 +2,14 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:searchpanel vm="@Model" reset-btn="true" old-post="true">
-    <wt:row items-per-row="ItemsPerRowEnum.Three">
+    <wt:row items-per-row="ItemsPerRowEnum.Four">
         <wt:combobox field="Searcher.TaskType" empty-text="@Localizer["All"]" />
-        <wt:datetime field="Searcher.datetime" type="DateTime" range="true" empty-text="输入开始-结束时间"/>
+        <wt:datetime field="Searcher.datetime" type="DateTime" range="true" empty-text="输入开始-结束时间" />
         <wt:textbox field="Searcher.Plan_no" empty-text="输入计划编号"></wt:textbox>
         <wt:textbox field="Searcher.ShopName" empty-text="输入店铺名称"></wt:textbox>
         <wt:textbox field="Searcher.Executor" empty-text="输入执行人" />
         <wt:textbox field="Searcher.MemberName" empty-text="输入会员名称" />
+        <wt:combobox field="Searcher.OrderState" empty-text="@Localizer["All"]" />
         @if (ViewBag.IsSuperAdministrator)
         {
             <wt:combobox field="Searcher.OrganizationID" items="Searcher.AllOrganization" />

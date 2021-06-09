@@ -2,7 +2,7 @@
 @inject IStringLocalizer<WalkingTec.Mvvm.Core.Program> Localizer;
 
 <wt:searchpanel vm="@Model" reset-btn="true">
-    <wt:row items-per-row="ItemsPerRowEnum.Three">
+    <wt:row items-per-row="ItemsPerRowEnum.Four">
         <wt:combobox field="Searcher.CustomerId" items="Searcher.AllCustomers" empty-text="@Localizer["All"]" />
         <wt:textbox field="Searcher.ShopName" />
         <wt:combobox field="Searcher.ShopPlat" empty-text="@Localizer["All"]" />
