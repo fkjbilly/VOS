@@ -4,7 +4,7 @@
 <wt:searchpanel vm="@Model" reset-btn="true">
     <wt:row items-per-row="ItemsPerRowEnum.Four">
         <wt:textbox field="Searcher.ShopName" empty-text="输入店铺名称"></wt:textbox>
-        <wt:combobox field="Searcher.Plan_noId" items="Searcher.AllPlan_nos" empty-text="@Localizer["All"]" />
+        <wt:combobox field="Searcher.Plan_noId" items="Searcher.AllPlan_nos" empty-text="输入或选择计划编号" />
         <wt:combobox field="Searcher.CollectionState" empty-text="@Localizer["All"]" />
         @if (@ViewBag.IsShow == true)
         {

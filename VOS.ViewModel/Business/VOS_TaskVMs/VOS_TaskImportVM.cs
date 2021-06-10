@@ -130,7 +130,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                     transaction.Commit();
                     return base.BatchSaveData();
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
                     transaction.Rollback();
                 }

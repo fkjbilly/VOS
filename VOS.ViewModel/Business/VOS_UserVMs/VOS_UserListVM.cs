@@ -67,7 +67,7 @@ namespace VOS.ViewModel.Business.VOS_UserVMs
                     this.MakeGridHeaderAction(width: 300)
                 };
             }
-            if (ExpandBaseVM.IsSuperAdministrator(this,LoginUserInfo.Id))
+            if (ExpandVM.IsSuperAdministrator(this,LoginUserInfo.Id))
             {
                 data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetAlign(GridColumnAlignEnum.Center).SetWidth(110).SetSort(true));
             }

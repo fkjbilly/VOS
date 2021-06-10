@@ -48,7 +48,7 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
                     }).SetSort(true),
                 this.MakeGridHeaderAction(width: 200),
             };
-            if (ExpandBaseVM.IsSuperAdministrator(this, LoginUserInfo.Id))
+            if (ExpandVM.IsSuperAdministrator(this, LoginUserInfo.Id))
             {
                 data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }
@@ -73,7 +73,7 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
                     OrganizationName_view = x.Plan_no.Organization.OrganizationName,
                     CollectionState = x.CollectionState,
                 })
-                .OrderByDescending(x => x.Plan_no_view);
+                .OrderByDescending(x => x.CollectionState).ThenByDescending(x => x.Plan_no_view);
             return query;
         }
 

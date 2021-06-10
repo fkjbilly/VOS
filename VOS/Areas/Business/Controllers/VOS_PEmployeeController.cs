@@ -54,7 +54,7 @@ namespace VOS.Controllers
             if (!IsSuperAdministrator) {
                 vm.Entity.OrganizationID = GetOrganizationID;
             }
-            vm.Entity.CreateBy = LoginUserInfo.ITCode.ToString();
+            vm.Entity.CreateBy = LoginUserInfo.ITCode;
             if (!ModelState.IsValid)
             {
                 ViewBag.IsShow = IsSuperAdministrator;

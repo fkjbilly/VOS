@@ -90,16 +90,13 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                     this.MakeGridHeader(x => x.WeChatPicId).SetFormat(WeChatPicIdFormat),
                     this.MakeGridHeader(x => x.WeChatRealNamePicId).SetFormat(WeChatRealNamePicIdFormat),
                     this.MakeGridHeader(x => x.PEstate).SetBackGroundFunc((x)=>{
-                        switch (x.PEstate)
+                      return x.PEstate switch
                             {
-                                case state.休息:
-                                return "#c2c2c2";
-                                case state.正常:
-                                return "#1E9FFF";
-                                case state.黑名单:
-                                return "#393D49";
-                            }
-                        return "";
+                                state.休息=>"#c2c2c2",
+                                state.正常=>"#1E9FFF",
+                                state.黑名单=>"#393D49",
+                                _=>""
+                            };
                     }).SetForeGroundFunc((x)=>{
                         return "#FFFFFF";
                     }).SetSort(true),
@@ -108,7 +105,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                     this.MakeGridHeaderAction(width: 200)
                 };
             }
-            if (ExpandBaseVM.IsSuperAdministrator(this, LoginUserInfo.Id))
+            if (ExpandVM.IsSuperAdministrator(this, LoginUserInfo.Id))
             {
                 data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }
@@ -188,8 +185,8 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
                         string.IsNullOrEmpty(Searcher.CreateBy) &&
                         string.IsNullOrEmpty(Searcher.WeChat))
                 {
-                    
-                    if (ExpandBaseVM.NotInContainRoles(this, LoginUserInfo.Id))
+
+                    if (ExpandVM.NoContainRoles(this, LoginUserInfo.Id))
                     {
                         //显示创建
                         query = query.Where(x => x.CreateBy.Equals(LoginUserInfo.ITCode));

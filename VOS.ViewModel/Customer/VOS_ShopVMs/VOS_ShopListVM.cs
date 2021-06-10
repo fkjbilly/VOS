@@ -39,7 +39,7 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
                 this.MakeGridHeader(x => x.OpenTime).SetSort(true),
                 this.MakeGridHeaderAction(width: 200)
             };
-            if (ExpandBaseVM.IsSuperAdministrator(this, LoginUserInfo.Id))
+            if (ExpandVM.IsSuperAdministrator(this, LoginUserInfo.Id))
             {
                 data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }
@@ -73,7 +73,7 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
     public class VOS_Shop_View : VOS_Shop{
         [Display(Name = "客户名称")]
         public String cust_name_view { get; set; }
-        [Display(Name = "部门")]
+        [Display(Name = "组织机构")]
         public String OrganizationName_view { get; set; }
     }
 }

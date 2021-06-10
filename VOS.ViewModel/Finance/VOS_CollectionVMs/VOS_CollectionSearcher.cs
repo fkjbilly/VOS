@@ -27,7 +27,7 @@ namespace VOS.ViewModel.Finance.VOS_CollectionVMs
 
         protected override void InitVM()
         {
-            AllPlan_nos = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
+            AllPlan_nos = DC.Set<VOS_Plan>().DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 

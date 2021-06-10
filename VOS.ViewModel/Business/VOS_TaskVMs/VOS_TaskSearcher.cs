@@ -63,11 +63,11 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
         protected override void InitVM()
         {
             Time = new DateRange(Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")), DateTime.Now);
-            //AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             //AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             //AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
-            //AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
-            MyInitVM();
+            AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
+            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
+            //MyInitVM();
         }
 
         public void MyInitVM()
@@ -87,22 +87,19 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             .CheckContain(Member, x => x.Employee.FullName)
             .CheckContain(ExecutorName, x => x.Executor.Name)
             .Where(x => x.IsValid == true);
-            const string ContainRoles = "超级管理员,管理员,财务管理,财务,会计管理,会计";
-            var FrameworkUserRole = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => new { x.RoleId }).FirstOrDefault();
-            if (FrameworkUserRole != null) {
-                var FrameworkRole = DC.Set<FrameworkRole>().Where(x => x.ID.ToString() == FrameworkUserRole.RoleId.ToString()).FirstOrDefault();
-                if (FrameworkRole != null && ContainRoles.IndexOf(FrameworkRole.RoleName) < 0)
-                {
-                    query = query.Where(x => x.ExecutorId.ToString() == LoginUserInfo.Id.ToString());
-                }
-            }else{
+            if (ExpandVM.NoContainRoles(this, LoginUserInfo.Id))
+            {
+                query = query.Where(x => x.ExecutorId.ToString() == LoginUserInfo.Id.ToString());
+            }
+            else
+            {
                 query = query.DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID);
             }
             var data = query.Where(x => x.IsValid == true).Select(x => x.Plan.Shopname.ID).ToList().Distinct();
             string str = "";
             foreach (var item in data)
             {
-                str += item+",";
+                str += item + ",";
             }
             AllShopName = DC.Set<VOS_Shop>().DPWhere(LoginUserInfo.DataPrivileges, x => x.Customer.OrganizationID).Where(x => str.IndexOf(x.ID.ToString()) >= 0).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
 

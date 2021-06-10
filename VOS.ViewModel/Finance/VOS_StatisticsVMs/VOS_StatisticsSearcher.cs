@@ -25,8 +25,9 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         [Display(Name ="会员")]
         public string MemberName { get; set; }
 
-        [Display(Name ="计划编号")]
-        public string Plan_no { get; set; }
+        [Display(Name = "计划编号")]
+        public Guid? PlanId { get; set; }
+        public List<ComboSelectListItem> AllPlans { get; set; }
 
         [Display(Name = "方法")]
         public TaskType? TaskType { get; set; }
@@ -35,6 +36,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         public OrderState? OrderState { get; set; }
 
         public List<ComboSelectListItem> AllOrganization { get; set; }
+
         [Display(Name = "组织机构")]
         public Guid? OrganizationID { get; set; }
 
@@ -44,6 +46,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         }
 
         public void MyInitVM() {
+            AllPlans = DC.Set<VOS_Plan>().DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 

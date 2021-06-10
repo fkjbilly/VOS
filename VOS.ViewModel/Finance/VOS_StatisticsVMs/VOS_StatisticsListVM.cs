@@ -43,23 +43,23 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     this.MakeGridHeader(x => x.Headquarters).SetFormat(CalculationtHeadquarters).SetWidth(120).SetShowTotal(true),
                     this.MakeGridHeader(x => x.proxy).SetFormat(CalculationtProxy).SetWidth(120).SetShowTotal(true),
                     this.MakeGridHeader(x => x.member).SetFormat(CalculationtMember).SetWidth(120).SetShowTotal(true),
-                   this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
-                     string color =  x.OrderState  switch
-                        {
-                             OrderState.未分配=>"#009688",
-                             OrderState.已分配=>"#5FB878",
-                             OrderState.进行中=>"#FF5722",
-                             OrderState.已完成=>"#1E9FFF",
-                             OrderState.已返款=>"#CCFF99",
-                                             _=>""
-                        };
-                        return color;
+                    this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
+                        return  x.OrderState  switch
+                            {
+                                 OrderState.未分配=>"#009688",
+                                 OrderState.已分配=>"#5FB878",
+                                 OrderState.进行中=>"#FF5722",
+                                 OrderState.已完成=>"#1E9FFF",
+                                 OrderState.已返款=>"#CCFF99",
+                                                 _=>""
+                            };
                     }).SetForeGroundFunc((x)=>{
                         return "#000000";
                     }).SetWidth(102).SetSort(true),
 
             };
-            if (ExpandBaseVM.IsSuperAdministrator(this,LoginUserInfo.Id)) {
+            if (ExpandVM.IsSuperAdministrator(this, LoginUserInfo.Id))
+            {
                 data.Insert(data.Count(), this.MakeGridHeader(x => x.OrganizationName).SetSort(true));
             }
             return data;
@@ -85,10 +85,11 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
             {
                 Sum = (CommissionModel.HeadquartersPrice * entity.discount) + CommissionModel.HeadquartersSeparate;
             }
-            else {
+            else
+            {
                 Sum = CommissionModel.HeadquartersPrice * entity.discount;
             }
-            return Sum.ToString("0.00");
+            return Math.Round(Sum, 2, MidpointRounding.AwayFromZero).ToString();
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                 return "0";
             }
             double Sum = entity.TaskType == TaskType.隔天 ? CommissionModel.proxyCommission + CommissionModel.proxySeparate : CommissionModel.proxyCommission;
-            return Sum.ToString("0.00");
+            return Math.Round(Sum, 2, MidpointRounding.AwayFromZero).ToString();
         }
 
         /// <summary>
@@ -121,7 +122,8 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
             {
                 return "0";
             }
-            return CommissionModel.memberCommission.ToString("0.00");
+            
+            return Math.Round(CommissionModel.memberCommission, 2, MidpointRounding.AwayFromZero).ToString();
         }
 
         public VOS_Commission GetDiscount(double CommodityPrice)
@@ -135,7 +137,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                 }
                 return null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -150,7 +152,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                 .CheckContain(Searcher.ShopName, x => x.Plan.Shopname.ShopName)
                 .CheckContain(Searcher.Executor, x => x.Executor.Name)
                 .CheckContain(Searcher.MemberName, x => x.Employee.FullName)
-                .CheckContain(Searcher.Plan_no, x => x.Plan.Plan_no)
+                .CheckEqual(Searcher.PlanId, x => x.Plan.ID)
                 .CheckEqual(Searcher.OrganizationID, x => x.Plan.OrganizationID)
                 .CheckEqual(Searcher.OrderState, x => x.OrderState)
                 .CheckEqual(Searcher.TaskType, x => x.TaskType)
@@ -161,10 +163,10 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                     ID = x.ID,
                     TaskType = x.TaskType,
                     ShopName = x.Plan.Shopname.ShopName,
-                    OrderState=x.OrderState,
+                    OrderState = x.OrderState,
                     discount = x.Plan.Shopname.Customer.discount,
                     Plan = x.Plan.Plan_no,
-                    OrganizationName=x.Plan.Organization.OrganizationName,
+                    OrganizationName = x.Plan.Organization.OrganizationName,
                     ExecutorTime = x.DistributionTime,
                     Executor = x.Executor.Name,
                     Peice = Convert.ToDouble(x.CommodityPrice),
@@ -180,7 +182,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
         {
             var query = await GetSearchQuery().ToListAsync();
             this.CalculationModel = new CalculationModel();
-            double SumHeadquarters = 0, SumProxy = 0, SumMember = 0, SumPeice = 0;
+            (double SumHeadquarters, double SumProxy, double SumMember, double SumPeice) = (0, 0, 0, 0);
             foreach (var item in query)
             {
                 var CommissionModel = GetDiscount(item.Peice);
@@ -203,10 +205,10 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
                 //价格
                 SumPeice += item.Peice;
             }
-            CalculationModel.SumHeadquarters = SumHeadquarters.ToString("0.00");
-            CalculationModel.SumProxy = SumProxy.ToString("0.00");
-            CalculationModel.SumMember = SumMember.ToString("0.00");
-            CalculationModel.SumPeice = SumPeice.ToString("0.00");
+            CalculationModel.SumHeadquarters = Math.Round(SumHeadquarters, 2, MidpointRounding.AwayFromZero).ToString();
+            CalculationModel.SumProxy = Math.Round(SumProxy, 2, MidpointRounding.AwayFromZero).ToString();
+            CalculationModel.SumMember = Math.Round(SumMember, 2, MidpointRounding.AwayFromZero).ToString();
+            CalculationModel.SumPeice = Math.Round(SumPeice, 2, MidpointRounding.AwayFromZero).ToString();
         }
     }
 
@@ -234,7 +236,7 @@ namespace VOS.ViewModel.Finance.VOS_StatisticsVMs
 
         [Display(Name = "客户则扣")]
         public double discount { get; set; }
-        [Display(Name ="组织机构")]
+        [Display(Name = "组织机构")]
         public string OrganizationName { get; set; }
 
         [Display(Name = "任务状态")]

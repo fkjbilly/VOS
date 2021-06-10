@@ -7,13 +7,13 @@ using WalkingTec.Mvvm.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using VOS.Model;
-
+using static VOS.Model.VOS_Customer;
 
 namespace VOS.ViewModel.Customer.VOS_CustomerVMs
 {
     public partial class VOS_CustomerListVM : BasePagedListVM<VOS_Customer_View, VOS_CustomerSearcher>
     {
-       
+
         protected override List<GridAction> InitGridAction()
         {
             return new List<GridAction>
@@ -37,21 +37,20 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
                 this.MakeGridHeader(x => x.cust_level),
                 this.MakeGridHeader(x => x.cust_telephone),
                 this.MakeGridHeader(x => x.cust_flag).SetBackGroundFunc((x)=>{
-                   string color = x.cust_flag switch
+                   return x.cust_flag switch
                     {
-                        VOS_Customer.flag.正常 => "#5FB878",
-                        VOS_Customer.flag.已删除 => "#c2c2c2",
-                        VOS_Customer.flag.流失 => "#393D49",
+                        flag.正常 => "#5FB878",
+                        flag.已删除 => "#c2c2c2",
+                        flag.流失 => "#393D49",
                         _ =>"",
                     };
-                    return color;
                 }).SetSort(true),
                 this.MakeGridHeader(x => x.link_name),
                 this.MakeGridHeader(x => x.link_mobile),
                 this.MakeGridHeader(x => x.discount),
                 this.MakeGridHeaderAction(width: 200)
             };
-            if (ExpandBaseVM.IsSuperAdministrator(this, LoginUserInfo.Id))
+            if (ExpandVM.IsSuperAdministrator(this, LoginUserInfo.Id))
             {
                 data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }
@@ -90,7 +89,7 @@ namespace VOS.ViewModel.Customer.VOS_CustomerVMs
 
     public class VOS_Customer_View : VOS_Customer
     {
-        [Display(Name = "部门")]
+        [Display(Name = "组织机构")]
         public String OrganizationName_view { get; set; }
     }
 }

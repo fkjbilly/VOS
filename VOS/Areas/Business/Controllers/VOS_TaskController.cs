@@ -26,13 +26,6 @@ namespace VOS.Controllers
     [ActionDescription("任务管理")]
     public partial class VOS_TaskController : VOS_BaseControllers
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
-
-        public VOS_TaskController(IHostingEnvironment hostingEnvironment)
-        {
-            _hostingEnvironment = hostingEnvironment;
-        }
-
 
         #region Search
         [ActionDescription("Search")]
@@ -40,7 +33,6 @@ namespace VOS.Controllers
         {
             var vm = CreateVM<VOS_TaskListVM>();
             ViewBag.IsShow = IsSuperAdministrator;
-            vm.SearcherMode = ListVMSearchModeEnum.Custom2;
             return PartialView(vm);
         }
 
@@ -48,8 +40,7 @@ namespace VOS.Controllers
         public ActionResult Index(VOS_TaskListVM vm)
         {
             ViewBag.IsShow = IsSuperAdministrator;
-            vm.SearcherMode = ListVMSearchModeEnum.Custom2;
-            vm.Searcher.MyInitVM();
+            //vm.Searcher.MyInitVM();
             return PartialView(vm);
         }
 
@@ -114,36 +105,43 @@ namespace VOS.Controllers
         [ValidateFormItemOnly]
         public ActionResult Edit(VOS_TaskVM vm)
         {
-            var _task = DC.Set<VOS_Task>().Where(x => x.ID == vm.Entity.ID).FirstOrDefault();
-            _task.TaskType = vm.Entity.TaskType;
-            _task.PlanId = vm.Entity.PlanId;
-            _task.ComDis = vm.Entity.ComDis;
-            _task.CustomerService = vm.Entity.CustomerService;
-            _task.Contact = vm.Entity.Contact;
-            _task.ShopCharge = vm.Entity.ShopCharge;
-            _task.ShopChargeContact = vm.Entity.ShopChargeContact;
-            _task.ImplementStartTime = vm.Entity.ImplementStartTime;
-            _task.ImplementEndTime = vm.Entity.ImplementEndTime;
-            _task.TaskCateId = vm.Entity.TaskCateId;
-            _task.CommodityName = vm.Entity.CommodityName;
-            _task.CommodityPicId = vm.Entity.CommodityPicId;
-            _task.CommodityLink = vm.Entity.CommodityLink;
-            _task.Eweight = vm.Entity.Eweight;
-            _task.TaskFen = vm.Entity.TaskFen;
-            _task.CommodityPrice = vm.Entity.CommodityPrice;
-            _task.Commission = vm.Entity.Commission;
-            _task.OtherExpenses = vm.Entity.OtherExpenses;
-            _task.ORequirement = vm.Entity.ORequirement;
-            _task.TRequirement = vm.Entity.TRequirement;
-            _task.CRemarks = vm.Entity.CRemarks;
-            _task.AreaRequirement = vm.Entity.AreaRequirement;
-            _task.IsTP = vm.Entity.IsTP;
-            _task.SearchKeyword = vm.Entity.SearchKeyword;
-            _task.DealKeyword = vm.Entity.DealKeyword;
-            _task.SKU = vm.Entity.SKU;
-            DC.Set<VOS_Task>().Update(_task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            DC.SaveChanges();
-            return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID);
+            try
+            {
+                var _task = DC.Set<VOS_Task>().Where(x => x.ID == vm.Entity.ID).FirstOrDefault();
+                _task.TaskType = vm.Entity.TaskType;
+                _task.PlanId = vm.Entity.PlanId;
+                _task.ComDis = vm.Entity.ComDis;
+                _task.CustomerService = vm.Entity.CustomerService;
+                _task.Contact = vm.Entity.Contact;
+                _task.ShopCharge = vm.Entity.ShopCharge;
+                _task.ShopChargeContact = vm.Entity.ShopChargeContact;
+                _task.ImplementStartTime = vm.Entity.ImplementStartTime;
+                _task.ImplementEndTime = vm.Entity.ImplementEndTime;
+                _task.TaskCateId = vm.Entity.TaskCateId;
+                _task.CommodityName = vm.Entity.CommodityName;
+                _task.CommodityPicId = vm.Entity.CommodityPicId;
+                _task.CommodityLink = vm.Entity.CommodityLink;
+                _task.Eweight = vm.Entity.Eweight;
+                _task.TaskFen = vm.Entity.TaskFen;
+                _task.CommodityPrice = vm.Entity.CommodityPrice;
+                _task.Commission = vm.Entity.Commission;
+                _task.OtherExpenses = vm.Entity.OtherExpenses;
+                _task.ORequirement = vm.Entity.ORequirement;
+                _task.TRequirement = vm.Entity.TRequirement;
+                _task.CRemarks = vm.Entity.CRemarks;
+                _task.AreaRequirement = vm.Entity.AreaRequirement;
+                _task.IsTP = vm.Entity.IsTP;
+                _task.SearchKeyword = vm.Entity.SearchKeyword;
+                _task.DealKeyword = vm.Entity.DealKeyword;
+                _task.SKU = vm.Entity.SKU;
+                DC.Set<VOS_Task>().Update(_task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                DC.SaveChanges();
+                return FFResult().CloseDialog().RefreshGridRow(vm.Entity.ID);
+            }
+            catch (Exception)
+            {
+                return FFResult().CloseDialog().Alert("修改失败");
+            }
 
         }
         #endregion
@@ -668,7 +666,7 @@ namespace VOS.Controllers
                     transaction.Commit();
                     return Json(new { Msg = "已完成批量创建", icon = 1 });
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return Json(new { Msg = "批量创建有误", icon = 5 });
@@ -735,7 +733,7 @@ namespace VOS.Controllers
             {
                 try
                 {
-                    string imgPath = _hostingEnvironment.ContentRootPath + "\\VOSImg\\" + DateTime.Now.ToString("yyyy-MM-dd") + "\\";
+                    string imgPath = Directory.GetCurrentDirectory() + "\\VOSImg\\" + DateTime.Now.ToString("yyyy-MM-dd") + "\\";
                     IFormFile fileImage = Request.Form.Files["file"];
                     if (!Directory.Exists(imgPath))
                     {
@@ -765,7 +763,7 @@ namespace VOS.Controllers
                     transaction.Commit();
                     return Json(new { Msg = "success", picid = file.ID });
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return Json(new { Msg = "error", picid = "" });

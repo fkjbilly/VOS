@@ -34,7 +34,7 @@ namespace VOS.ViewModel.BasicData.CityVMs
                     return true;
                     //base.DoBatchDelete();
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
                     transaction.Rollback();
                 }

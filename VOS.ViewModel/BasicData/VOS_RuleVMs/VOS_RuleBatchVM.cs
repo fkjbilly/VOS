@@ -33,7 +33,7 @@ namespace VOS.ViewModel.BasicData.VOS_RuleVMs
                     transaction.Commit();
                     return true;//base.DoBatchDelete();
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
                     transaction.Rollback();
                 }

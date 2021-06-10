@@ -12,22 +12,14 @@ namespace VOS.Areas.BaseControllers
     public class VOS_BaseControllers : BaseController
     {
         /// <summary>
-        /// 是否是超级管理员登录
+        /// 是超级管理员登录
         /// </summary>
         protected bool IsSuperAdministrator
         {
             get
             {
-                var RoleId = DC.Set<FrameworkUserRole>().Where(x => x.UserId == LoginUserInfo.Id).Select(x => x.RoleId).FirstOrDefault();
-                var RoleObj = DC.Set<FrameworkRole>().Where(x => x.ID == RoleId).FirstOrDefault();
-                if (RoleObj != null && RoleObj.RoleName.Equals("超级管理员"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                var FrameworkRoleList = ExpandVM.GetFrameworkRoleObject(this.DC, LoginUserInfo.Id);
+                return FrameworkRoleList != null && FrameworkRoleList.Where(x => x.RoleName == "超级管理员")!.Count() > 0;
             }
         }
 

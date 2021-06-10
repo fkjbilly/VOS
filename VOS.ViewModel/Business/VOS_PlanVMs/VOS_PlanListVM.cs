@@ -40,7 +40,7 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
                 this.MakeGridHeader(x => x.Remark),
                 this.MakeGridHeaderAction(width: 200)
             };
-            if (ExpandBaseVM.IsSuperAdministrator(this, LoginUserInfo.Id))
+            if (ExpandVM.IsSuperAdministrator(this, LoginUserInfo.Id))
             {
                 data.Insert(data.Count() - 1, this.MakeGridHeader(x => x.OrganizationName_view).SetSort(true));
             }
