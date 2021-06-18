@@ -68,6 +68,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 {
                     this.SetEntityList();
                     List<VOS_Task> newList = new List<VOS_Task>();
+                    //var test = EntityList.GroupBy(x => x.VOS_Number > 1).ToList();
                     foreach (var item in EntityList)
                     {
                         //单量是否大于1
@@ -75,56 +76,10 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         {
                             for (int i = 1; i < item.VOS_Number; i++)
                             {
-                                newList.Add(new VOS_Task()
-                                {
-                                    IsValid = true,
-                                    Task_no = item.Task_no + "-" + i,
-                                    TaskType = item.TaskType,
-                                    PlanId = item.PlanId,
-                                    ComDis = item.ComDis,
-                                    ShopCharge = item.ShopCharge,
-                                    ImplementStartTime = item.ImplementStartTime,
-                                    TaskCateId = item.TaskCateId,
-                                    CommodityName = item.CommodityName,
-                                    CommodityLink = item.CommodityLink,
-                                    CommodityPrice = item.CommodityPrice,
-                                    Commission = item.Commission,
-                                    OtherExpenses = item.OtherExpenses,
-                                    TRequirement = item.TRequirement,
-                                    AreaRequirement = item.AreaRequirement,
-                                    SearchKeyword = item.SearchKeyword,
-                                    SKU = item.SKU,
-                                    EmployeeCommission = item.EmployeeCommission,
-                                    IsLock = false,
-                                    IsTP = false,
-
-                                });
+                                newList.Add(Insert_Task(item, true, i));
                             }
                         }
-                        VOS_Task vOS_Task = new VOS_Task()
-                        {
-                            IsValid = true,
-                            Task_no = item.Task_no,
-                            TaskType = item.TaskType,
-                            PlanId = item.PlanId,
-                            ComDis = item.ComDis,
-                            ShopCharge = item.ShopCharge,
-                            ImplementStartTime = item.ImplementStartTime,
-                            TaskCateId = item.TaskCateId,
-                            CommodityName = item.CommodityName,
-                            CommodityLink = item.CommodityLink,
-                            CommodityPrice = item.CommodityPrice,
-                            Commission = item.Commission,
-                            OtherExpenses = item.OtherExpenses,
-                            TRequirement = item.TRequirement,
-                            AreaRequirement = item.AreaRequirement,
-                            SearchKeyword = item.SearchKeyword,
-                            SKU = item.SKU,
-                            EmployeeCommission = item.EmployeeCommission,
-                            IsLock = false,
-                            IsTP = false,
-                        };
-                        newList.Add(vOS_Task);
+                        newList.Add(Insert_Task(item));
                     }
                     this.EntityList = newList;
                     transaction.Commit();
@@ -137,6 +92,39 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             }
             return false;
         }
+
+        /// <summary>
+        /// 添加任务
+        /// </summary>
+        /// <param name="task">任务对象</param>
+        /// <param name="IsMultiple">是多个添加</param>
+        /// <param name="record">【IsMultiple：true】重新赋值任务编号</param>
+        private VOS_Task Insert_Task(VOS_Task task, bool IsMultiple = false, int record = 0)
+        {
+            VOS_Task _Taskr = new VOS_Task();
+            _Taskr.IsValid = true;
+            _Taskr.Task_no = IsMultiple ? task.Task_no + (record + 1) : task.Task_no;
+            _Taskr.TaskType = task.TaskType;
+            _Taskr.PlanId = task.PlanId;
+            _Taskr.ComDis = task.ComDis;
+            _Taskr.ShopCharge = task.ShopCharge;
+            _Taskr.ImplementStartTime = task.ImplementStartTime;
+            _Taskr.TaskCateId = task.TaskCateId;
+            _Taskr.CommodityName = task.CommodityName;
+            _Taskr.CommodityLink = task.CommodityLink;
+            _Taskr.CommodityPrice = task.CommodityPrice;
+            _Taskr.Commission = task.Commission;
+            _Taskr.OtherExpenses = task.OtherExpenses;
+            _Taskr.TRequirement = task.TRequirement;
+            _Taskr.AreaRequirement = task.AreaRequirement;
+            _Taskr.SearchKeyword = task.SearchKeyword;
+            _Taskr.SKU = task.SKU;
+            _Taskr.EmployeeCommission = task.EmployeeCommission;
+            _Taskr.IsLock = true;
+            _Taskr.IsTP = false;
+            return _Taskr;
+        }
+
     }
 
 }

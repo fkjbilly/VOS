@@ -40,7 +40,7 @@ namespace VOS.Controllers
         public ActionResult Index(VOS_TaskListVM vm)
         {
             ViewBag.IsShow = IsSuperAdministrator;
-            //vm.Searcher.MyInitVM();
+            vm.Searcher.MyInitVM();
             return PartialView(vm);
         }
 
@@ -618,55 +618,80 @@ namespace VOS.Controllers
             vm.Entity.Plan_no = "P" + DateTime.Now.ToString("yyyyMMddHHmmss");
             vm.Entity.PlanSatrtTime = DateTime.Now;
             vm.Entity.PlanEndTime = DateTime.Now.AddDays(+1);
+            ViewBag.IsShow = IsSuperAdministrator;
             return PartialView(vm);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="plan"></param>
+        /// <param name="tasklist"></param>
+        /// <param name="SelectOrInsert">true 则无须创建计划编号</param>
+        /// <returns></returns>
         [HttpPost]
         [ActionDescription("批量创建操作")]
-        public async Task<ActionResult> DoBatchCreation(string plan, string tasklist)
+        public async Task<ActionResult> DoBatchCreation(string plan, string tasklist, bool SelectOrInsert)
         {
             using (var transaction = DC.BeginTransaction())
             {
                 try
                 {
                     var _plan = JsonConvert.DeserializeObject<VOS_Plan>(plan);
-                    _plan.CreateTime = DateTime.Now;
-                    _plan.CreateBy = LoginUserInfo.ITCode;
-                    _plan.IsValid = true;
-                    await DC.Set<VOS_Plan>().AddAsync(_plan);
-                    await DC.SaveChangesAsync();
+                    if (!SelectOrInsert)
+                    {
+                        _plan.OrganizationID = IsSuperAdministrator ? _plan.OrganizationID : GetOrganizationID;
+                        _plan.CreateTime = DateTime.Now;
+                        _plan.CreateBy = LoginUserInfo.ITCode;
+                        _plan.IsValid = true;
+                        await DC.Set<VOS_Plan>().AddAsync(_plan);
+                        await DC.SaveChangesAsync();
 
-                    VOS_Collection _CollectionObj = new VOS_Collection() {
-                        CreateTime=DateTime.Now,
-                        CreateBy=LoginUserInfo.ITCode,
-                        IsValid=true,
-                        Plan_noId= _plan.ID,
-                        CollectionState= CollectionState.未到账,
-                        Collection= _plan.PlanFee,
-                    };
-                    await DC.Set<VOS_Collection>().AddAsync(_CollectionObj);
-                    await DC.SaveChangesAsync();
+                        VOS_Collection _CollectionObj = new VOS_Collection()
+                        {
+                            CreateTime = DateTime.Now,
+                            CreateBy = LoginUserInfo.ITCode,
+                            IsValid = true,
+                            Plan_noId = _plan.ID,
+                            CollectionState = CollectionState.未到账,
+                            Collection = _plan.PlanFee,
+                        };
+                        await DC.Set<VOS_Collection>().AddAsync(_CollectionObj);
+                        await DC.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        _plan = DC.Set<VOS_Plan>().Where(x => x.Plan_no == _plan.Plan_no).FirstOrDefault();
+                    }
 
                     var _Task = JsonConvert.DeserializeObject<List<VOS_Task>>(tasklist);
+
                     var _PlanId = _plan.ID;
                     foreach (var item in _Task)
                     {
-                        if (item.VOS_Number > 1)
+
+                        if (item.isSelect)
                         {
-                            for (int i = 0; i < item.VOS_Number; i++)
-                            {
-                                await Insert_Task(item, _PlanId, true, i);
-                            }
+                            await Insert_Task(item, _PlanId, true);
                         }
                         else
                         {
-                            await Insert_Task(item, _PlanId);
+                            if (item.VOS_Number > 1)
+                            {
+                                for (int i = 0; i < item.VOS_Number; i++)
+                                {
+                                    await Insert_Task(item, _PlanId, false, true, i);
+                                }
+                            }
+                            else
+                            {
+                                await Insert_Task(item, _PlanId);
+                            }
                         }
                     }
                     transaction.Commit();
                     return Json(new { Msg = "已完成批量创建", icon = 1 });
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     transaction.Rollback();
                     return Json(new { Msg = "批量创建有误", icon = 5 });
@@ -691,38 +716,60 @@ namespace VOS.Controllers
         }
 
         /// <summary>
-        /// 添加任务
+        /// 添加or修改 任务
         /// </summary>
         /// <param name="task">任务对象</param>
         /// <param name="_PlanId">计划编号</param>
+        /// <param name="isSelect">修改或添加</param>
         /// <param name="IsMultiple">是否多个添加</param>
         /// <param name="record">【IsMultiple：true】重新赋值任务编号</param>
-        private async Task Insert_Task(VOS_Task task, Guid _PlanId, bool IsMultiple = false, int record = 0)
+        /// <returns></returns>
+        private async Task Insert_Task(VOS_Task task, Guid _PlanId, bool isSelect = false, bool IsMultiple = false, int record = 0)
         {
-            string _Task_no = "T" + DateTime.Now.ToString("MMdd") + task.Task_no;
-            VOS_Task _Taskr = new VOS_Task();
-            _Taskr.CommodityLink = task.CommodityLink;
-            _Taskr.CommodityName = task.CommodityName;
-            _Taskr.CommodityPrice = task.CommodityPrice;
-            _Taskr.ImplementStartTime = task.ImplementStartTime;
-            _Taskr.SKU = task.SKU;
-            _Taskr.TaskType = task.TaskType;
-            _Taskr.Task_no = IsMultiple ? _Task_no + (record + 1) : _Task_no;
-            _Taskr.TaskCateId = task.TaskCateId;
-            _Taskr.CommodityPicId = new Guid(task.ImgCommodityPicId);
-            _Taskr.SearchKeyword = task.SearchKeyword;
-            _Taskr.ComDis = "/";
-            _Taskr.Commission = "1";
-            _Taskr.OtherExpenses = "1";
-            _Taskr.PlanId = _PlanId;
-            _Taskr.CreateBy = LoginUserInfo.ITCode;
-            _Taskr.CreateTime = DateTime.Now;
-            _Taskr.IsValid = true;
-            _Taskr.IsLock = true;
-            _Taskr.UnlockerId = LoginUserInfo.Id;
-            _Taskr.UnlockTime = DateTime.Now;
-            await DC.Set<VOS_Task>().AddAsync(_Taskr);
-            await DC.SaveChangesAsync();
+            VOS_Task _Taskr = null;
+            if (isSelect)
+            {
+                _Taskr = DC.Set<VOS_Task>().Where(x => x.ID == task.ID).FirstOrDefault();
+
+                _Taskr.TaskType = task.TaskType;
+                _Taskr.ImplementStartTime = task.ImplementStartTime;
+                _Taskr.TaskCateId = task.TaskCateId;
+                _Taskr.CommodityName = task.CommodityName;
+                _Taskr.CommodityPicId = task.ImgCommodityPicId == "1" ? _Taskr.CommodityPicId : new Guid(task.ImgCommodityPicId);
+                _Taskr.CommodityLink = task.CommodityLink;
+                _Taskr.CommodityPrice = task.CommodityPrice;
+                _Taskr.SKU = task.SKU;
+                _Taskr.SearchKeyword = task.SearchKeyword;
+                await DC.SaveChangesAsync();
+            }
+            else
+            {
+                string _Task_no = "T" + DateTime.Now.ToString("MMdd") + task.Task_no;
+                _Taskr = new VOS_Task();
+                _Taskr.CommodityLink = task.CommodityLink;
+                _Taskr.CommodityName = task.CommodityName;
+                _Taskr.CommodityPrice = task.CommodityPrice;
+                _Taskr.ImplementStartTime = task.ImplementStartTime;
+                _Taskr.SKU = task.SKU;
+                _Taskr.TaskType = task.TaskType;
+                _Taskr.Task_no = IsMultiple ? _Task_no + (record + 1) : _Task_no;
+                _Taskr.TaskCateId = task.TaskCateId;
+                _Taskr.CommodityPicId = new Guid(task.ImgCommodityPicId);
+                _Taskr.SearchKeyword = task.SearchKeyword;
+                _Taskr.ComDis = "/";
+                _Taskr.Commission = "1";
+                _Taskr.OtherExpenses = "1";
+                _Taskr.PlanId = _PlanId;
+                _Taskr.CreateBy = LoginUserInfo.ITCode;
+                _Taskr.CreateTime = DateTime.Now;
+                _Taskr.IsValid = true;
+                _Taskr.IsLock = true;
+                _Taskr.UnlockerId = LoginUserInfo.Id;
+                _Taskr.UnlockTime = DateTime.Now;
+                await DC.Set<VOS_Task>().AddAsync(_Taskr);
+                await DC.SaveChangesAsync();
+            }
+
         }
 
         [HttpPost]
@@ -772,8 +819,70 @@ namespace VOS.Controllers
 
         }
 
-        #endregion
+        [HttpPost]
+        [ActionDescription("批量创建查询")]
+        public ActionResult SearchBatchCreation(string SearchBatchCreationModelJson)
+        {
+            var SearchBatchCreationModel = JsonConvert.DeserializeObject<BatchCreationModel>(SearchBatchCreationModelJson);
 
+            if (SearchBatchCreationModel.OrganizationID == null)
+            {
+                SearchBatchCreationModel.OrganizationID = GetOrganizationID;
+            }
+
+            var PlanObject = DC.Set<VOS_Plan>()
+                .CheckEqual(SearchBatchCreationModel.OrganizationID, x => x.OrganizationID)
+                .CheckEqual(SearchBatchCreationModel.ShopnameId, x => x.ShopnameId)
+                .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID)
+                .Where(x => x.IsValid)
+                .OrderByDescending(x => x.CreateTime.Value).Select(x => new
+                {
+                    ID = x.ID,
+                    Plan_no = x.Plan_no,
+                    PlanSatrtTime = x.PlanSatrtTime.ToString("yyyy-MM-dd"),
+                    PlanEndTime = x.PlanEndTime.ToString("yyyy-MM-dd"),
+                    PlanFee = x.PlanFee,
+                    OrganizationID = x.OrganizationID,
+                }).FirstOrDefault();
+            if (PlanObject != null)
+            {
+                var TaskList = DC.Set<VOS_Task>().DPWhere(LoginUserInfo.DataPrivileges, x => x.Plan.OrganizationID).Where(x => x.IsValid && x.PlanId == PlanObject.ID).Select(x => new
+                {
+                    ID = x.ID
+                    ,
+                    Task_no = x.Task_no
+                    ,
+                    TaskType = x.TaskType.ToString()
+                    ,
+                    TaskVal = x.TaskType
+                    ,
+                    ImplementStartTime = x.ImplementStartTime.ToString("yyyy-MM-dd")
+                    ,
+                    ImplementEndTime = x.ImplementEndTime == Convert.ToDateTime("0001-01-01") ? null : x.ImplementEndTime.ToString("yyyy-MM-dd")
+                    ,
+                    Name_view = x.TaskCate.Name
+                    ,
+                    TaskCateId = x.TaskCateId
+                    ,
+                    CommodityName = x.CommodityName
+                    ,
+                    CommodityPicUrl = "/_Framework/GetFile?id=" + x.CommodityPic.ID + "&stream=true&_DONOT_USE_CS=default"
+                    ,
+                    CommodityLink = x.CommodityLink
+                    ,
+                    CommodityPrice = x.CommodityPrice
+                    ,
+                    sku = x.SKU
+                    ,
+                    SearchKeyword = x.SearchKeyword
+                }).ToList();
+                return Json(new { PlanObject, TaskList });
+            }
+
+            return Json(new { PlanObject });
+        }
+
+        #endregion
 
         [ActionDescription("Export")]
         [HttpPost]
@@ -781,6 +890,13 @@ namespace VOS.Controllers
         {
             return vm.GetExportData();
         }
+    }
 
+    class BatchCreationModel
+    {
+        public Guid? OrganizationID { get; set; }
+        public Guid? ShopnameId { get; set; }
+        public DateTime? PlanSatrtTime { get; set; }
+        public DateTime? PlanEndTime { get; set; }
     }
 }

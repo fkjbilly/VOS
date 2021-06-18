@@ -158,7 +158,7 @@ namespace VOS.ViewModel.Business.VOS_PEmployeeVMs
             {
                 query = query.Where(x => x.PEstate == state.正常);
                 var TaskObj = DC.Set<VOS_Task>().Where(x => x.ID.ToString().Equals(MemoryCacheHelper.Set_TaskID)).FirstOrDefault();
-                if (TaskObj != null)
+                if (TaskObj.EmployeeId != null)
                 {//已分配
                     query = query.Where(x => x.ID.ToString().Equals(TaskObj.EmployeeId.ToString()));
                     button_show = true;

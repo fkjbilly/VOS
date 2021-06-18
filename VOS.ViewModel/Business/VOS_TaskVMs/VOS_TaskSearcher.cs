@@ -62,12 +62,12 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
 
         protected override void InitVM()
         {
-            Time = new DateRange(Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")), DateTime.Now);
+            Time = new DateRange(Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")), DateTime.Now.AddHours(3));
             //AllDistributors = DC.Set<FrameworkUserBase>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.CodeAndName);
             //AllEmployees = DC.Set<VOS_PEmployee>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.FullName);
-            AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
-            AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
-            //MyInitVM();
+            //AllPlans = DC.Set<VOS_Plan>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.Plan_no);
+            //AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
+            MyInitVM();
         }
 
         public void MyInitVM()

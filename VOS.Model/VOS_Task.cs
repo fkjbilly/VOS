@@ -195,8 +195,11 @@ namespace VOS.Model
         [Display(Name = "单量")]
         [NotMapped]
         [RegularExpression(@"^[1-9]\d*$", ErrorMessage = "请输入正确单量")]
-        public int? VOS_Number { get; set; }
+        public int? VOS_Number { get; set; } = 1;
         [NotMapped]
         public string ImgCommodityPicId { get; set; }
+
+        [NotMapped]
+        public bool isSelect { get; set; }
     }
 }
