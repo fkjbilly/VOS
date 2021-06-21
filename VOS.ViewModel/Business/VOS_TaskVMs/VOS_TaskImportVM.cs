@@ -68,7 +68,6 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 {
                     this.SetEntityList();
                     List<VOS_Task> newList = new List<VOS_Task>();
-                    //var test = EntityList.GroupBy(x => x.VOS_Number > 1).ToList();
                     foreach (var item in EntityList)
                     {
                         //单量是否大于1

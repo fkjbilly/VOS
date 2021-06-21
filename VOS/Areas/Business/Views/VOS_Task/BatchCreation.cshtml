@@ -41,9 +41,9 @@
             <wt:textbox field="Entity.PlanFee" default-value="1" />
         </wt:row>
         <wt:row align="AlignEnum.Right">
-            <wt:button style="width: 10%; float: left; margin-right: 10px; color: #000000;" class="layui-btn layui-btn-radius" text="创建一行" click="CreateTB()"></wt:button>
+            <wt:button style="width: 10%; float: left; margin-right: 10px; color: #000000;" class="layui-btn layui-btn-radius" text="创建一行" click="Create()"></wt:button>
 
-            <wt:button style="width: 10%; float: left; color: #000000;" class="layui-btn layui-btn-radius layui-btn-warm" text="查询店铺计划" click="SelectShop()"></wt:button>
+            <wt:button style="width: 10%; float: left; color: #000000;" class="layui-btn layui-btn-radius layui-btn-warm" text="查询店铺计划" click="SearchShop()"></wt:button>
 
             <wt:button id="SaveTask" style="width: 10%; margin-right: 10px; color: #000000; " text="提交" class="layui-btn layui-btn-radius layui-btn-normal"></wt:button>
 
@@ -66,7 +66,6 @@
                     <th>关键字</th>
                     <th style="width:75px;">单量</th>
                     <th>操作</th>
-                    <th style="display:none">是否查询</th>
                 </tr>
             </thead>
             <tbody id="layui_table"></tbody>
@@ -80,24 +79,11 @@
 <script type="text/javascript">
     layui.use(['upload', 'layer'], function () {
             layer = layui.layer
-            , upload = layui.upload;
-
+            , upload = layui.upload
+            , form = layui.form;
     });
     let RowIndex = 1
-        , SelectOrInsert = false
         , htmloption//类目下拉
-        , TaskTypeVal = 0
-        , TaskTypeTex = "其他"//方法
-        , StartTime//执行开始
-        , TaskCateTex = "请选择"//类目
-        , TaskCateVal = "-"
-        , CommodityName = "-"//商品名称
-        , CommodityPrice = 0.01//商品价格
-        , CommodityLink = "-"//商品链接
-        , base64 = "images/logo.png"
-        , picid="1"
-        , sku = "-"
-        , keyword = "-"
         ,_url = '@Url.Action("DoBatchCreation", "VOS_Task")'
         , imgurl = '@Url.Action("ImgSave", "VOS_Task")';
     $(function () {
@@ -113,8 +99,8 @@
         });
     });
 
-    function CreateTB() {
-        if ($("#VOS_PlanVM_Entity_PlanSatrtTime").val() == ""
+    function Create() {
+         if ($("#VOS_PlanVM_Entity_PlanSatrtTime").val() == ""
             || $("#VOS_PlanVM_Entity_PlanEndTime").val() == ""
             || $("#VOS_PlanVM_Entity_PlanFee").val() == ""
             || $("#VOS_PlanVM_Entity_OrganizationID").val() == ""
@@ -122,10 +108,52 @@
             layer.msg("请将上部分填写完毕");
             return false;
         }
-        layer.msg("已创建一行，共 " + ($("#layui_table tr").length + 1) +" 行");
         $("#SaveTask").removeClass("layui-btn-disabled").addClass("layui-btn-radius layui-btn-normal");
-        CreateTr(GetTask_no(), TaskTypeTex, TaskTypeVal, GetDate(), TaskCateTex, TaskCateVal, CommodityName, base64, CommodityLink, CommodityPrice, sku, keyword);
-        RowIndex++;
+
+        if ($("#layui_table tr").length <= 0) {
+            let obj = {
+                CommodityLink: "-"
+                , CommodityName: "-"
+                , CommodityPicID: "1"
+                , CommodityPicUrl: "images/logo.png"
+                , CommodityPrice: "0.01"
+                , ImplementStartdate: GetDate()
+                , SKU: "-"
+                , SearchKeyword: "-"
+                , TaskCateId: "-"
+                , TaskCateText: "请选择"
+                , TaskType: "0"
+                , TaskTypeText: "搜索"
+                , VOS_Number: "1"
+            };
+            CreateRow(obj);
+        } else {
+            let lastlineTr = $("#layui_table").children("tr:last")
+            let obj = { ImplementStartdate : GetDate()};
+            $(lastlineTr).each(function (trIndex, trItem) {
+                $(this).find('td').each(function (tdIndex, tdItem) {
+                    let input = $(tdItem).find("input").not('.fileUpload');
+                    let select = $(tdItem).find("select");
+                    let selectpicker = $(tdItem).find(".selectpicker");
+                    let img = $(tdItem).find("img")[0];
+                    if ($(img).attr("name") != undefined) {
+                        obj["CommodityPicUrl"] = $(img).attr("src");
+                        obj[$(img).attr("name")] = $(img).data("id");
+                    } else if (selectpicker.length > 0) {
+                        obj["TaskCateText"] = $(selectpicker[0]).find("option:selected").text();
+                        obj[selectpicker[0].name] = $(selectpicker[0]).val();
+                    } else if (input.val() != undefined) {
+                        obj[input[0].name] = input.val().replace('\t', "");;
+                    } else if (select.val() != undefined) {
+                        obj["TaskTypeText"] = $(select[0]).find("option:selected").text();
+                        obj[select[0].name] = select.val();
+                    }
+                });
+            });
+            CreateRow(obj);
+        }
+        layer.msg("已创建一行，共 " + $("#layui_table tr").length + " 行");
+
     }
 
     function edit(o, otype) {
@@ -172,7 +200,6 @@
             TaskInpt[0].style.display = "block";
             TaskDiv[0].style.display = "none";
             //方法
-            $(MakeSelect[0]).val(SelectOp(MakeDiv[0].childNodes[0].nodeValue));
             MakeSelect[0].style.display = "block";
             MakeDiv[0].style.display = "none";
             //执行开始
@@ -180,8 +207,6 @@
             ImplementStartTimeInput[0].style.display = "block";
             ImplementStartTimeDiv[0].style.display = "none";
             //商品类目
-            $(TaskCateDiv[0]).find(".selectpicker").selectpicker('val', TaskCateVal);//设置选中
-            $(TaskCateDiv[0]).find(".selectpicker").selectpicker('refresh');
             TaskCateDiv[0].style.display = "block";
             TaskCateSpan[0].style.display = "none";
             //商品名称
@@ -218,33 +243,32 @@
             TaskInpt[0].style.display = "none";
             TaskDiv[0].style.display = "block";
             //方法
-            TaskTypeTex = MakeDiv[0].childNodes[0].nodeValue = $(MakeSelect[0]).find("option:selected").text();
+            MakeDiv[0].childNodes[0].nodeValue = $(MakeSelect[0]).find("option:selected").text();
             TaskTypeVal = $(MakeSelect[0]).find("option:selected").val();
             MakeSelect[0].style.display = "none";
             MakeDiv[0].style.display = "block";
             //执行开始
-            StartTime = ImplementStartTimeDiv[0].childNodes[0].nodeValue = ImplementStartTimeInput[0].value;
+            ImplementStartTimeDiv[0].childNodes[0].nodeValue = ImplementStartTimeInput[0].value;
             ImplementStartTimeInput[0].style.display = "none";
             ImplementStartTimeDiv[0].style.display = "block";
             //商品类目
-            TaskCateTex = TaskCateSpan[0].childNodes[0].nodeValue = $(TaskCateDiv[0]).find("option:selected").text();
-            TaskCateVal = $(TaskCateDiv[0]).find("option:selected").val();
+            TaskCateSpan[0].childNodes[0].nodeValue = $(TaskCateDiv[0]).find("option:selected").text();
             TaskCateDiv[0].style.display = "none";
             TaskCateSpan[0].style.display = "block";
             //商品名称
-            CommodityName = CommodityNameDiv[0].childNodes[0].nodeValue = CommodityNameInput[0].value;
+            CommodityNameDiv[0].childNodes[0].nodeValue = CommodityNameInput[0].value;
             CommodityNameInput[0].style.display = "none";
             CommodityNameDiv[0].style.display = "block";
             //商品图片
             CommodityPicIdButton[0].style.display = "none";
             CommodityPicIdImg[0].style.display = "block";
             //商品链接
-            CommodityLink = CommodityLinkDiv[0].childNodes[0].nodeValue = CommodityLinkInput[0].value;
+            CommodityLinkDiv[0].childNodes[0].nodeValue = CommodityLinkInput[0].value;
             CommodityLinkInput[0].style.display = "none";
             CommodityLinkDiv[0].style.display = "block";
             //商品价格
             let _PriceInput = CommodityPriceInput[0].value;
-            CommodityPrice = CommodityPriceInput[0].value = CommodityPriceDiv[0].childNodes[0].nodeValue = _PriceInput < 0.01 || _PriceInput == "" ? 0.01 : _PriceInput;
+            CommodityPriceInput[0].value = CommodityPriceDiv[0].childNodes[0].nodeValue = _PriceInput < 0.01 || _PriceInput == "" ? 0.01 : _PriceInput;
             CommodityPriceInput[0].style.display = "none";
             CommodityPriceDiv[0].style.display = "block";
             //SKU
@@ -290,28 +314,6 @@
         return realNum;
     }
 
-    function SelectOp(nodeValue) {
-        let op = 0;
-        switch (nodeValue) {
-            case "搜索":
-                op = 0;
-                break;
-            case "隔天":
-                op = 1;
-                break;
-            case "非搜":
-                op = 2;
-                break;
-            case "动销":
-                op = 3;
-                break;
-            default:
-                op = 4;
-                break;
-        }
-        return op;
-    }
-
     function GetTask_no() {
         return  new Date().getTime();
     }
@@ -331,7 +333,7 @@
             , choose: function (obj) {
                 obj.preview(function (index, file, result) {
                     layer.msg("已选择图片");
-                    base64 = oTD5.getElementsByTagName("img")[0].src = result;
+                    oTD5.getElementsByTagName("img")[0].src = result;
                 });
             }//成功
             , done: function (res, index, upload) {
@@ -354,14 +356,10 @@
             var row = {};
             $(this).find('td').each(function (index2, item2) {
                 let input = $(item2).find("input").not('.fileUpload');
-                let checkbox = $(item2).find('[type="checkbox"]');
                 let select = $(item2).find("select");
                 let selectpicker = $(item2).find(".selectpicker");
                 let img = $(item2).find("img")[0];
-                if (checkbox.length >= 1) {
-                    row[$(checkbox).attr("name")] = $(checkbox).prop("checked");
-                    row["id"] = $(checkbox).data("id");
-                } else if ($(img).attr("name") != undefined) {
+                if ($(img).attr("name") != undefined) {
                     row[$(img).attr("name")] = $(img).data("id");
                 } else if (selectpicker.length > 0) {
                     row[selectpicker[0].name] = $(selectpicker[0]).val();
@@ -383,11 +381,12 @@
             , "PlanEndTime": $("#VOS_PlanVM_Entity_PlanEndTime").val()
             , "PlanFee": $("#VOS_PlanVM_Entity_PlanFee").val()
         };
+
         let lo = showLoad();
         $.ajax({
             type: "post"
             , url: _url
-            , data: { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist), "SelectOrInsert": SelectOrInsert }
+            , data: { "plan": JSON.stringify(plan), "tasklist": JSON.stringify(tasklist) }
             , success: res => {
                 setInterval(function () {
                     closeLoad(lo);
@@ -415,7 +414,71 @@
         layer.close(index);
     }
 
-    function SelectShop() {
+    function CreateRow(obj) {
+        let oTB = document.getElementById("layui_table");
+        let oTR = oTB.insertRow(oTB.rows.length);
+        //任务编号
+        let oTD0 = oTR.insertCell(0);
+        oTD0.innerHTML = "<div>" + GetTask_no() + "</div><input  name='Task_no' readonly  type='text' value='" + GetTask_no() + "' class='layui-input layui-btn-disabled' style='display:none;'/>";
+        //方法
+        let oTD1 = oTR.insertCell(1);
+        oTD1.innerHTML = "<div>" + obj.TaskTypeText + "</div>\
+                          <select name='TaskType' style='width: 80px;' class='form-control' >\
+                            <option value='0'>搜索</option>\
+                            <option value='1'>隔天</option>\
+                            <option value='2'>非搜</option>\
+                            <option value='3'>动销</option>\
+                            <option value='4'>其他</option>\
+                         </select>";
+        $(oTD1).find("select").val(obj.TaskType);
+        //执行开始
+        let oTD2 = oTR.insertCell(2);
+        oTD2.style.width = "140px";
+        oTD2.innerHTML = "<div>" + obj.ImplementStartdate + "</div><input  name='ImplementStartTime' value=" + obj.ImplementStartdate + " type='date'  style='display:none' class='layui-input'>";
+        //商品类目
+        let oTD3 = oTR.insertCell(3);
+        oTD3.innerHTML = "<span>" + obj.TaskCateText + "</span><select  name='TaskCateId' class='form-control selectpicker' data-live-search='true' style='display:none;'><option value='-'>请选择</option>" + htmloption + "</select>";
+        $(oTD3).find("select").val(obj.TaskCateId);//赋值
+        $(oTD3).find("select").selectpicker('refresh');//初始化
+        $(oTD3).find(".bootstrap-select").css("display", "none");//隐藏
+        //商品名称
+        let oTD4 = oTR.insertCell(4);
+        oTD4.innerHTML = "<div>" + obj.CommodityName + "</div><input type='text' value=" + obj.CommodityName + "  name='CommodityName' class='layui-input' style='display:none;'/>";
+        //商品图片
+        let oTD5 = oTR.insertCell(5);
+        oTD5.innerHTML = '<img src="' + obj.CommodityPicUrl + '"  name="CommodityPicID" data-id="' + obj.CommodityPicID + '" class="FileData" width="32" height="32"/>\
+                          <button type="button" style="display:none;" name="fileUpload" class="layui-btn" id="SaveImg'+ RowIndex + '">上传图片</button>';
+        Img("#SaveImg" + RowIndex, oTD5);
+        //商品链接
+        let oTD6 = oTR.insertCell(6);
+        oTD6.innerHTML = "<div>" + obj.CommodityLink + "</div><input type='text' name='CommodityLink' value='" + obj.CommodityLink + "' class='layui-input' style='display:none;'/>";
+        //商品价格
+        let oTD7 = oTR.insertCell(7);
+        oTD7.style.width = "50px";
+        oTD7.innerHTML = "<div>" + obj.CommodityPrice + "</div><input type='number' name='CommodityPrice' value=" + obj.CommodityPrice + " class='layui-input deal' style='width:75px;display:none;'/>";
+        //SKU
+        let oTD8 = oTR.insertCell(8);
+        oTD8.innerHTML = "<div>" + obj.SKU + "</div><input type='text'  name='SKU' value='" + obj.SKU + "' class='layui-input' style='display:none;'/>";
+        //搜索关键字
+        let oTD9 = oTR.insertCell(9);
+        oTD9.innerHTML = "<div>" + obj.SearchKeyword + "</div><input type='text' name='SearchKeyword' value='" + obj.SearchKeyword + "' class='layui-input' style='display:none;'/>";
+        //单量
+        let oTD10 = oTR.insertCell(10);
+        oTD10.style.width = "50px";
+        oTD10.innerHTML = "<div>" + obj.VOS_Number + "</div><input type='number'  name='VOS_Number' value='" + obj.VOS_Number + "' class='layui-input deal' style='width:75px;display:none;'/>";
+        //操作
+        let oTD11 = oTR.insertCell(11);
+        oTD11.style.width = "230px";
+        oTD11.innerHTML = "<input type='button' class='layui-btn ayui-btn-sm' value='编辑' onclick=\"edit(this,'show')\"/> <input type='button' class='layui-btn ayui-btn-sm layui-btn-primary layui-border-black' value='删除' onclick='drop(this)'/>";
+        RowIndex++;
+    }
+
+    function SearchShop() {
+        if ($("#VOS_PlanVM_Entity_ShopnameId").val() == "") {
+            layer.msg("请先选择店铺");
+            return false;
+        }
+        let layerIndex = layer.msg("正在查询任务中,请勿关闭或刷新...", { icon: 16, shade: [0.5, '#f5f5f5'], scrollbar: false, offset: 'auto', time: 1000000 });
         let SearchBatchCreationModelJson = {
             "OrganizationID": $("#VOS_PlanVM_Entity_OrganizationID").val()
             , "ShopnameId": $("#VOS_PlanVM_Entity_ShopnameId").val()
@@ -427,31 +490,25 @@
             , url: "@Url.Action("SearchBatchCreation", "VOS_Task")"
             , data: { "SearchBatchCreationModelJson": JSON.stringify(SearchBatchCreationModelJson) }
             , success: res => {
-                //先清空
                 document.getElementById("layui_table").innerHTML = "";
-                if (res.Data.PlanObject === null) {
-                    layer.msg("未能找到 “" + $('#VOS_PlanVM_Entity_ShopnameId option:selected').text() + "” 店铺最新计划编号", { icon: 6});
-                    return false;
-                }
-                let index = layer.msg("计划编号正在替换为：“" + res.Data.PlanObject.Plan_no +"”请勿关闭或刷新...", { icon: 16, shade: [0.5, '#f5f5f5'], scrollbar: false, offset: 'auto', time: 1000000 });
-                $("#VOS_PlanVM_Entity_Plan_no").val(res.Data.PlanObject.Plan_no);
-                $("#VOS_PlanVM_Entity_Plan_no").text(res.Data.PlanObject.Plan_no);
-                $("#VOS_PlanVM_Entity_PlanSatrtTime").val(res.Data.PlanObject.PlanSatrtTime);
-                $("#VOS_PlanVM_Entity_PlanEndTime").val(res.Data.PlanObject.PlanEndTime);
-
-                if (res.Data.TaskList.length <= 0) {
+                if (res.Data.TaskList == undefined || res.Data.TaskList.length <= 0) {
                     setTimeout(function () {
-                        layer.close(index);
-                        layer.msg("《 " + res.Data.PlanObject.Plan_no + " 》下没有任务", { icon: 6 });
-                    }, 2000);
+                        layer.close(layerIndex);
+                    }, 1000);
+                    layer.msg("2天内《 " + $('#VOS_PlanVM_Entity_ShopnameId option:selected').text() + " 》下没有任务", { icon: 6 });
                     return false;
                 }
+                let index = layer.msg("正在添加任务中,请勿关闭或刷新...", { icon: 16, shade: [0.5, '#f5f5f5'], scrollbar: false, offset: 'auto', time: 1000000 });
+                setTimeout(function () {
+                    layer.close(index);
+                }, 2000);
                 $("#SaveTask").removeClass("layui-btn-disabled").addClass("layui-btn-radius layui-btn-normal");
+                $("#VOS_PlanVM_Entity_OrganizationID").val(res.Data.PlanObject.OrganizationID);
+                form.render();
+                console.log(res.Data.PlanObject.OrganizationID);
                 $(res.Data.TaskList).each(function (index, item) {
-                    CreateTr(item.Task_no, item.TaskType, item.TaskVal, item.ImplementStartTime, item.Name_view, item.TaskCateId, item.CommodityName, item.CommodityPicUrl, item.CommodityLink, item.CommodityPrice, item.sku, item.SearchKeyword, item.ID, true);
-                    RowIndex++;
+                    CreateRow(item);
                 });
-                SelectOrInsert = true;
                 setTimeout(function () {
                     layer.close(index);
                 }, 2000);
@@ -463,88 +520,4 @@
         });
     }
 
-    /**
-    * 创建
-    * 任务编号 Task_no
-    * 方法Tex TaskTypeTex
-    * 方法Val TaskTypeVal
-    * 执行开始 ImplementStartTime
-    * 商品类目Tex TaskCateTex
-    * 商品类目Val TaskCateVal
-    * 商品名称 CommodityName
-    * 商品图片 base64
-    * 商品链接 CommodityLink
-    * 商品价格 CommodityPrice
-    * SKU sku
-    * 搜索关键字 keyword
-    * 是否是查询出来的数据集 isSelect
-    */
-    function CreateTr(Task_no, TaskTypeTex, TaskTypeVal, ImplementStartTime, TaskCateTex, TaskCateVal, CommodityName, base64
-        , CommodityLink, CommodityPrice, sku, keyword,ID, isSelect = false) {
-        let oTB = document.getElementById("layui_table");
-        let oTR = oTB.insertRow(oTB.rows.length);
-        //任务编号
-        let oTD0 = oTR.insertCell(0);
-        oTD0.innerHTML = "<div>" + Task_no + "</div><input  name='Task_no' readonly  type='text' value='" + Task_no + "' class='layui-input layui-btn-disabled' style='display:none;'/>";
-        //方法
-        let oTD1 = oTR.insertCell(1);
-        oTD1.innerHTML = "<div>" + TaskTypeTex + "</div>\
-                          <select name='TaskType' style='width: 80px;' class='form-control' >\
-                            <option value='0'>搜索</option>\
-                            <option value='1'>隔天</option>\
-                            <option value='2'>非搜</option>\
-                            <option value='3'>动销</option>\
-                            <option value='4'>其他</option>\
-                         </select>";
-        $(oTD1).find("select").val(TaskTypeVal);
-        //执行开始
-        let oTD2 = oTR.insertCell(2);
-        oTD2.style.width = "140px";
-        oTD2.innerHTML = "<div>" + ImplementStartTime + "</div><input  name='ImplementStartTime' value=" + ImplementStartTime + " type='date'  style='display:none' class='layui-input'>";
-        //商品类目
-        let oTD3 = oTR.insertCell(3);
-        oTD3.innerHTML = "<span>" + TaskCateTex + "</span><select  name='TaskCateId' class='form-control selectpicker' data-live-search='true' style='display:none;'><option value='-'>请选择</option>" + htmloption + "</select>";
-        $(oTD3).find("select").val(TaskCateVal);//赋值
-        $(oTD3).find("select").selectpicker('refresh');//初始化
-        $(oTD3).find(".bootstrap-select").css("display", "none");//隐藏
-        //商品名称
-        let oTD4 = oTR.insertCell(4);
-        oTD4.innerHTML = "<div>" + CommodityName + "</div><input type='text' value=" + CommodityName + "  name='CommodityName' class='layui-input' style='display:none;'/>";
-        //商品图片
-        let oTD5 = oTR.insertCell(5);
-        oTD5.innerHTML = '<img src="' + base64 + '"  name="imgcommoditypicid" data-id="' + picid + '" class="FileData" width="32" height="32"/>\
-                          <button type="button" style="display:none;" name="fileUpload" class="layui-btn" id="SaveImg'+ RowIndex + '">上传图片</button>';
-        Img("#SaveImg" + RowIndex, oTD5);
-        //商品链接
-        let oTD6 = oTR.insertCell(6);
-        oTD6.innerHTML = "<div>" + CommodityLink + "</div><input type='text' name='CommodityLink' value='" + CommodityLink + "' class='layui-input' style='display:none;'/>";
-        //商品价格
-        let oTD7 = oTR.insertCell(7);
-        oTD7.style.width = "50px";
-        oTD7.innerHTML = "<div>" + CommodityPrice + "</div><input type='number' value=" + CommodityPrice + " name='CommodityPrice' class='layui-input deal' style='width:75px;display:none;'/>";
-        //SKU
-        let oTD8 = oTR.insertCell(8);
-        oTD8.innerHTML = "<div>" + sku + "</div><input type='text'  name='SKU' value='" + sku + "' class='layui-input' style='display:none;'/>";
-        //搜索关键字
-        let oTD9 = oTR.insertCell(9);
-        oTD9.innerHTML = "<div>" + keyword + "</div><input type='text' name='searchkeyword' value='" + keyword + "' class='layui-input' style='display:none;'/>";
-        //单量
-        let oTD10 = oTR.insertCell(10);
-        oTD10.style.width = "50px";
-        oTD10.innerHTML = "<div>1</div><input type='number'  name='vos_number' value='1' class='layui-input deal' style='width:75px;display:none;'/>";
-        //操作
-        let oTD11 = oTR.insertCell(11);
-        oTD11.style.width = "230px";
-        oTD11.innerHTML = "<input type='button' class='layui-btn ayui-btn-sm' value='编辑' onclick=\"edit(this,'show')\"/> <input type='button' class='layui-btn ayui-btn-sm layui-btn-primary layui-border-black' value='删除' onclick='drop(this)'/>";
-        //是否是查询出来的数据集
-        if (isSelect) {
-            let oTD12 = oTR.insertCell(12);
-            oTD12.innerHTML = '<input type="checkbox" name="isSelect" data-id="' + ID + '" checked="true" style="display:block;" />';
-            oTD12.style.display = "none";
-        } else {
-            let oTD12 = oTR.insertCell(12);
-            oTD12.innerHTML = '<input type="checkbox" name="isSelect"  style="display:block;" />';
-            oTD12.style.display = "none";
-        }
-    }
 </script>

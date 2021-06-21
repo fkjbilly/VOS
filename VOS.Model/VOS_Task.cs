@@ -197,9 +197,15 @@ namespace VOS.Model
         [RegularExpression(@"^[1-9]\d*$", ErrorMessage = "请输入正确单量")]
         public int? VOS_Number { get; set; } = 1;
         [NotMapped]
-        public string ImgCommodityPicId { get; set; }
-
+        public string CommodityPicUrl { get; set; }
         [NotMapped]
-        public bool isSelect { get; set; }
+        public string TaskTypeText { get; set; }
+        [NotMapped]
+        public string TaskCateText { get; set; }
+        [NotMapped]
+        public string CommodityPicID { get; set; }
+        [NotMapped]
+        public string ImplementStartdate { get; set; }
+        
     }
 }
