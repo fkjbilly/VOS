@@ -100,14 +100,14 @@
     });
 
     function Create() {
-        // if ($("#VOS_PlanVM_Entity_PlanSatrtTime").val() == ""
-        //    || $("#VOS_PlanVM_Entity_PlanEndTime").val() == ""
-        //    || $("#VOS_PlanVM_Entity_PlanFee").val() == ""
-        //    || $("#VOS_PlanVM_Entity_OrganizationID").val() == ""
-        //    || $("#VOS_PlanVM_Entity_ShopnameId").val() == "") {
-        //    layer.msg("请将上部分填写完毕");
-        //    return false;
-        //}
+         if ($("#VOS_PlanVM_Entity_PlanSatrtTime").val() == ""
+            || $("#VOS_PlanVM_Entity_PlanEndTime").val() == ""
+            || $("#VOS_PlanVM_Entity_PlanFee").val() == ""
+            || $("#VOS_PlanVM_Entity_OrganizationID").val() == ""
+            || $("#VOS_PlanVM_Entity_ShopnameId").val() == "") {
+            layer.msg("请将上部分填写完毕");
+            return false;
+        }
         $("#SaveTask").removeClass("layui-btn-disabled").addClass("layui-btn-radius layui-btn-normal");
 
         if ($("#layui_table tr").length <= 0) {
