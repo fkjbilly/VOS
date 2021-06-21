@@ -24,7 +24,8 @@ namespace VOS.ViewModel.Business.VOS_PlanVMs
 
         protected override void InitVM()
         {
-            AllShopnames = DC.Set<VOS_Shop>().DPWhere(LoginUserInfo.DataPrivileges, x => x.Customer.OrganizationID).GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
+            //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Customer.OrganizationID)数据权限
+            AllShopnames = DC.Set<VOS_Shop>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.ShopName);
             AllOrganization = DC.Set<VOS_Organization>().GetSelectListItems(LoginUserInfo?.DataPrivileges, null, y => y.OrganizationName);
         }
 
