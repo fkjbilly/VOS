@@ -805,10 +805,6 @@ namespace VOS.Controllers
                         ,
                         TaskVal = x.TaskType
                         ,
-                        ImplementStartTime = x.ImplementStartTime.ToString("yyyy-MM-dd")
-                        ,
-                        ImplementEndTime = x.ImplementEndTime == Convert.ToDateTime("0001-01-01") ? null : x.ImplementEndTime.ToString("yyyy-MM-dd")
-                        ,
                         TaskCateTex = x.TaskCate.Name
                         ,
                         TaskCateId = x.TaskCateId
@@ -841,8 +837,6 @@ namespace VOS.Controllers
                                 ,
                                 TaskType = item.TaskVal
                                 ,
-                                ImplementStartdate = item.ImplementStartTime
-                                ,
                                 TaskCateText = item.TaskCateTex
                                 ,
                                 TaskCateId = item.TaskCateId
@@ -869,7 +863,7 @@ namespace VOS.Controllers
                 }
                 return Json(new { PlanObject, TaskList });
             }
-
+           
             return Json(new { PlanObject });
         }
 

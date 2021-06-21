@@ -204,8 +204,6 @@ namespace VOS.Model
         public string TaskCateText { get; set; }
         [NotMapped]
         public string CommodityPicID { get; set; }
-        [NotMapped]
-        public string ImplementStartdate { get; set; }
         
     }
 }

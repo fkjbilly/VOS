@@ -434,7 +434,7 @@
         //执行开始
         let oTD2 = oTR.insertCell(2);
         oTD2.style.width = "140px";
-        oTD2.innerHTML = "<div>" + obj.ImplementStartdate + "</div><input  name='ImplementStartTime' value=" + obj.ImplementStartdate + " type='date'  style='display:none' class='layui-input'>";
+        oTD2.innerHTML = "<div>" + GetDate() + "</div><input  name='ImplementStartTime' value=" + GetDate()  + " type='date'  style='display:none' class='layui-input'>";
         //商品类目
         let oTD3 = oTR.insertCell(3);
         oTD3.innerHTML = "<span>" + obj.TaskCateText + "</span><select  name='TaskCateId' class='form-control selectpicker' data-live-search='true' style='display:none;'><option value='-'>请选择</option>" + htmloption + "</select>";
