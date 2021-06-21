@@ -53,7 +53,7 @@ namespace VOS.ViewModel.Customer.VOS_ShopVMs
                 .CheckContain(Searcher.ShopName, x=>x.ShopName)
                 .CheckEqual(Searcher.ShopPlat, x=>x.ShopPlat)
                 .CheckEqual(Searcher.OrganizationID, x=>x.Customer.OrganizationID)
-                .DPWhere(LoginUserInfo.DataPrivileges, x => x.Customer.OrganizationID)
+                //.DPWhere(LoginUserInfo.DataPrivileges, x => x.Customer.OrganizationID)
                 .Select(x => new VOS_Shop_View
                 {
 				    ID = x.ID,
