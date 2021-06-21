@@ -474,14 +474,15 @@
     }
 
     function SearchShop() {
-        if ($("#VOS_PlanVM_Entity_ShopnameId").val() == "") {
+        let ShopnameId = $("#VOS_PlanVM_Entity_ShopnameId").val();
+        if (ShopnameId == "") {
             layer.msg("请先选择店铺");
             return false;
         }
         let layerIndex = layer.msg("正在查询任务中,请勿关闭或刷新...", { icon: 16, shade: [0.5, '#f5f5f5'], scrollbar: false, offset: 'auto', time: 1000000 });
         let SearchBatchCreationModelJson = {
             "OrganizationID": $("#VOS_PlanVM_Entity_OrganizationID").val()
-            , "ShopnameId": $("#VOS_PlanVM_Entity_ShopnameId").val()
+            , "ShopnameId": ShopnameId
             , "PlanSatrtTime": $("#VOS_PlanVM_Entity_PlanSatrtTime").val()
             , "PlanEndTime": $("#VOS_PlanVM_Entity_PlanEndTime").val()
         };
