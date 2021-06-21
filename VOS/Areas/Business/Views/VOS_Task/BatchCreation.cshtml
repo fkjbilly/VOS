@@ -492,21 +492,22 @@
             , url: "@Url.Action("SearchBatchCreation", "VOS_Task")"
             , data: { "SearchBatchCreationModelJson": JSON.stringify(SearchBatchCreationModelJson) }
             , success: res => {
+              
                 document.getElementById("layui_table").innerHTML = "";
                 if (res.Data.TaskList == undefined || res.Data.TaskList.length <= 0) {
                     setTimeout(function () {
                         closeLoad(layerIndex);
                     }, 1000);
-                    layer.msg("2天内《 " + $('#VOS_PlanVM_Entity_ShopnameId option:selected').text() + " 》下没有任务", { icon: 6 });
+                    layer.msg("《 " + $('#VOS_PlanVM_Entity_ShopnameId option:selected').text() + " 》下没有任务", { icon: 6 });
                     return false;
                 }
+                $("#VOS_PlanVM_Entity_OrganizationID").val(res.Data.PlanObject.OrganizationID);
+                form.render();
                 let index = showLoad("正在添加任务中,请勿关闭或刷新...");
                 setTimeout(function () {
                     closeLoad(index);
                 }, 2000);
                 $("#SaveTask").removeClass("layui-btn-disabled").addClass("layui-btn-radius layui-btn-normal");
-                $("#VOS_PlanVM_Entity_OrganizationID").val(res.Data.PlanObject.OrganizationID);
-                form.render();
                 $(res.Data.TaskList).each(function (index, item) {
                     CreateRow(item);
                 });

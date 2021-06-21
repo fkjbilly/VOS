@@ -785,7 +785,8 @@ namespace VOS.Controllers
                 .CheckEqual(SearchBatchCreationModel.OrganizationID, x => x.OrganizationID)
                 .CheckEqual(SearchBatchCreationModel.ShopnameId, x => x.ShopnameId)
                 .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID)
-                .Where(x => x.IsValid && x.CreateTime.Value > dateTime)
+                //.CheckBetween(SearchBatchCreationModel.PlanSatrtTime, SearchBatchCreationModel.PlanEndTime, x => x.CreateTime, includeMax: false)
+                .Where(x => x.IsValid)
                 .OrderByDescending(x => x.CreateTime.Value).Select(x => new
                 {
                     ID = x.ID,
