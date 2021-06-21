@@ -798,32 +798,17 @@ namespace VOS.Controllers
                 }).FirstOrDefault();
             if (PlanObject != null)
             {
-                var taskObjectList = DC.Set<VOS_Task>()
-                    .Where(x => x.IsValid && x.PlanId == PlanObject.ID && x.Plan.OrganizationID == PlanObject.OrganizationID).Select(x => new
+                var TaskListData = DC.Set<VOS_Task>()
+                    .Where(x => x.IsValid && x.PlanId == PlanObject.ID && x.Plan.OrganizationID == PlanObject.OrganizationID)
+                    .Select(x => new
                     {
-                        TaskType = x.TaskType.ToString()
-                        ,
-                        TaskVal = x.TaskType
-                        ,
-                        TaskCateTex = x.TaskCate.Name
-                        ,
-                        TaskCateId = x.TaskCateId
-                        ,
-                        CommodityName = x.CommodityName
-                        ,
-                        CommodityPicID = x.CommodityPic.ID
-                        ,
-                        CommodityLink = x.CommodityLink
-                        ,
-                        CommodityPrice = x.CommodityPrice
-                        ,
-                        SKU = x.SKU
-                        ,
-                        SearchKeyword = x.SearchKeyword
-
-                    }).ToList();
-
-                var TaskListData = taskObjectList.GroupBy(x => x.SearchKeyword).Select(y => new { key = y.Key, VOS_Number = y.Count(), Tasklist = y.Distinct(x => x.SearchKeyword) });
+                        TaskType = x.TaskType, TaskCateTex = x.TaskCate.Name,
+                        TaskCateId = x.TaskCateId, CommodityName = x.CommodityName,
+                        CommodityPicId = x.CommodityPicId, CommodityLink = x.CommodityLink,
+                        CommodityPrice = x.CommodityPrice, SKU = x.SKU, SearchKeyword = x.SearchKeyword,
+                    })
+                    .ToList()
+                    .GroupBy(x => x.SearchKeyword).Select(y => new { key = y.Key, VOS_Number = y.Count(), Tasklist = y.Distinct(x => x.SearchKeyword) });
                 List<VOS_Task> TaskList = new List<VOS_Task>();
                 foreach (var TaskListDataObj in TaskListData)
                 {
@@ -831,9 +816,9 @@ namespace VOS.Controllers
                     {
                         TaskList.Add(new VOS_Task()
                         {
-                            TaskTypeText = TasklistObj.TaskType
+                            TaskTypeText = TasklistObj.TaskType.ToString()
                           ,
-                            TaskType = TasklistObj.TaskVal
+                            TaskType = TasklistObj.TaskType
                           ,
                             TaskCateText = TasklistObj.TaskCateTex
                           ,
@@ -841,9 +826,9 @@ namespace VOS.Controllers
                           ,
                             CommodityName = TasklistObj.CommodityName
                           ,
-                            CommodityPicUrl = "/_Framework/GetFile?id=" + TasklistObj.CommodityPicID + "&stream=true&_DONOT_USE_CS=default"
+                            CommodityPicUrl = "/_Framework/GetFile?id=" + TasklistObj.CommodityPicId + "&stream=true&_DONOT_USE_CS=default"
                           ,
-                            CommodityPicID = TasklistObj.CommodityPicID.ToString()
+                            CommodityPicID = TasklistObj.CommodityPicId.ToString()
                           ,
                             CommodityLink = TasklistObj.CommodityLink
                           ,
