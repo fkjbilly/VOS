@@ -822,48 +822,44 @@ namespace VOS.Controllers
                         SearchKeyword = x.SearchKeyword
 
                     }).ToList();
-                var TaskListKey = taskObjectList.GroupBy(x => x.SearchKeyword).Select(y => new { key = y.Key, VOS_Number = y.Count() }).ToList();
 
+                var TaskListData = taskObjectList.GroupBy(x => x.SearchKeyword).Select(y => new { key = y.Key, VOS_Number = y.Count(), Tasklist = y.Distinct(x => x.SearchKeyword) });
                 List<VOS_Task> TaskList = new List<VOS_Task>();
-                foreach (var item in taskObjectList.Distinct(x => x.SearchKeyword))
+                foreach (var TaskListDataObj in TaskListData)
                 {
-                    foreach (var Ikey in TaskListKey)
+                    foreach (var TasklistObj in TaskListDataObj.Tasklist)
                     {
-                        if (item.SearchKeyword == Ikey.key)
+                        TaskList.Add(new VOS_Task()
                         {
-                            TaskList.Add(new VOS_Task()
-                            {
-                                TaskTypeText = item.TaskType
-                                ,
-                                TaskType = item.TaskVal
-                                ,
-                                TaskCateText = item.TaskCateTex
-                                ,
-                                TaskCateId = item.TaskCateId
-                                ,
-                                CommodityName = item.CommodityName
-                                ,
-                                CommodityPicUrl = "/_Framework/GetFile?id=" + item.CommodityPicID + "&stream=true&_DONOT_USE_CS=default"
-                                ,
-                                CommodityPicID = item.CommodityPicID.ToString()
-                                ,
-                                CommodityLink = item.CommodityLink
-                                ,
-                                CommodityPrice = item.CommodityPrice
-                                ,
-                                SKU = item.SKU
-                                ,
-                                SearchKeyword = item.SearchKeyword
-                                ,
-                                VOS_Number = Ikey.VOS_Number
-                            });
-                        }
+                            TaskTypeText = TasklistObj.TaskType
+                          ,
+                            TaskType = TasklistObj.TaskVal
+                          ,
+                            TaskCateText = TasklistObj.TaskCateTex
+                          ,
+                            TaskCateId = TasklistObj.TaskCateId
+                          ,
+                            CommodityName = TasklistObj.CommodityName
+                          ,
+                            CommodityPicUrl = "/_Framework/GetFile?id=" + TasklistObj.CommodityPicID + "&stream=true&_DONOT_USE_CS=default"
+                          ,
+                            CommodityPicID = TasklistObj.CommodityPicID.ToString()
+                          ,
+                            CommodityLink = TasklistObj.CommodityLink
+                          ,
+                            CommodityPrice = TasklistObj.CommodityPrice
+                          ,
+                            SKU = TasklistObj.SKU
+                          ,
+                            SearchKeyword = TasklistObj.SearchKeyword
+                          ,
+                            VOS_Number = TaskListDataObj.VOS_Number
+                        });
                     }
-
                 }
                 return Json(new { PlanObject, TaskList });
             }
-           
+
             return Json(new { PlanObject });
         }
 
