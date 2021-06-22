@@ -626,12 +626,16 @@ namespace VOS.Controllers
         [ActionDescription("批量创建操作")]
         public async Task<ActionResult> DoBatchCreation(string plan, string tasklist)
         {
+            if (GetOrganizationID == null)
+            {
+                return Json(new { Msg = GetMsg, icon = 5 });
+            }
             using (var transaction = DC.BeginTransaction())
             {
                 try
                 {
                     var _plan = JsonConvert.DeserializeObject<VOS_Plan>(plan);
-                    _plan.OrganizationID = IsSuperAdministrator ? _plan.OrganizationID : GetOrganizationID;
+                    _plan.OrganizationID = IsSuperAdministrator ? _plan.OrganizationID : (Guid)GetOrganizationID;
                     _plan.CreateTime = DateTime.Now;
                     _plan.CreateBy = LoginUserInfo.ITCode;
                     _plan.IsValid = true;
@@ -779,6 +783,10 @@ namespace VOS.Controllers
             DateTime dateTime = Convert.ToDateTime(DateTime.Now.AddDays(-2).ToString("yyyy-MM-dd"));
             if (SearchBatchCreationModel.OrganizationID == null)
             {
+                if (GetOrganizationID == null)
+                {
+                    return Json(new { msg = "请选择组织或您无权限查询", icon = 5 });
+                }
                 SearchBatchCreationModel.OrganizationID = GetOrganizationID;
             }
             var PlanObject = DC.Set<VOS_Plan>()
@@ -787,25 +795,22 @@ namespace VOS.Controllers
                 .DPWhere(LoginUserInfo.DataPrivileges, x => x.OrganizationID)
                 //.CheckBetween(SearchBatchCreationModel.PlanSatrtTime, SearchBatchCreationModel.PlanEndTime, x => x.CreateTime, includeMax: false)
                 .Where(x => x.IsValid)
-                .OrderByDescending(x => x.CreateTime.Value).Select(x => new
-                {
-                    ID = x.ID,
-                    Plan_no = x.Plan_no,
-                    PlanSatrtTime = x.PlanSatrtTime.ToString("yyyy-MM-dd"),
-                    PlanEndTime = x.PlanEndTime.ToString("yyyy-MM-dd"),
-                    PlanFee = x.PlanFee,
-                    OrganizationID = x.OrganizationID,
-                }).FirstOrDefault();
+                .OrderByDescending(x => x.CreateTime.Value).FirstOrDefault();
             if (PlanObject != null)
             {
                 var TaskListData = DC.Set<VOS_Task>()
                     .Where(x => x.IsValid && x.PlanId == PlanObject.ID && x.Plan.OrganizationID == PlanObject.OrganizationID)
                     .Select(x => new
                     {
-                        TaskType = x.TaskType, TaskCateTex = x.TaskCate.Name,
-                        TaskCateId = x.TaskCateId, CommodityName = x.CommodityName,
-                        CommodityPicId = x.CommodityPicId, CommodityLink = x.CommodityLink,
-                        CommodityPrice = x.CommodityPrice, SKU = x.SKU, SearchKeyword = x.SearchKeyword,
+                        TaskType = x.TaskType,
+                        TaskCateTex = x.TaskCate.Name,
+                        TaskCateId = x.TaskCateId,
+                        CommodityName = x.CommodityName,
+                        CommodityPicId = x.CommodityPicId,
+                        CommodityLink = x.CommodityLink,
+                        CommodityPrice = x.CommodityPrice,
+                        SKU = x.SKU,
+                        SearchKeyword = x.SearchKeyword,
                     })
                     .ToList()
                     .GroupBy(x => x.SearchKeyword).Select(y => new { key = y.Key, VOS_Number = y.Count(), Tasklist = y.Distinct(x => x.SearchKeyword) });

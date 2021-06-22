@@ -11,6 +11,9 @@ namespace VOS.Areas.BaseControllers
 {
     public class VOS_BaseControllers : BaseController
     {
+
+        protected string GetMsg => "您无权限创建，如需要请联系管理员";
+
         /// <summary>
         /// 是超级管理员登录
         /// </summary>
@@ -26,11 +29,12 @@ namespace VOS.Areas.BaseControllers
         /// <summary>
         /// 当前登录人(组织机构)ID
         /// </summary>
-        protected Guid GetOrganizationID
+        protected Guid? GetOrganizationID
         {
             get
             {
-                return (Guid)DC.Set<VOS_User>().Where(x => x.ID.Equals(LoginUserInfo.Id)).FirstOrDefault().OrganizationID;
+                var UserObj = DC.Set<VOS_User>().Where(x => x.ID.Equals(LoginUserInfo.Id)).FirstOrDefault();
+                return UserObj == null ? null : UserObj.OrganizationID;
             }
         }
 

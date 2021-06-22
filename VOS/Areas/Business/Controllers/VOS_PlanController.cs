@@ -54,7 +54,11 @@ namespace VOS.Controllers
         {
             if (!IsSuperAdministrator)
             {
-                vm.Entity.OrganizationID = GetOrganizationID;
+                if (GetOrganizationID == null)
+                {
+                    return FFResult().CloseDialog().Alert(GetMsg, "提示");
+                }
+                vm.Entity.OrganizationID = (Guid)GetOrganizationID;
             }
             if (!ModelState.IsValid)
             {

@@ -51,8 +51,13 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create(VOS_PEmployeeVM vm)
         {
-            if (!IsSuperAdministrator) {
-                vm.Entity.OrganizationID = GetOrganizationID;
+            if (!IsSuperAdministrator)
+            {
+                if (GetOrganizationID == null)
+                {
+                    return FFResult().CloseDialog().Alert(GetMsg, "提示");
+                }
+                vm.Entity.OrganizationID = (Guid)GetOrganizationID;
             }
             vm.Entity.CreateBy = LoginUserInfo.ITCode;
             if (!ModelState.IsValid)
@@ -63,7 +68,7 @@ namespace VOS.Controllers
             else
             {
                 vm.Entity.FullName = vm.Entity.FullName.Trim();
-                vm.Entity.WeChat= vm.Entity.WeChat.Trim();
+                vm.Entity.WeChat = vm.Entity.WeChat.Trim();
                 vm.Entity.TaobaAccount = vm.Entity.TaobaAccount.Trim();
                 vm.DoAdd();
                 if (!ModelState.IsValid)
@@ -165,7 +170,7 @@ namespace VOS.Controllers
         {
             if (!ModelState.IsValid || !vm.DoBatchEdit())
             {
-                return PartialView("BatchEdit",vm);
+                return PartialView("BatchEdit", vm);
             }
             else
             {
@@ -189,7 +194,7 @@ namespace VOS.Controllers
         {
             if (!ModelState.IsValid || !vm.DoBatchDelete())
             {
-                return PartialView("BatchDelete",vm);
+                return PartialView("BatchDelete", vm);
             }
             else
             {
@@ -199,7 +204,7 @@ namespace VOS.Controllers
         #endregion
 
         #region Import
-		[ActionDescription("Import")]
+        [ActionDescription("Import")]
         public ActionResult Import()
         {
             var vm = CreateVM<VOS_PEmployeeImportVM>();

@@ -492,7 +492,10 @@
             , url: "@Url.Action("SearchBatchCreation", "VOS_Task")"
             , data: { "SearchBatchCreationModelJson": JSON.stringify(SearchBatchCreationModelJson) }
             , success: res => {
-              
+                if (res.Data.msg != "undefined" ) {
+                    layer.msg("《 " + res.Data.msg + " 》", { icon: res.Data.icon });
+                    return false;
+                }
                 document.getElementById("layui_table").innerHTML = "";
                 if (res.Data.TaskList == undefined || res.Data.TaskList.length <= 0) {
                     setTimeout(function () {

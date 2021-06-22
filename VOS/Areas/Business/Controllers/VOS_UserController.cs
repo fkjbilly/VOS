@@ -58,10 +58,14 @@ namespace VOS.Controllers
         [ActionDescription("Create")]
         public ActionResult Create(VOS_UserVM vm)
         {
-            vm.Entity.IsValid = true;
             if (!IsSuperAdministrator) {
+                if (GetOrganizationID == null)
+                {
+                    return FFResult().CloseDialog().Alert(GetMsg, "提示");
+                }
                 vm.Entity.OrganizationID = GetOrganizationID;
             }
+            vm.Entity.IsValid = true;
             if (!ModelState.IsValid)
             {
                 ViewBag.IsShow = IsSuperAdministrator;
