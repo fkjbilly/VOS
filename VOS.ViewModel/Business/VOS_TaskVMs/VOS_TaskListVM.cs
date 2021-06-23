@@ -207,10 +207,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             }
             else
             {
-                return data.OrderBy(x => (int)x.OrderState == 1 ? 1 :
-                                      (x.OrderState == 0 ? 2 :
-                                      ((int)x.OrderState == 2 ? 3 :
-                                      (int)x.OrderState == 3 ? 4 : 5)));
+                //return data.OrderBy(x => x.OrderState == OrderState.已分配 ? 0 : x.OrderState == OrderState.未分配 ? 1 : x.OrderState == OrderState.进行中 ? 2 : x.OrderState == OrderState.已完成 ? 3 : 4);
+                return data.OrderBy(x => x.OrderState == 0 ? 1 : (int)x.OrderState == 1 ? 0 : (int)x.OrderState );
             }
         }
 
