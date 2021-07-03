@@ -63,7 +63,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 ListVMSearchModeEnum.Export => new List<GridColumn<VOS_Task_View>>{
                     this.MakeGridHeader(x => x.method),
                     this.MakeGridHeader(x => x.ShopName),
-                    this.MakeGridHeader(x => x.DoubleCommodityPrice),
+                    this.MakeGridHeader(x => x.CommodityPrice),
                     this.MakeGridHeader(x => x.keyword),
                     this.MakeGridHeader(x => x.SKU),
                     this.MakeGridHeader(x => x.Wangwang),
@@ -86,7 +86,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                          return color;
                     }).SetSort(true).SetWidth(90),
                     this.MakeGridHeader(x => x.ShopName).SetWidth(100),
-                    this.MakeGridHeader(x => x.DoubleCommodityPrice).SetSort(true).SetShowTotal(true).SetWidth(110),
+                    this.MakeGridHeader(x => x.CommodityPrice).SetSort(true).SetShowTotal(true).SetWidth(110),
                     this.MakeGridHeader(x => x.SearchKeyword),
                     this.MakeGridHeader(x => x.SKU),
                     this.MakeGridHeader(x => x.CommodityPicId).SetFormat(CommodityPicIdFormat).SetWidth(90),
@@ -106,7 +106,7 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                         }
                         return "false";
                     }),
-                    this.MakeGridHeader(x => x.DoubleOtherExpenses).SetSort(true).SetShowTotal(true).SetWidth(110),
+                    this.MakeGridHeader(x => x.OtherExpenses).SetSort(true).SetShowTotal(true).SetWidth(110),
                     this.MakeGridHeader(x=>x.executorName).SetWidth(80),
                     this.MakeGridHeader(x => x.OrderState).SetBackGroundFunc((x)=>{
                      string color =  x.OrderState  switch
@@ -134,10 +134,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
             {
                 return entity.OrderState switch
                 {
-                    _ when entity.OrderState == OrderState.未分配 || entity.OrderState == OrderState.已分配 => entity.VOrderCode,
                     _ when entity.OrderState == OrderState.进行中 => "<input type='text' title='双击填写单号' placeholder='双击填写单号' value='" + entity.VOrderCode + "' readonly data-code='" + entity.ID + "' class='layui-input brushAlone' style='width:150px;' />",
-                    _ when entity.OrderState == OrderState.已完成 || entity.OrderState == OrderState.已返款 => entity.VOrderCode,
-                    _ => ""
+                    _ => entity.VOrderCode
                 };
             }
             else
@@ -181,7 +179,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 TaskType = x.TaskType,
                 Name_view = x.TaskCate.Name,
                 CommodityName = x.CommodityName,
-                DoubleCommodityPrice = Convert.ToDouble(x.CommodityPrice),
+                //DoubleCommodityPrice = Convert.ToDouble(x.CommodityPrice),
+                CommodityPrice = x.CommodityPrice,
                 SearchKeyword = x.SearchKeyword,
                 SKU = x.SKU,
                 FullName_view = x.Employee.TaobaAccount,
@@ -191,7 +190,8 @@ namespace VOS.ViewModel.Business.VOS_TaskVMs
                 IsLock = x.IsLock,
                 ShopName = x.Plan.Shopname.ShopName,
                 executorName = x.Executor.Name,
-                DoubleOtherExpenses = Convert.ToDouble(x.OtherExpenses),
+                //DoubleOtherExpenses = Convert.ToDouble(x.OtherExpenses),
+                OtherExpenses = x.OtherExpenses,
                 CommodityPicId = x.CommodityPicId,
                 DistributionTime = x.DistributionTime,
                 CompleteTime = x.CompleteTime,
