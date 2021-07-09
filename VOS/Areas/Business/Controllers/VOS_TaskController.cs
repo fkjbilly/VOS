@@ -105,6 +105,11 @@ namespace VOS.Controllers
         [ValidateFormItemOnly]
         public ActionResult Edit(VOS_TaskVM vm)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return PartialView(vm);
+            }
             try
             {
                 var _task = DC.Set<VOS_Task>().Where(x => x.ID == vm.Entity.ID).FirstOrDefault();
