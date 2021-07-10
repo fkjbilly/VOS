@@ -631,15 +631,16 @@ namespace VOS.Controllers
         [ActionDescription("批量创建操作")]
         public async Task<ActionResult> DoBatchCreation(string plan, string tasklist)
         {
-            if (GetOrganizationID == null)
-            {
-                return Json(new { Msg = GetMsg, icon = 5 });
-            }
+            
             using (var transaction = DC.BeginTransaction())
             {
                 try
                 {
                     var _plan = JsonConvert.DeserializeObject<VOS_Plan>(plan);
+                    if (_plan.OrganizationID == null && GetOrganizationID == null)
+                    {
+                        return Json(new { Msg = GetMsg, icon = 5 });
+                    }
                     _plan.OrganizationID = IsSuperAdministrator ? _plan.OrganizationID : (Guid)GetOrganizationID;
                     _plan.CreateTime = DateTime.Now;
                     _plan.CreateBy = LoginUserInfo.ITCode;
