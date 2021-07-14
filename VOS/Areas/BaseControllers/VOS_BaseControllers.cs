@@ -12,7 +12,7 @@ namespace VOS.Areas.BaseControllers
     public class VOS_BaseControllers : BaseController
     {
 
-        protected string GetMsg => "您无权限创建，如需要请联系管理员";
+        protected string GetMsg => "您无权限创建，请设置账号所属机构";
 
         /// <summary>
         /// 是超级管理员登录
